@@ -37,7 +37,7 @@ public class TournamentController {
     }
 
     @GetMapping(path = "/tournaments")
-    public List<TournamentDto> listTournaments(@RequestBody TournamentDto tournament){
+    public List<TournamentDto> listTournaments(){
         List<TournamentEntity> tournaments = tournamentService.findAll();
         return tournaments.stream().map(tournamentMapper::mapTo).collect(Collectors.toList());
     }
