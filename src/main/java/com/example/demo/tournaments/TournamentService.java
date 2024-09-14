@@ -5,15 +5,15 @@ import java.util.Optional;
 
 public interface TournamentService {
 
-    TournamentEntity save(TournamentEntity tournament);
+    Tournament save(Tournament tournament);
 
-    List<TournamentEntity> findAll();
+    List<Tournament> findAll();
 
-    Optional<TournamentEntity> findOne(Long id);
+    Optional<Tournament> find(Long id);
 
-    boolean isExists(Long id); 
+    boolean isExists(Long id);
 
-    TournamentEntity partialUpdate(Long id, TournamentEntity tournament);
+    Tournament update(Long id, Tournament tournament);
 
     void delete(Long id);
 }

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "tournaments")
 
-public class TournamentEntity {
+public class Tournament {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tournament_id_seq")
     @SequenceGenerator(name = "tournament_id_seq", sequenceName = "tournament_id_seq", allocationSize = 1)

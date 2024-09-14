@@ -8,37 +8,37 @@ import java.util.stream.StreamSupport;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TournamentServiceImpl implements TournamentService{
+public class TournamentServiceImpl implements TournamentService {
 
     private TournamentRepository tournamentRepository;
 
-    public TournamentServiceImpl (TournamentRepository tournamentRepository){
+    public TournamentServiceImpl(TournamentRepository tournamentRepository) {
         this.tournamentRepository = tournamentRepository;
     }
 
     @Override
-    public TournamentEntity save(TournamentEntity tournamentEntity){
+    public Tournament save(Tournament tournamentEntity) {
         return tournamentRepository.save(tournamentEntity);
     }
 
     @Override
-    public List<TournamentEntity> findAll(){
+    public List<Tournament> findAll() {
         return StreamSupport.stream(tournamentRepository.findAll().spliterator(), false)
-                            .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<TournamentEntity> findOne(Long id){
+    public Optional<Tournament> find(Long id) {
         return tournamentRepository.findById(id);
     }
 
     @Override
-    public boolean isExists(Long id){
-         return tournamentRepository.existsById(id);
+    public boolean isExists(Long id) {
+        return tournamentRepository.existsById(id);
     }
 
     @Override
-    public TournamentEntity partialUpdate(Long id, TournamentEntity tournamentEntity) {
+    public Tournament update(Long id, Tournament tournamentEntity) {
         tournamentEntity.setId(id);
 
         return tournamentRepository.findById(id).map(existingTournament -> {
