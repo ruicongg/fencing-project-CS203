@@ -50,7 +50,7 @@ public class TournamentController {
         return new ResponseEntity<>(tournamentService.save(newTournament), HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/authors/{id}")
+    @DeleteMapping(path = "/tournaments/{id}")
     public ResponseEntity<Tournament> deleteTournament(@PathVariable("id") Long id) {
         tournamentService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
