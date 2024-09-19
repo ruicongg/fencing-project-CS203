@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "tournaments")
 public class Tournament {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tournament_id_seq")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @SequenceGenerator(name = "tournament_id_seq", sequenceName = "tournament_id_seq", allocationSize = 1)
     private long id;
 
