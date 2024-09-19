@@ -1,4 +1,4 @@
-package com.example.demo.tournaments;
+package org.fencing.demo.tournaments;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,12 +42,12 @@ public class TournamentController {
 
     @PutMapping(path = "/tournaments/{id}")
     public ResponseEntity<Tournament> updateTournament(@PathVariable("id") Long id,
-            @RequestBody Tournament tournament) {
+            @RequestBody Tournament newTournament) {
         if (!tournamentService.isExists(id)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        tournament.setId(id);
-        return new ResponseEntity<>(tournamentService.save(tournament), HttpStatus.OK);
+        newTournament.setId(id);
+        return new ResponseEntity<>(tournamentService.save(newTournament), HttpStatus.OK);
     }
 
     @DeleteMapping(path = "/authors/{id}")

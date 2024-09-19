@@ -1,4 +1,4 @@
-package com.example.demo.tournaments;
+package org.fencing.demo.tournaments;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.data.repository.CrudRepository;

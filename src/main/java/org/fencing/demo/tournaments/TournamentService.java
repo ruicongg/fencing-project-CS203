@@ -1,4 +1,4 @@
-package com.example.demo.tournaments;
+package org.fencing.demo.tournaments;
 
 import java.util.List;
 import java.util.Optional;

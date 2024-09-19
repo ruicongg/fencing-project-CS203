@@ -1,4 +1,4 @@
-package com.example.demo.tournaments;
+package org.fencing.demo.tournaments;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
