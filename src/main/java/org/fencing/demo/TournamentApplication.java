@@ -12,6 +12,6 @@ public class TournamentApplication {
 		SpringApplication.run(TournamentApplication.class, args);
 	}
 	
-	// test
+	// test2
 
 }
