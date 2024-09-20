@@ -5,15 +5,16 @@ import java.util.Optional;
 
 public interface TournamentService {
 
-    Tournament save(Tournament tournament);
+    Tournament updateTournament(Tournament tournament);
 
-    List<Tournament> findAll();
+    List<Tournament> listTournaments();
 
-    Optional<Tournament> find(Long id);
+    Optional<Tournament> getTournament(Long id);
 
-    boolean isExists(Long id);
+    // ! might want to remove
+    boolean doesTournamentExist(Long id);
 
-    Tournament update(Long id, Tournament tournament);
+    Tournament updateTournament(Long id, Tournament tournament);
 
-    void delete(Long id);
+    void deleteTournament(Long id);
 }

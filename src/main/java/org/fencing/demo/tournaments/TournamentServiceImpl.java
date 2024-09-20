@@ -4,51 +4,62 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
 import org.springframework.stereotype.Service;
 
 @Service
 public class TournamentServiceImpl implements TournamentService {
 
-    private TournamentRepository tournamentRepository;
+    private final TournamentRepository tournamentRepository;
 
     public TournamentServiceImpl(TournamentRepository tournamentRepository) {
         this.tournamentRepository = tournamentRepository;
     }
 
     @Override
-    public Tournament save(Tournament tournamentEntity) {
-        return tournamentRepository.save(tournamentEntity);
+    public Tournament updateTournament(Tournament tournament) {
+        return tournamentRepository.save(tournament);
     }
 
     @Override
-    public List<Tournament> findAll() {
+    public List<Tournament> listTournaments() {
         return StreamSupport.stream(tournamentRepository.findAll().spliterator(), false)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Tournament> find(Long id) {
+    public Optional<Tournament> getTournament(Long id) {
         return tournamentRepository.findById(id);
     }
 
     @Override
-    public boolean isExists(Long id) {
+    public boolean doesTournamentExist(Long id) {
         return tournamentRepository.existsById(id);
     }
 
-    @Override
-    public Tournament update(Long id, Tournament tournamentEntity) {
-        tournamentEntity.setId(id);
+    // ! check before deleting
+    // @Override
+    // public Tournament updateTournament(Long id, Tournament tournament) {
+    //     tournament.setId(id);
 
+    //     return tournamentRepository.findById(id).map(existingTournament -> {
+    //         Optional.ofNullable(tournament.getName()).ifPresent(existingTournament::setName);
+    //         return tournamentRepository.save(existingTournament);
+    //     }).orElseThrow(() -> new RuntimeException("Tournament does not exist"));
+    // }
+
+    // ! still need to implement exception handling
+    // this method assumes that you are not changing reviews
+    @Override
+    public Tournament updateTournament(Long id, Tournament newTournament) {
         return tournamentRepository.findById(id).map(existingTournament -> {
-            Optional.ofNullable(tournamentEntity.getName()).ifPresent(existingTournament::setName);
+            existingTournament.setName(newTournament.getName());
+            existingTournament.setDate(newTournament.getDate());
             return tournamentRepository.save(existingTournament);
-        }).orElseThrow(() -> new RuntimeException("Tournament does not exist"));
+        }).orElseThrow(() -> new IllegalArgumentException("Tournament does not exist"));
     }
 
     @Override
-    public void delete(Long id) {
+    public void deleteTournament(Long id) {
         tournamentRepository.deleteById(id);
     }
 

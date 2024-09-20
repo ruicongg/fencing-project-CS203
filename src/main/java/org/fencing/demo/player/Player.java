@@ -20,9 +20,9 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String name;
+    // private String name;
 
-    private int elo;
+    // private int elo;
 
     @ManyToMany
     @JoinTable(
