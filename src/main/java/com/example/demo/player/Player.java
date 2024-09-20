@@ -26,6 +26,11 @@ public class Player {
         this.elo = 1700; //Arbitary value
     }
 
-    
+    // @ManyToMany
+    // @JoinTable(
+    //     name = "Tournament_player",
+    //     joinColumns = @JoinColumn(name = "Player_id"),
+    //     inverseJoinColumns = @JoinColumn(name = "Tournament_id")
+    // )
 }
 
