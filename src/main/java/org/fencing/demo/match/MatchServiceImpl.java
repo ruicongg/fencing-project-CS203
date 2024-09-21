@@ -50,10 +50,10 @@ public class MatchServiceImpl implements MatchService {
         if (!existingMatch.getTournament().equals(newMatch.getTournament())) {
             throw new IllegalArgumentException("Tournament cannot be changed");
         }
-        // existingMatch.setWinner(newMatch.getWinner());
-        // existingMatch.setLoser(newMatch.getLoser());
-        // existingMatch.setLoserScore(newMatch.getLoserScore());
-        // existingMatch.setWinnerScore(newMatch.getWinnerScore());
+        existingMatch.setWinner(newMatch.getWinner());
+        existingMatch.setLoser(newMatch.getLoser());
+        existingMatch.setLoserScore(newMatch.getLoserScore());
+        existingMatch.setWinnerScore(newMatch.getWinnerScore());
         return matchRepository.save(existingMatch);
         
     }

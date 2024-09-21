@@ -30,17 +30,15 @@ public class Match {
     @ManyToOne
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
-
-    // commented out for testing 
     
-    // @ManyToOne
-    // @JoinColumn(name = "winner_id", nullable = false)
-    // private Player winner;
+    @ManyToOne
+    @JoinColumn(name = "winner_id", nullable = false)
+    private Player winner;
 
-    // @ManyToOne
-    // @JoinColumn(name = "loser_id", nullable = false)
-    // private Player loser;
+    @ManyToOne
+    @JoinColumn(name = "loser_id", nullable = false)
+    private Player loser;
 
-    // private int winnerScore;
-    // private int loserScore;
+    private int winnerScore;
+    private int loserScore;
 }
