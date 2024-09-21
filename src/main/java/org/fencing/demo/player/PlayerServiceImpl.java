@@ -1,10 +1,10 @@
-package com.example.demo.player;
-
+package org.fencing.demo.player;
 import java.util.List;
+import java.util.Optional;
 
-import org.apache.el.stream.Optional;
 import org.springframework.stereotype.Service;
 
+@Service
 public class PlayerServiceImpl implements PlayerService{
     private PlayerRepository players;
 
