@@ -40,10 +40,17 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
     @Override
-    public List<Tournament> findByDateTournament(LocalDate date){
+    public List<Tournament> findByStartDateTournament(LocalDate date){
 
-        return tournamentRepository.findByDate(date);
+        return tournamentRepository.findByStartDate(date);
     }
+
+    @Override
+    public List<Tournament> findByEndDateTournament(LocalDate date){
+
+        return tournamentRepository.findByEndDate(date);
+    }
+
 
     // ! check before deleting
     // @Override
@@ -62,7 +69,8 @@ public class TournamentServiceImpl implements TournamentService {
     public Tournament updateTournament(Long id, Tournament newTournament) {
         return tournamentRepository.findById(id).map(existingTournament -> {
             existingTournament.setName(newTournament.getName());
-            existingTournament.setDate(newTournament.getDate());
+            existingTournament.setStartDate(newTournament.getStartDate());
+            existingTournament.setEndDate(newTournament.getEndDate());
             return tournamentRepository.save(existingTournament);
         }).orElseThrow(() -> new IllegalArgumentException("Tournament does not exist"));
     }
@@ -70,6 +78,20 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public void deleteTournament(Long id) {
         tournamentRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Tournament> findByAvailability(LocalDate startDate, LocalDate endDate){
+        LocalDate currentDate = LocalDate.now();
+        if (!startDate.isAfter(currentDate) || !endDate.isAfter(currentDate)){
+            throw new RuntimeException();
+        }
+
+        if(startDate.isAfter(endDate)){
+            throw new RuntimeException();
+        }
+
+        return tournamentRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(endDate, startDate);
     }
 
 }
