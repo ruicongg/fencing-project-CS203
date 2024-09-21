@@ -1,7 +1,6 @@
 package org.fencing.demo.tournaments;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,19 +25,21 @@ public class TournamentController {
     }
 
     @GetMapping(path = "/tournaments")
+    @ResponseStatus(HttpStatus.OK)
     public List<Tournament> getTournaments() {
         return tournamentService.listTournaments().stream().collect(Collectors.toList());
     }
 
     @GetMapping(path = "/tournaments/{id}")
-    public ResponseEntity<Tournament> getTournament(@PathVariable("id") Long id) {
-        return tournamentService.getTournament(id).map(t -> new ResponseEntity<>(t, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    @ResponseStatus(HttpStatus.OK)
+    public Tournament getTournament(@PathVariable("id") Long id) {
+        return tournamentService.getTournament(id);
     }
 
     @PostMapping(path = "/tournaments")
+    @ResponseStatus(HttpStatus.CREATED)
     public Tournament createTournament(@RequestBody Tournament tournament) {
-        return tournamentService.updateTournament(tournament);
+        return tournamentService.addTournament(tournament);
     }
 
     // @PutMapping(path = "/tournaments/{id}")
@@ -58,9 +59,9 @@ public class TournamentController {
     }
 
     @DeleteMapping(path = "/tournaments/{id}")
-    public ResponseEntity<Tournament> deleteTournament(@PathVariable("id") Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTournament(@PathVariable("id") Long id) {
         tournamentService.deleteTournament(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
