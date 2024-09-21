@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import org.hibernate.annotations.DialectOverride.OverridesAnnotation;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 
 @Service
 public class TournamentServiceImpl implements TournamentService {
@@ -34,6 +37,12 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public boolean doesTournamentExist(Long id) {
         return tournamentRepository.existsById(id);
+    }
+
+    @Override
+    public List<Tournament> findByDateTournament(LocalDate date){
+
+        return tournamentRepository.findByDate(date);
     }
 
     // ! check before deleting
