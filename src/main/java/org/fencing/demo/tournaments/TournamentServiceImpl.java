@@ -84,11 +84,11 @@ public class TournamentServiceImpl implements TournamentService {
     public List<Tournament> findByAvailability(LocalDate startDate, LocalDate endDate){
         LocalDate currentDate = LocalDate.now();
         if (!startDate.isAfter(currentDate) || !endDate.isAfter(currentDate)){
-            throw new RuntimeException();
+            throw new IllegalArgumentException("Error: Date entered must be after today!");
         }
 
         if(startDate.isAfter(endDate)){
-            throw new RuntimeException();
+            throw new IllegalArgumentException("Error: start date is after end date");
         }
 
         return tournamentRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(endDate, startDate);
