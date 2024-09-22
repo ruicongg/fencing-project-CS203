@@ -1,7 +1,6 @@
 package org.fencing.demo.tournaments;
 
 import java.util.List;
-import java.util.Optional;
 import java.time.LocalDate;
 
 public interface TournamentService {

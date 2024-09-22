@@ -8,7 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.fencing.demo.tournaments.Tournament;
+import org.fencing.demo.events.Event;
 import org.fencing.demo.player.Player;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,17 +28,18 @@ public class Match {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "tournament_id", nullable = false)
-    private Tournament tournament;
+    @JoinColumn(name = "event_id", nullable = false)
+    private Event event;
     
     @ManyToOne
-    @JoinColumn(name = "winner_id", nullable = false)
-    private Player winner;
+    @JoinColumn(name = "player1_id", nullable = false)
+    private Player player1;
 
     @ManyToOne
-    @JoinColumn(name = "loser_id", nullable = false)
-    private Player loser;
+    @JoinColumn(name = "player2_id", nullable = false)
+    private Player player2;
 
     private int winnerScore;
     private int loserScore;
+    
 }

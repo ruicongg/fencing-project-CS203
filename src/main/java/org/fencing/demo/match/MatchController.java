@@ -23,7 +23,7 @@ public class MatchController {
     @GetMapping("/tournaments/{tournamentId}/matches")
     @ResponseStatus(HttpStatus.OK)
     public List<Match> getAllMatchesByTournamentId(@PathVariable Long tournamentId) {
-        return matchService.getAllMatchesByTournamentId(tournamentId);
+        return matchService.getAllMatchesByEventId(tournamentId);
     }
 
     @PutMapping("/tournaments/{tournamentId}/match/{matchId}")

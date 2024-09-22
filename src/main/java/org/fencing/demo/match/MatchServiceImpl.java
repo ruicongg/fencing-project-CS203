@@ -4,40 +4,42 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import org.fencing.demo.tournaments.*;
+
+import org.fencing.demo.events.EventNotFoundException;
+import org.fencing.demo.events.EventRepository;
 
 @Service
 public class MatchServiceImpl implements MatchService {
 
     private final MatchRepository matchRepository;
-    private final TournamentRepository tournamentRepository;
+    private final EventRepository eventRepository;
 
-    public MatchServiceImpl(MatchRepository matchRepository, TournamentRepository tournamentRepository) {
+    public MatchServiceImpl(MatchRepository matchRepository, EventRepository eventRepository) {
         this.matchRepository = matchRepository;
-        this.tournamentRepository = tournamentRepository;
+        this.eventRepository = eventRepository;
     }
 
     @Override
     @Transactional
-    public Match addMatch(Long tournamentId, Match match) {
-        if (tournamentId == null || match == null) {
-            throw new IllegalArgumentException("Tournament ID and Match cannot be null");
+    public Match addMatch(Long eventId, Match match) {
+        if (eventId == null || match == null) {
+            throw new IllegalArgumentException("Event ID and Match cannot be null");
         }
-        return tournamentRepository.findById(tournamentId).map(tournament -> {
-            match.setTournament(tournament);
+        return eventRepository.findById(eventId).map(event -> {
+            match.setEvent(event);
             return matchRepository.save(match);
-        }).orElseThrow(() -> new TournamentNotFoundException(tournamentId));
+        }).orElseThrow(() -> new EventNotFoundException(eventId));
     }
 
     @Override
-    public List<Match> getAllMatchesByTournamentId(Long tournamentId) {
-        if (tournamentId == null) {
-            throw new IllegalArgumentException("Tournament ID cannot be null");
+    public List<Match> getAllMatchesByEventId(Long eventId) {
+        if (eventId == null) {
+            throw new IllegalArgumentException("Event ID cannot be null");
         }
-        if (!tournamentRepository.existsById(tournamentId)) {
-            throw new TournamentNotFoundException(tournamentId);
+        if (!eventRepository.existsById(eventId)) {
+            throw new EventNotFoundException(eventId);
         }
-        return matchRepository.findByTournamentId(tournamentId);
+        return matchRepository.findByEventId(eventId);
     }
 
     @Override
@@ -51,16 +53,16 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     @Transactional
-    public Match updateMatch(Long tournamentId, Long matchId, Match newMatch) {
-        if (tournamentId == null || matchId == null || newMatch == null) {
-            throw new IllegalArgumentException("Tournament ID, Match ID and updated Match cannot be null");
+    public Match updateMatch(Long eventId, Long matchId, Match newMatch) {
+        if (eventId == null || matchId == null || newMatch == null) {
+            throw new IllegalArgumentException("Event ID, Match ID and updated Match cannot be null");
         }
         Match existingMatch = matchRepository.findById(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
-        if (!existingMatch.getTournament().equals(newMatch.getTournament())) {
-            throw new IllegalArgumentException("Tournament cannot be changed");
+        if (!existingMatch.getEvent().equals(newMatch.getEvent())) {
+            throw new IllegalArgumentException("Event cannot be changed");
         }
-        existingMatch.setWinner(newMatch.getWinner());
-        existingMatch.setLoser(newMatch.getLoser());
+        existingMatch.setPlayer1(newMatch.getPlayer1());
+        existingMatch.setPlayer2(newMatch.getPlayer2());
         existingMatch.setLoserScore(newMatch.getLoserScore());
         existingMatch.setWinnerScore(newMatch.getWinnerScore());
         return matchRepository.save(existingMatch);
@@ -69,10 +71,10 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     @Transactional
-    public void deleteMatch(Long tournamentId, Long matchId) {
-        if (tournamentId == null || matchId == null) {
-            throw new IllegalArgumentException("Tournament ID and Match ID cannot be null");
+    public void deleteMatch(Long eventId, Long matchId) {
+        if (eventId == null || matchId == null) {
+            throw new IllegalArgumentException("Event ID and Match ID cannot be null");
         }
-        matchRepository.deleteByTournamentIdAndId(tournamentId, matchId);
+        matchRepository.deleteByEventIdAndId(eventId, matchId);
     }
 }

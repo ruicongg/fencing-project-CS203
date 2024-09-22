@@ -12,10 +12,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
-import org.fencing.demo.match.Match;
+
+import org.fencing.demo.events.Event;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.ManyToMany;
-import org.fencing.demo.player.Player;
 import java.util.Set;
 
 @Data
@@ -30,11 +29,15 @@ public class Tournament {
     private long id;
 
     private String name;
-    private LocalDate startDate;
-    public LocalDate endDate;
+
+    private LocalDate registrationStartDate;
+    private LocalDate registrationEndDate;
+    private LocalDate tournamentStartDate;
+    private LocalDate tournamentEndDate;
+
+    private String venue;
+
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private Set<Match> matches;
-    @ManyToMany(mappedBy = "tournaments")
-    private Set<Player> players;
+    private Set<Event> events;
 }

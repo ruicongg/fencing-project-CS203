@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.hibernate.annotations.DialectOverride.OverridesAnnotation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,8 +79,11 @@ public class TournamentServiceImpl implements TournamentService {
         }
         return tournamentRepository.findById(tournamentId).map(existingTournament -> {
             existingTournament.setName(newTournament.getName());
-            existingTournament.setStartDate(newTournament.getStartDate());
-            existingTournament.setEndDate(newTournament.getEndDate());
+            existingTournament.setTournamentStartDate(newTournament.getTournamentStartDate());
+            existingTournament.setTournamentEndDate(newTournament.getTournamentEndDate());
+            existingTournament.setRegistrationStartDate(newTournament.getRegistrationStartDate());
+            existingTournament.setRegistrationEndDate(newTournament.getRegistrationEndDate());
+            existingTournament.setVenue(newTournament.getVenue());
             return tournamentRepository.save(existingTournament);
         }).orElseThrow(() -> new TournamentNotFoundException(tournamentId));
     }
