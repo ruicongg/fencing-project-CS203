@@ -1,34 +1,59 @@
-// ! This is a simple example of a Player class
-
 package org.fencing.demo.player;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import java.util.List;
 import org.fencing.demo.tournaments.Tournament;
 
-@Table(name = "players")
+import jakarta.persistence.*;
+import lombok.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Email;
+import java.util.HashSet;
+import java.util.Set;
+import org.fencing.demo.match.Match;
+
 @Entity
+@Getter
+@Setter
+@ToString(exclude = "password")
+@NoArgsConstructor
+@Table(name = "players")
 public class Player {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    // private String name;
+    @NotNull(message = "Username is required")
+    @Column(unique = true)
+    // ! might need to implement unique logic in service as well
+    private String username; 
+    @NotNull(message = "Password is required")
+    private String password; // Consider hashing passwords for security , Need Min length etc
+    @Email(message = "Email should be valid")
+    private String email;
+    private int elo;
 
-    // private int elo;
+    private final int STARTING_ELO = 1700;
 
     @ManyToMany
     @JoinTable(
-        name = "Tournament_player",
-        joinColumns = @JoinColumn(name = "Player_id"),
-        inverseJoinColumns = @JoinColumn(name = "Tournament_id")
+        name = "player_tournament",
+        joinColumns = @JoinColumn(name = "player_id"),
+        inverseJoinColumns = @JoinColumn(name = "tournament_id")
     )
-    private List<Tournament> tournaments;
+    private Set<Tournament> tournaments = new HashSet<>();
+
+    // ! need to implement logic to update matches when player is updated
+    @OneToMany(mappedBy = "winner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Match> wonMatches = new HashSet<>();
+
+    @OneToMany(mappedBy = "loser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Match> lostMatches = new HashSet<>();
+
+    public Player(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.elo = STARTING_ELO;
+    }
+
 }

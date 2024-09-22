@@ -1,4 +1,4 @@
-package com.example.demo.player;
+package org.fencing.demo.player;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
