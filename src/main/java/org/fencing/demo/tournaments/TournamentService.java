@@ -6,14 +6,14 @@ import java.time.LocalDate;
 
 public interface TournamentService {
 
-    Tournament updateTournament(Tournament tournament);
+    Tournament addTournament(Tournament tournament);
 
     List<Tournament> listTournaments();
 
-    Optional<Tournament> getTournament(Long id);
+    Tournament getTournament(Long id);
 
     // ! might want to remove
-    boolean doesTournamentExist(Long id);
+    // boolean doesTournamentExist(Long id);
 
     Tournament updateTournament(Long id, Tournament tournament);
 

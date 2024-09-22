@@ -8,6 +8,8 @@ public interface MatchService {
 
     List<Match> getAllMatchesByTournamentId(Long tournamentId);
 
+    Match getMatch(Long id);
+
     Match updateMatch(Long tournamentId, Long matchId, Match newMatch);
 
     void deleteMatch(Long tournamentId, Long matchId);

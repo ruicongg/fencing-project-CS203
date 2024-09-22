@@ -1,7 +1,7 @@
 package org.fencing.demo.events;
 
 public enum WeaponType {
-    EPEE, 
+    EPEE,
     FOIL,
     SABER
 }

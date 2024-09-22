@@ -8,12 +8,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Email;
 import java.util.HashSet;
 import java.util.Set;
+import org.fencing.demo.match.Match;
 
 @Entity
 @Getter
 @Setter
 @ToString(exclude = "password")
 @NoArgsConstructor
+@Table(name = "players")
 public class Player {
 
     @Id
@@ -34,11 +36,18 @@ public class Player {
 
     @ManyToMany
     @JoinTable(
-        name = "Tournament_player",
-        joinColumns = @JoinColumn(name = "Player_id"),
-        inverseJoinColumns = @JoinColumn(name = "Tournament_id")
+        name = "player_tournament",
+        joinColumns = @JoinColumn(name = "player_id"),
+        inverseJoinColumns = @JoinColumn(name = "tournament_id")
     )
     private Set<Tournament> tournaments = new HashSet<>();
+
+    // ! need to implement logic to update matches when player is updated
+    @OneToMany(mappedBy = "winner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Match> wonMatches = new HashSet<>();
+
+    @OneToMany(mappedBy = "loser", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Match> lostMatches = new HashSet<>();
 
     public Player(String username, String password, String email) {
         this.username = username;
