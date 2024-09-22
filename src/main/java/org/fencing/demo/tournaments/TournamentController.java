@@ -7,12 +7,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.lang.Long;
+import java.time.LocalDate;
+
 
 // ! might want to use @response status
 @RestController
@@ -62,6 +65,18 @@ public class TournamentController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTournament(@PathVariable("id") Long id) {
         tournamentService.deleteTournament(id);
+    }
+
+
+    @GetMapping("/tournaments/search")
+    public List<Tournament> getTournamentsDuringPeriod(
+        @RequestParam("startDate") String startDateStr, 
+        @RequestParam("endDate") String endDateStr) {
+        
+        LocalDate startDate = LocalDate.parse(startDateStr);
+        LocalDate endDate = LocalDate.parse(endDateStr);
+        
+        return tournamentService.findByAvailability(startDate, endDate);
     }
 
 }
