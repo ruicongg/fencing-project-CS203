@@ -94,6 +94,4 @@ public class TournamentServiceImpl implements TournamentService {
         return tournamentRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(endDate, startDate);
     }
 
-    
-
 }
