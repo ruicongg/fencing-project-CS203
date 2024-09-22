@@ -28,7 +28,8 @@ public class Tournament {
     private long id;
 
     private String name;
-    private LocalDate date;
+    private LocalDate startDate;
+    public LocalDate endDate;
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Match> matches;
