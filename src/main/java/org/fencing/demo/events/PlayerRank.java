@@ -1,6 +1,6 @@
 package org.fencing.demo.events;
 
-import com.example.demo.player.Player;
+import org.fencing.demo.player.Player;
 
 public class PlayerRank {
     public int winCount;
