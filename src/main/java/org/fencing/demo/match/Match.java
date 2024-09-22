@@ -43,4 +43,6 @@ public class Match {
 
     // private int winnerScore;
     // private int loserScore;
+
+    //need to add boolean for whether match is complete
 }
