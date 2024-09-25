@@ -63,8 +63,8 @@ public class MatchServiceImpl implements MatchService {
         }
         existingMatch.setPlayer1(newMatch.getPlayer1());
         existingMatch.setPlayer2(newMatch.getPlayer2());
-        existingMatch.setLoserScore(newMatch.getLoserScore());
-        existingMatch.setWinnerScore(newMatch.getWinnerScore());
+        existingMatch.setPlayer1Score(newMatch.getPlayer1Score());
+        existingMatch.setPlayer2Score(newMatch.getPlayer2Score());
         return matchRepository.save(existingMatch);
         
     }

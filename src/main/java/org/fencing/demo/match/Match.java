@@ -39,7 +39,10 @@ public class Match {
     @JoinColumn(name = "player2_id", nullable = false)
     private Player player2;
 
-    private int winnerScore;
-    private int loserScore;
-    
+    private int player1Score;
+    private int player2Score;
+
+    public Player getWinner(){
+        return player1Score > player2Score ? player1 : player2;
+    }
 }

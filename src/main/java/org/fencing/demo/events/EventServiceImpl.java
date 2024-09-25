@@ -1,6 +1,7 @@
 package org.fencing.demo.events;
 
 import java.util.List;
+import java.time.LocalDate;
 
 import org.fencing.demo.tournaments.TournamentNotFoundException;
 import org.fencing.demo.tournaments.TournamentRepository;
@@ -57,6 +58,9 @@ public class EventServiceImpl implements EventService{
         Event existingEvent = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
         if (!existingEvent.getTournament().equals(newEvent.getTournament())) {
             throw new IllegalArgumentException("Tournament cannot be changed");
+        }
+        if (!(LocalDate.now().isBefore(newEvent.getStartDate().toLocalDate()))){
+            throw new IllegalArgumentException("One player will not have an opponent");
         }
         existingEvent.setGender(newEvent.getGender());
         existingEvent.setWeapon(newEvent.getWeapon());

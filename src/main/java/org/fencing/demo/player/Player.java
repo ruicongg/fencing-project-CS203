@@ -16,7 +16,7 @@ import org.fencing.demo.match.Match;
 @ToString(exclude = "password")
 @NoArgsConstructor
 @Table(name = "players")
-public class Player {
+public class Player implements Comparable<Player>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,6 +54,12 @@ public class Player {
         this.password = password;
         this.email = email;
         this.elo = STARTING_ELO;
+    }
+
+    @Override
+    public int compareTo(Player otherPlayer) {
+        // Sort in descending order of ELO
+        return Integer.compare(otherPlayer.elo, this.elo); // Higher ELO comes first
     }
 
 }
