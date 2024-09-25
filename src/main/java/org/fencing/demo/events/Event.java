@@ -9,6 +9,8 @@ import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.tournaments.Tournament;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,8 +41,10 @@ public class Event {
     //public TreeSet<Player> EloRank;
     //for sorting first when go to group stage
 
+    @ManyToOne
     public Tournament tournament;
     
+    @OneToMany
     public Set<GroupStage> GroupStages;
 
     public KnockoutStage knockoutStage;

@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @Entity
 @Table(name = "matches")
@@ -41,5 +40,16 @@ public class Match {
 
     private int winnerScore;
     private int loserScore;
+
+    private boolean matchCompleted;
+
+    public Match(Event event, Player player1, Player player2) {
+        this.event = event;
+        this.player1 = player1;
+        this.player2 = player2;
+        this.winnerScore = 0;
+        this.loserScore = 0;
+        this.matchCompleted = false;
+    }
     
 }
