@@ -7,20 +7,17 @@ import java.util.Set;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.tournaments.Tournament;
+import org.fencing.demo.player.Player;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Entity
 @Table(name = "events")
 public class Event {
@@ -38,7 +35,7 @@ public class Event {
     // for sorting after
     public TreeSet<PlayerRank> rankings;
 
-    //public TreeSet<Player> EloRank;
+    public TreeSet<Player> players;
     //for sorting first when go to group stage
 
     @ManyToOne
@@ -48,5 +45,20 @@ public class Event {
     public Set<GroupStage> GroupStages;
 
     public KnockoutStage knockoutStage;
+
+    public Event(LocalDateTime startDate, LocalDateTime endDate, Gender gender,
+    WeaponType weapon, Tournament tournament){
+        this.tournament = tournament;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.gender = gender;
+        this.weapon = weapon;
+    }
+
+    public void addPlayer(Player p){
+        players.add(p);
+        PlayerRank pr = new PlayerRank(p);
+        rankings.add(pr);
+    }
 
 }

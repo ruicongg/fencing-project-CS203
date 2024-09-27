@@ -1,7 +1,6 @@
 package org.fencing.demo.stages;
 
 import org.fencing.demo.events.PlayerRank;
-import org.fencing.demo.match.MatchRepository;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.events.Event;
 
@@ -10,9 +9,8 @@ import jakarta.persistence.ManyToOne;
 
 import java.util.TreeSet;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.HashSet;
-import java.util.Iterator;
+
 
 public class GroupStage {
     

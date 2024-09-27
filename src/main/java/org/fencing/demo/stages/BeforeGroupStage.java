@@ -1,44 +1,16 @@
 package org.fencing.demo.stages;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.Set;
+import java.util.List;
 
 import org.fencing.demo.events.PlayerRank;
-import org.fencing.demo.match.Match;
-import org.fencing.demo.events.Event;
+import org.fencing.demo.player.Player;
 
-//call before creating grp stage so can pass in the matches
+//ELO sort
 public class BeforeGroupStage {
-
-    public static TreeMap<PlayerRank, PlayerRank> permutation(TreeSet<PlayerRank> rankings){
-
-        TreeMap<PlayerRank, PlayerRank> result = new TreeMap<>();
-
-        for (PlayerRank playerRank : rankings) {
-            // Inner loop: Iterate through elements that come after 'first'
-            Iterator<PlayerRank> it = rankings.tailSet(playerRank, false).iterator(); // Start after 'first'
-            while (it.hasNext()) {
-                PlayerRank nextPlayerRank = it.next();
-                result.put(playerRank, nextPlayerRank);
-            }
-        }
-
-        return result;
-    }
-
-    public static HashSet<Match> groupMatchMakingAlgorithm(TreeSet<PlayerRank> rankings, Event event){
-        TreeMap<PlayerRank, PlayerRank> pairings = permutation(rankings);
-
-        HashSet<Match> results = new HashSet<>();
-
-        for (PlayerRank pr : pairings.keySet()) {
-            Match newMatch = new Match(event, pr.getPlayer(), pairings.get(pr).getPlayer());
-            results.add(newMatch);
-        }
-
-        return results;
+    
+    public static Set<List<PlayerRank>> sortByELO(Set<PlayerRank> rankings, Set<Player> players){
+        //create Player sorter and ranking sorter for Player Rank
+        return null;
     }
 }
