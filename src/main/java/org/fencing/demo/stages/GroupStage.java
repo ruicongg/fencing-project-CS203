@@ -5,7 +5,7 @@ import org.fencing.demo.match.MatchRepository;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.events.Event;
 
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.ManyToOne;
 
 import java.util.TreeSet;
@@ -16,7 +16,7 @@ import java.util.Iterator;
 
 public class GroupStage {
     
-    @ManyToMany
+    @OneToMany
     public TreeSet<PlayerRank> rankings;
 
     public Set<Match> matches;
@@ -25,33 +25,15 @@ public class GroupStage {
     public Event event;
 
 
-    public GroupStage(TreeSet<PlayerRank> rankings, Event event){
+    public GroupStage(TreeSet<PlayerRank> rankings, Event event, Set<Match> matches){
         this.rankings = rankings;
         this.event = event;
         this.matches = new HashSet<Match>();
 
-        TreeMap<PlayerRank, PlayerRank> pairings = permutation(rankings);
-        
-        for (PlayerRank pr : pairings.keySet()) {
-            Match newMatch = new Match(event, pr.getPlayer(), pairings.get(pr).getPlayer());
-            matches.add(newMatch);
-        }
+        this.matches = matches;
         
     }
 
-    public static TreeMap<PlayerRank, PlayerRank> permutation(TreeSet<PlayerRank> rankings){
+    
 
-        TreeMap<PlayerRank, PlayerRank> result = new TreeMap<>();
-
-        for (PlayerRank playerRank : rankings) {
-            // Inner loop: Iterate through elements that come after 'first'
-            Iterator<PlayerRank> it = rankings.tailSet(playerRank, false).iterator(); // Start after 'first'
-            while (it.hasNext()) {
-                PlayerRank nextPlayerRank = it.next();
-                result.put(playerRank, nextPlayerRank);
-            }
-        }
-
-        return result;
-    }
 }
