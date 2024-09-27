@@ -1,5 +1,9 @@
 package org.fencing.demo.stages;
 
-public class GroupStageRepository {
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface GroupStageRepository extends JpaRepository<GroupStage, Long>{
+
     
 }
