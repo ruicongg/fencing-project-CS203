@@ -2,11 +2,14 @@ package org.fencing.demo.player;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.hc.client5.http.auth.InvalidCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PlayerServiceImpl implements PlayerService{
     private PlayerRepository players;
+    private PasswordEncoder passwordEncoder;
 
     public PlayerServiceImpl(PlayerRepository players){
         this.players = players;
@@ -23,6 +26,7 @@ public class PlayerServiceImpl implements PlayerService{
     }
     @Override
     public Player addPlayer(Player player){
+        player.setPassword(passwordEncoder.encode(player.getPassword()));
         return players.save(player);
     }
     @Override
@@ -35,7 +39,7 @@ public class PlayerServiceImpl implements PlayerService{
 
             // Update the fields of the existing player with the new player data
             updatedPlayer.setUsername(player.getUsername());
-            updatedPlayer.setPassword(player.getPassword());
+            updatedPlayer.setPassword(passwordEncoder.encode(player.getPassword()));
             updatedPlayer.setEmail(player.getEmail()); 
             updatedPlayer.setElo(player.getElo());
             
@@ -46,6 +50,7 @@ public class PlayerServiceImpl implements PlayerService{
             return null;
         }
     }
+    @Override
     public void deletePlayer(Long id){
         Optional<Player> player = players.findById(id);
         if (player.isPresent()) {
@@ -53,6 +58,16 @@ public class PlayerServiceImpl implements PlayerService{
         } else {
             // Handle the case where the player does not exist
             throw new IllegalArgumentException("Player with id " + id + " does not exist");
+        }
+    }
+
+    @Override
+    public Player login(String username, String password) throws InvalidCredentialsException {
+        Optional<Player> player = players.findByUsername(username);
+        if (player.isPresent() && passwordEncoder.matches(password, player.get().getPassword())) {
+            return player.get();
+        } else {    
+            throw new InvalidCredentialsException("Invalid username or password");
         }
     }
 
