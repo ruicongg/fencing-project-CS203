@@ -12,11 +12,18 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table; 
 
 import java.util.Set;
 import java.util.TreeSet;
 
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
 @Entity
+@Table(name = "groupStage")
 public class GroupStage {
 
     @Id

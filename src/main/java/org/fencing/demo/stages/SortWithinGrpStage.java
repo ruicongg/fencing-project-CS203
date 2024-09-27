@@ -1,6 +1,6 @@
 package org.fencing.demo.stages;
 
-import java.util.HashMap;
+//import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeMap;
@@ -39,8 +39,6 @@ public class SortWithinGrpStage {
             Match newMatch = new Match();
             newMatch.setPlayer1(pr.getPlayer());
             newMatch.setPlayer2(pairings.get(pr).getPlayer());
-
-            // event, pr.getPlayer(), pairings.get(pr).getPlayer()
             results.add(newMatch);
         }
 
