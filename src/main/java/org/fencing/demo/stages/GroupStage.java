@@ -14,7 +14,6 @@ public class GroupStage {
 
     public Set<Match> matches;
 
-
     public GroupStage(TreeSet<PlayerRank> rankings){
         TreeMap<PlayerRank, PlayerRank> pairings = permutation(rankings);
         

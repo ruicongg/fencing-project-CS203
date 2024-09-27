@@ -1,9 +1,4 @@
 package org.fencing.demo.events;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import org.fencing.demo.player.Player;
 
 import jakarta.persistence.Entity;

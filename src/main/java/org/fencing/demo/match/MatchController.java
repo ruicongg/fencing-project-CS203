@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 public class MatchController {
@@ -14,16 +16,28 @@ public class MatchController {
         this.matchService = matchService;
     }
 
-    @PostMapping("/tournaments/{tournamentId}/events/{eventId}/matches")
+    // @PostMapping("/tournaments/{tournamentId}/events/{eventId}/group/*/matches")
+    // @ResponseStatus(HttpStatus.CREATED)
+    // public Match addMatchforGroupStage(@PathVariable Long eventId, @RequestBody Match match) {
+    //     return matchService.addMatchforGroupStage(eventId, match);
+    // }
+
+    @PostMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/matches")
     @ResponseStatus(HttpStatus.CREATED)
-    public Match addMatch(@PathVariable Long eventId, @RequestBody Match match) {
-        return matchService.addMatch(eventId, match);
+    public List<Match> addMatchforKnockoutStage(@PathVariable Long eventId) {
+        return matchService.addMatchesforKnockoutStage(eventId);
     }
 
-    @GetMapping("/tournaments/{tournamentId}/events/{eventId}/matches")
+    @GetMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/matches")
     @ResponseStatus(HttpStatus.OK)
-    public List<Match> getAllMatchesByEventId(@PathVariable Long eventId) {
-        return matchService.getAllMatchesByEventId(eventId);
+    public Map<Integer, Set<Match>> getAllMatchesforKnockoutStageByEventId(@PathVariable Long eventId) {
+        return matchService.getAllMatchesForKnockoutStageByEventId(eventId);
+    }
+
+    @GetMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/matches/{roundNum}")
+    @ResponseStatus(HttpStatus.OK)
+    public Set<Match> getAllMatchesforKnockoutStageByEventId(@PathVariable Long eventId, int roundNum) {
+        return matchService.getAllMatchesForKnockoutStageRound(eventId, roundNum);
     }
 
     @PutMapping("/tournaments/{tournamentId}/events/{eventId}/match/{matchId}")
