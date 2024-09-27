@@ -45,4 +45,6 @@ public class Match {
     public Player getWinner(){
         return player1Score > player2Score ? player1 : player2;
     }
+
+
 }
