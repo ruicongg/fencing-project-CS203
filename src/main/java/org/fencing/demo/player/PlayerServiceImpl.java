@@ -47,7 +47,13 @@ public class PlayerServiceImpl implements PlayerService{
         }
     }
     public void deletePlayer(Long id){
-        players.deleteById(id);
+        Optional<Player> player = players.findById(id);
+        if (player.isPresent()) {
+            players.delete(player.get());
+        } else {
+            // Handle the case where the player does not exist
+            throw new IllegalArgumentException("Player with id " + id + " does not exist");
+        }
     }
 
 }
