@@ -116,17 +116,33 @@ public class GroupStage {
     }
 
     // to move methods here
-    public static TreeMap<Player, Player> permutation(TreeSet<Player> players) {
+    public static TreeSet<Pair> permutation(Set<Player> players) {
 
-        TreeMap<Player, Player> result = new TreeMap<>();
+        TreeSet<Pair> result = new TreeSet<>();
         Player[] playerArr = players.toArray(new Player[0]);
 
         for(int i = 0; i < playerArr.length - 1; i++){
             for(int r = i + 1; r < playerArr.length; r++){
-                result.put(playerArr[i], playerArr[r]);
+                result.add(new Pair(playerArr[i], playerArr[r]));
             }
         }
         return result;
+    }
+    
+    public void groupMatchMakingAlgorithm(){
+        for(int i : playerGroups.keySet()){
+            HashSet<Match> matches = new HashSet<>();
+            TreeSet<Pair> pairings = permutation(playerGroups.get(i));
+            for(Pair p : pairings){
+                Match current = new Match();
+                current.setEvent(event);
+                current.setPlayer1(p.getPlayer1());
+                current.setPlayer2(p.getPlayer2());
+                matches.add(current);
+            }
+
+            groupMatches.put(i, matches);
+        }
     }
     
 
