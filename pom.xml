@@ -106,6 +106,19 @@
    			<artifactId>spring-security-config</artifactId>
     		<version>5.6.1</version>
 		</dependency>	
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version> <!-- or a more recent version -->
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>5.6.1</version> <!-- Match the version of other Spring Security dependencies -->
+		</dependency>
+
+
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

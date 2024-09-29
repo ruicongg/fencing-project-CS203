@@ -1,14 +1,14 @@
 package org.fencing.demo.player;
 
-import org.fencing.demo.tournaments.Tournament;
+// import org.fencing.demo.tournaments.Tournament;
 
 import jakarta.persistence.*;
 import lombok.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Email;
-import java.util.HashSet;
-import java.util.Set;
-import org.fencing.demo.match.Match;
+// import java.util.HashSet;
+// import java.util.Set;
+// import org.fencing.demo.match.Match;
 
 @Entity
 @Getter
@@ -34,20 +34,20 @@ public class Player implements Comparable<Player>{
 
     private final int STARTING_ELO = 1700;
 
-    @ManyToMany
-    @JoinTable(
-        name = "player_tournament",
-        joinColumns = @JoinColumn(name = "player_id"),
-        inverseJoinColumns = @JoinColumn(name = "tournament_id")
-    )
-    private Set<Tournament> tournaments = new HashSet<>();
+    // @ManyToMany
+    // @JoinTable(
+    //     name = "player_tournament",
+    //     joinColumns = @JoinColumn(name = "player_id"),
+    //     inverseJoinColumns = @JoinColumn(name = "tournament_id")
+    // )
+    // private Set<Tournament> tournaments = new HashSet<>();
 
-    // ! need to implement logic to update matches when player is updated
-    @OneToMany(mappedBy = "winner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Match> wonMatches = new HashSet<>();
+    // // ! need to implement logic to update matches when player is updated
+    // @OneToMany(mappedBy = "winner", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private Set<Match> wonMatches = new HashSet<>();
 
-    @OneToMany(mappedBy = "loser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Match> lostMatches = new HashSet<>();
+    // @OneToMany(mappedBy = "loser", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private Set<Match> lostMatches = new HashSet<>();
 
     public Player(String username, String password, String email) {
         this.username = username;
