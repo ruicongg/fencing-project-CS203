@@ -42,9 +42,23 @@ public class Match {
     private int player1Score;
     private int player2Score;
 
+    //added - tbc
+    //private boolean matchFinished;
+
+
     public Player getWinner(){
         return player1Score > player2Score ? player1 : player2;
     }
 
+    //need the number of k value in player
+    // add the number of matches played in player
+    // public void updateEloRanking(){
+    //     if(matchFinished){
+    //         int elo1 = this.player1.getElo();
+    //         int elo2 = this.player2.getElo();
+
+
+    //     }
+    // }
 
 }

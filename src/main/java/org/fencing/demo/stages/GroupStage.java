@@ -1,21 +1,24 @@
 package org.fencing.demo.stages;
 
+import org.bouncycastle.util.Arrays.Iterator;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.match.Match;
+import org.fencing.demo.player.Player;
+import org.hibernate.mapping.Map;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.MapsId;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table; 
 
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.TreeMap;
+import java.util.HashSet;
 
 import lombok.Builder;
 import lombok.Data;
@@ -30,42 +33,102 @@ public class GroupStage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    // @ManyToMany
     @MapsId
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
+
+    public TreeMap<Integer, Set<Player>> playerGroups;
+
+    public TreeMap<Integer, Set<Match>> groupMatches;
+
+    private boolean allMatchesCompleted;
+
+    public void eloSort(){
+        // Check if event and rankings exist
+        if (getEvent() == null || getEvent().getRankings() == null) {
+            return;
+        }
+
+        Set<PlayerRank> rankings = getEvent().getRankings();
+        Set<Player> players = new TreeSet<>();
+
+        // Add players from rankings to the TreeSet (automatically sorted)
+        for (PlayerRank pr : rankings) {
+            players.add(pr.getPlayer());
+        }
+
+        int playerNum = players.size();
+        if (playerNum == 0) {
+            return; // No players to sort
+        }
+
+        // Map to store possible group sizes and remainders
+        TreeMap<Integer, Integer> factorRemainder = new TreeMap<>();
+
+        // Find the best group size by checking divisors between 4 and 7
+        for (int i = 4; i <= 7; i++) {
+            int remainder = playerNum % i;
+            factorRemainder.put(i, remainder);
+        }
+
+        int bestFactor = 4;
+        int grpSize = 0;
+
+        // Find the best group size with the smallest remainder
+        for (Integer factor : factorRemainder.keySet()) {
+            if (factorRemainder.get(factor) == 0) {
+                grpSize = factor;
+                break;
+            }
+            // Otherwise, pick the factor with the smallest remainder
+            if (factorRemainder.get(factor) > factorRemainder.get(bestFactor)) {
+                bestFactor = factor;
+            }
+        }
+
+        if (grpSize == 0) {
+            grpSize = bestFactor; // Use the best factor if no perfect division
+        }
+
+        int numGroups = playerNum / grpSize;
+        int remainder = playerNum % grpSize;
+
+        // If there's a remainder, we may need one more group
+        if (remainder != 0) {
+            numGroups++;
+        }
+
+        // Initialize the groups
+        for (int i = 1; i <= numGroups; i++) {
+            playerGroups.put(i, new HashSet<>());
+        }
+
+        // Distribute players across the groups in a round-robin fashion
+        int currentGrp = 1;
+        for (Player p : players) {
+            playerGroups.get(currentGrp).add(p);
+            currentGrp++;
+            if (currentGrp > numGroups) {
+                currentGrp = 1;
+            }
+        }
+
+    }
+
+    // to move methods here
+    public static TreeMap<Player, Player> permutation(TreeSet<Player> players) {
+
+        TreeMap<Player, Player> result = new TreeMap<>();
+        Player[] playerArr = players.toArray(new Player[0]);
+
+        for(int i = 0; i < playerArr.length - 1; i++){
+            for(int r = i + 1; r < playerArr.length; r++){
+                result.put(playerArr[i], playerArr[r]);
+            }
+        }
+        return result;
+    }
     
-    @ManyToMany
-    public TreeSet<PlayerRank> rankings;
 
-    @OneToMany
-    public Set<Match> matches;
 
-    // public GroupStage(TreeSet<PlayerRank> rankings){
-    //     // TreeMap<PlayerRank, PlayerRank> pairings = permutation(rankings);
-        
-    //     // for (PlayerRank pr : pairings.keySet()) {
-    //     //     //add getplayer for PlayerRank
-    //     //     // add the fields for match
-    //     //     // Match newMatch = new Match();
-    //     //     // matches.add(newMatch);
-    //     // }
-        
-    // }
-
-    // public static TreeMap<PlayerRank, PlayerRank> permutation(TreeSet<PlayerRank> rankings){
-
-    //     TreeMap<PlayerRank, PlayerRank> result = new TreeMap<>();
-
-    //     for (PlayerRank playerRank : rankings) {
-    //         // Inner loop: Iterate through elements that come after 'first'
-    //         Iterator<PlayerRank> it = rankings.tailSet(playerRank, false).iterator(); // Start after 'first'
-    //         while (it.hasNext()) {
-    //             PlayerRank nextPlayerRank = it.next();
-    //             result.put(playerRank, nextPlayerRank);
-    //         }
-    //     }
-
-    //     return result;
-    // }
 }
