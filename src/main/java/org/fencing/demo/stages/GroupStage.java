@@ -1,18 +1,17 @@
 package org.fencing.demo.stages;
 
-import org.bouncycastle.util.Arrays.Iterator;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.player.Player;
-import org.hibernate.mapping.Map;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+// import jakarta.persistence.GeneratedValue;
+// import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table; 
 
 import java.util.Set;
@@ -30,9 +29,10 @@ import lombok.Data;
 public class GroupStage {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @OneToOne
     @MapsId
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
