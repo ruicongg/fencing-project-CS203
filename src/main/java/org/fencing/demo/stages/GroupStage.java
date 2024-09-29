@@ -5,6 +5,7 @@ import org.fencing.demo.events.Event;
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.player.Player;
+import org.hibernate.mapping.Map;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -115,9 +116,19 @@ public class GroupStage {
     }
 
     // to move methods here
-    public void permutation(){
+    public static TreeMap<Player, Player> permutation(TreeSet<Player> players) {
 
+        TreeMap<Player, Player> result = new TreeMap<>();
+        Player[] playerArr = players.toArray(new Player[0]);
+
+        for(int i = 0; i < playerArr.length - 1; i++){
+            for(int r = i + 1; r < playerArr.length; r++){
+                result.put(playerArr[i], playerArr[r]);
+            }
+        }
+        return result;
     }
+    
 
 
 }
