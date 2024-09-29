@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import org.apache.hc.client5.http.auth.InvalidCredentialsException;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.player.PlayerServiceImpl;
@@ -10,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,6 +26,9 @@ public class PlayerTest {
 
     @Mock
     private PlayerRepository playerRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     public void setUp() {
@@ -105,5 +110,32 @@ public class PlayerTest {
 
         assertThrows(IllegalArgumentException.class, () -> playerService.deletePlayer(1L));
         verify(playerRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    public void testLogin_Success() {
+        Player player = new Player("testUser", "password123", "test@example.com");
+        when(playerRepository.findByUsername("testUser")).thenReturn(Optional.of(player));
+        when(passwordEncoder.matches("password123", player.getPassword())).thenReturn(true);
+
+        Player loggedInPlayer = null;
+        try {
+            loggedInPlayer = playerService.login("testUser", "password123");
+        } catch (InvalidCredentialsException e) {
+
+            e.printStackTrace();
+        }
+
+        assertNotNull(loggedInPlayer);
+        assertEquals("testUser", loggedInPlayer.getUsername());
+    }
+
+    @Test
+    public void testLogin_Failure() { // Need to change, wrong password case
+        when(playerRepository.findByUsername("testUser")).thenReturn(Optional.empty());
+
+        assertThrows(InvalidCredentialsException.class, () -> {
+            playerService.login("testUser", "wrongPassword");
+        });
     }
 }
