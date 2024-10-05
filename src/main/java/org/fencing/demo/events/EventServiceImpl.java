@@ -66,7 +66,7 @@ public class EventServiceImpl implements EventService{
         existingEvent.setWeapon(newEvent.getWeapon());
         existingEvent.setStartDate(newEvent.getStartDate());
         existingEvent.setEndDate(newEvent.getEndDate());
-        existingEvent.setGroupStages(newEvent.getGroupStages());
+        // existingEvent.setGroupStages(newEvent.getGroupStages());
         existingEvent.setKnockoutStage(newEvent.getKnockoutStage());
         existingEvent.setRankings(newEvent.getRankings());
 

@@ -58,8 +58,9 @@ public class Event {
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
     
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<GroupStage> GroupStages;
+    // @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
+    // @JsonIgnore // To prevent circular references during serialization
+    // private GroupStage GroupStages;
 
     @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
     @JsonIgnore // To prevent circular references during serialization
