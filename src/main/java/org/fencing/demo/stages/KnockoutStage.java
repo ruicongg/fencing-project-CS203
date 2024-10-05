@@ -68,11 +68,17 @@ public class KnockoutStage {
         }
 
         roundNum++; // Increment the round number
-        return createMatches(players, roundNum); // Create matches for the next round
+        KnockoutStage nextKnockoutStage = new KnockoutStage();
+        Set<Match> nextRound = createMatches(players, roundNum, nextKnockoutStage);
+        nextKnockoutStage.setEvent(event);
+        nextKnockoutStage.setMatches(nextRound);
+        nextKnockoutStage.setRoundNum(roundNum);
+        event.getKnockoutStages().add(nextKnockoutStage);
+        return nextRound; // Create matches for the next round
     }
 
     // Method to create matches for both first and subsequent rounds
-    private Set<Match> createMatches(List<Player> players, int roundNumber) {
+    private Set<Match> createMatches(List<Player> players, int roundNumber, KnockoutStage nextKnockoutStage) {
         matches = new LinkedHashSet<>();
         int n = players.size();
         for (int i = 0; i < n / 2; i++) {
@@ -84,6 +90,7 @@ public class KnockoutStage {
             match.setPlayer1(player1);
             match.setPlayer2(player2);
             match.setEvent(this.event);
+            match.setKnockoutStage(nextKnockoutStage);
             matches.add(match);
         }
 

@@ -18,9 +18,9 @@ public interface TournamentService {
 
     void deleteTournament(Long id);
 
-    List<Tournament> findByStartDateTournament(LocalDate date);
+    // List<Tournament> findByStartDateTournament(LocalDate date);
 
-    List<Tournament> findByEndDateTournament(LocalDate date);
+    // List<Tournament> findByEndDateTournament(LocalDate date);
 
     List<Tournament> findByAvailability(LocalDate startDate, LocalDate endDate);
 }

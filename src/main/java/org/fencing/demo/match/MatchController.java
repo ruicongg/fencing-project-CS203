@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -22,22 +21,16 @@ public class MatchController {
     //     return matchService.addMatchforGroupStage(eventId, match);
     // }
 
-    @PostMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/matches")
+    @PostMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage")
     @ResponseStatus(HttpStatus.CREATED)
     public List<Match> addMatchforKnockoutStage(@PathVariable Long eventId) {
         return matchService.addMatchesforKnockoutStage(eventId);
     }
 
-    @GetMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/matches")
+    @GetMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/{knockoutStageId}")
     @ResponseStatus(HttpStatus.OK)
-    public Map<Integer, Set<Match>> getAllMatchesforKnockoutStageByEventId(@PathVariable Long eventId) {
-        return matchService.getAllMatchesForKnockoutStageByEventId(eventId);
-    }
-
-    @GetMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/matches/{roundNum}")
-    @ResponseStatus(HttpStatus.OK)
-    public Set<Match> getAllMatchesforKnockoutStageByEventId(@PathVariable Long eventId, int roundNum) {
-        return matchService.getAllMatchesForKnockoutStageRound(eventId, roundNum);
+    public Set<Match> getAllMatchesForKnockoutStageByKnockoutStageId(@PathVariable Long knockoutStageId) {
+        return matchService.getAllMatchesForKnockoutStageByKnockoutStageId(knockoutStageId);
     }
 
     @PutMapping("/tournaments/{tournamentId}/events/{eventId}/match/{matchId}")
