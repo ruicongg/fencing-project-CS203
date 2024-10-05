@@ -1,6 +1,8 @@
 package org.fencing.demo.events;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.fencing.demo.stages.GroupStage;
@@ -19,7 +21,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -62,8 +63,12 @@ public class Event {
     // @JsonIgnore // To prevent circular references during serialization
     // private GroupStage GroupStages;
 
-    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
-    @JsonIgnore // To prevent circular references during serialization
-    private KnockoutStage knockoutStage;
+    // @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
+    // @JsonIgnore // To prevent circular references during serialization
+    // private KnockoutStage knockoutStage;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<KnockoutStage> knockoutStages = new ArrayList<>();
 
 }

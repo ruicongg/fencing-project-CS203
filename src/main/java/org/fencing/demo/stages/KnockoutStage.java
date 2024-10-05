@@ -2,10 +2,8 @@ package org.fencing.demo.stages;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.fencing.demo.events.Event;
@@ -13,14 +11,17 @@ import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.player.Player;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table; 
 // import jakarta.persistence.GeneratedValue;
 // import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,25 +35,23 @@ import lombok.NoArgsConstructor;
 @Table(name = "knockout_stage")
 public class KnockoutStage {
     @Id
-    // @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne
-    @MapsId
-    @JoinColumn(name = "event_id")
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event; 
 
-    @Builder.Default
-    private Map<Integer, Set<Match>> matches = new LinkedHashMap<>(); // Store matches by round number
+    @OneToMany(mappedBy = "knockoutStage", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Match> matches; 
 
-    @Builder.Default
-    private int currentRound = 0; // Keep track of the current round
+    private int roundNum;
 
     public Set<Match> createOrAdvanceRound() {
         
         List<Player> players = new ArrayList<>();
 
-        if (currentRound == 0) {
+        if (roundNum == 0) {
             // For the first round, convert PlayerRank set to a list of Players
             Set<PlayerRank> playerRanks = event.getRankings();
             List<PlayerRank> playerRankList = new ArrayList<>(playerRanks);
@@ -60,20 +59,21 @@ public class KnockoutStage {
             players = convertToPlayerList(playerRanks);
 
         } else {
-            Set<Match> previousMatches = getMatchesForRound(currentRound);
+            KnockoutStage previousRound = event.getKnockoutStages().get(roundNum - 1 -1);
+            Set<Match> previousMatches = previousRound.getMatches();
             for (Match match : previousMatches) {
                 players.add(match.getWinner()); // Get the winner of each match
 
             }
         }
 
-        currentRound++; // Increment the round number
-        return createMatches(players, currentRound); // Create matches for the next round
+        roundNum++; // Increment the round number
+        return createMatches(players, roundNum); // Create matches for the next round
     }
 
     // Method to create matches for both first and subsequent rounds
     private Set<Match> createMatches(List<Player> players, int roundNumber) {
-        Set<Match> roundMatches = new LinkedHashSet<>();
+        matches = new LinkedHashSet<>();
         int n = players.size();
         for (int i = 0; i < n / 2; i++) {
             Player player1 = players.get(i);
@@ -84,20 +84,24 @@ public class KnockoutStage {
             match.setPlayer1(player1);
             match.setPlayer2(player2);
             match.setEvent(this.event);
-            roundMatches.add(match);
+            matches.add(match);
         }
-        matches.put(roundNumber, roundMatches); // Store the matches in the map by round
-        return roundMatches;
+
+        return matches;
     }
 
-    // Access matches for a specific round
-    public Set<Match> getMatchesForRound(int round) {
-        return matches.get(round);
+    // // Access matches for a specific round
+    // public Match getMatch(int round) {
+    //     return matches.get(round);
+    // }
+
+    public Set<Match> getMatches() {
+        return matches;
     }
 
     // Get the current round number
-    public int getCurrentRound() {
-        return currentRound;
+    public int getRoundNum() {
+        return roundNum;
     }
 
     public List<Player> convertToPlayerList(Set<PlayerRank> rankings) {
