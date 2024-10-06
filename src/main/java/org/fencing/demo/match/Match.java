@@ -10,6 +10,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.player.Player;
+import org.fencing.demo.stages.GroupStage;
+import org.fencing.demo.stages.KnockoutStage;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,6 +33,16 @@ public class Match {
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
+
+    // Optional ManyToOne relationship with GroupStage
+    @ManyToOne
+    @JoinColumn(name = "group_stage_id")
+    private GroupStage groupStage;
+
+    // Optional ManyToOne relationship with KnockoutStage
+    @ManyToOne
+    @JoinColumn(name = "knockout_stage_id")
+    private KnockoutStage knockoutStage;
     
     @ManyToOne
     @JoinColumn(name = "player1_id", nullable = false)

@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.fencing.demo.events.Event;
@@ -27,15 +26,15 @@ public class MatchServiceImpl implements MatchService {
         this.knockoutStageRepository = knockoutStageRepository;
     }
 
-    public Match addMatch(Long eventId, Match match){
-        if (eventId == null || match == null) {
-            throw new IllegalArgumentException("Event ID and Match cannot be null");
-        }
-        return eventRepository.findById(eventId).map(event -> {
-            match.setEvent(event);
-            return matchRepository.save(match);
-        }).orElseThrow(() -> new EventNotFoundException(eventId));
-    }
+    // public Match addMatch(Long eventId, Match match){
+    //     if (eventId == null || match == null) {
+    //         throw new IllegalArgumentException("Event ID and Match cannot be null");
+    //     }
+    //     return eventRepository.findById(eventId).map(event -> {
+    //         match.setEvent(event);
+    //         return matchRepository.save(match);
+    //     }).orElseThrow(() -> new EventNotFoundException(eventId));
+    // }
 
     @Override
     @Transactional
@@ -47,8 +46,12 @@ public class MatchServiceImpl implements MatchService {
             throw new EventNotFoundException(eventId);
         }
         Event event = eventRepository.findById(eventId).get();
-        KnockoutStage knockoutStage = event.getKnockoutStage();
-        return matchRepository.saveAll(knockoutStage.createOrAdvanceRound());
+        List<KnockoutStage> knockoutStages = event.getKnockoutStages();
+        if (knockoutStages.isEmpty()) {
+            throw new IllegalStateException("No KnockoutStage found for event " + eventId);
+        }
+        KnockoutStage knockoutStage = knockoutStages.get(knockoutStages.size() - 1);
+        return matchRepository.saveAll(event.createOrAdvanceRound(knockoutStage));
     }
 
     // @Override
@@ -62,24 +65,14 @@ public class MatchServiceImpl implements MatchService {
     //     return matchRepository.findByEventId(eventId);
     // }
 
-    public Map<Integer, Set<Match>> getAllMatchesForKnockoutStageByEventId(Long eventId) {
-        if (eventId == null) {
-            throw new IllegalArgumentException("Event ID and Match cannot be null");
-        }
-        if (!eventRepository.existsById(eventId)) {
-            throw new EventNotFoundException(eventId);
-        }
-        return eventRepository.findById(eventId).get().getKnockoutStage().getMatches();
-    }
-
-    public Set<Match> getAllMatchesForKnockoutStageRound(Long knockoutStageId, int roundNum) {
+    public Set<Match> getAllMatchesForKnockoutStageByKnockoutStageId(Long knockoutStageId) {
         if (knockoutStageId == null) {
-            throw new IllegalArgumentException("KnockoutStageId ID cannot be null");
+            throw new IllegalArgumentException("Knockout Stage ID cannot be null");
         }
         if (!knockoutStageRepository.existsById(knockoutStageId)) {
             throw new KnockoutStageNotFoundException(knockoutStageId);
         }
-        return knockoutStageRepository.findById(knockoutStageId).get().getMatchesForRound(roundNum);
+        return knockoutStageRepository.findById(knockoutStageId).get().getMatches();
     }
 
     @Override

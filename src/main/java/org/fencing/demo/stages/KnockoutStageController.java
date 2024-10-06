@@ -7,8 +7,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
+@RequestMapping("/knockout")
 public class KnockoutStageController {
     private final KnockoutStageService knockoutStageService;
 
@@ -22,19 +26,19 @@ public class KnockoutStageController {
         return knockoutStageService.addKnockoutStage(eventId, knockoutStage);
     }
 
-    @GetMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage")
+    @GetMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/{knockoutId}")
     @ResponseStatus(HttpStatus.OK)
     public KnockoutStage getKnockoutStage(@PathVariable Long knockoutStageId) {
         return knockoutStageService.getKnockoutStage(knockoutStageId);
     }
 
-    @PutMapping("/tournaments/{tournamentId}/events/{eventId}/KnockoutStage")
+    @PutMapping("/tournaments/{tournamentId}/events/{eventId}/KnockoutStage/{knockoutId}")
     @ResponseStatus(HttpStatus.OK)
     public KnockoutStage updateKnockoutStage(@PathVariable Long eventId, @PathVariable Long knockoutStageId, @RequestBody KnockoutStage knockoutStage) {
         return knockoutStageService.updateKnockoutStage(eventId, knockoutStageId, knockoutStage);
     }
 
-    @DeleteMapping("/tournaments/{tournamentId}/events/{eventId}/KnockoutStage")
+    @DeleteMapping("/tournaments/{tournamentId}/events/{eventId}/KnockoutStage/{knockoutId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteKnockoutStage(@PathVariable Long eventId, @PathVariable Long knockoutStageId) {
         knockoutStageService.deleteKnockoutStage(eventId, knockoutStageId);
