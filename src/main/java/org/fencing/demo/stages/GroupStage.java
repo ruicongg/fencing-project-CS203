@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table; 
 
 import java.util.Set;
@@ -32,15 +33,15 @@ public class GroupStage {
     // @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne
+    @ManyToOne
     @MapsId
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    public TreeMap<Integer, Set<Player>> playerGroups;
+    Set<PlayerRank> rankings;
 
-    public TreeMap<Integer, Set<Match>> groupMatches;
-
+    public Set<Match> matches;
+    
     private boolean allMatchesCompleted;
 
     public void eloSort(){
@@ -74,13 +75,13 @@ public class GroupStage {
         int bestFactor = 4;
         int grpSize = 0;
 
-        // Find the best group size with the smallest remainder
+        // Find the best group size with the largest remainder
         for (Integer factor : factorRemainder.keySet()) {
             if (factorRemainder.get(factor) == 0) {
                 grpSize = factor;
                 break;
             }
-            // Otherwise, pick the factor with the smallest remainder
+            // Otherwise, pick the factor with the largest remainder
             if (factorRemainder.get(factor) > factorRemainder.get(bestFactor)) {
                 bestFactor = factor;
             }
