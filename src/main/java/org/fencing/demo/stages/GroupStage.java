@@ -1,7 +1,6 @@
 package org.fencing.demo.stages;
 
 import org.fencing.demo.events.Event;
-import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.match.Match;
 // import org.fencing.demo.player.Player;
 
