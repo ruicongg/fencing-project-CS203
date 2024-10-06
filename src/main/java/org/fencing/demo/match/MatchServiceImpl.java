@@ -47,8 +47,11 @@ public class MatchServiceImpl implements MatchService {
         }
         Event event = eventRepository.findById(eventId).get();
         List<KnockoutStage> knockoutStages = event.getKnockoutStages();
+        if (knockoutStages.isEmpty()) {
+            throw new IllegalStateException("No KnockoutStage found for event " + eventId);
+        }
         KnockoutStage knockoutStage = knockoutStages.get(knockoutStages.size() - 1);
-        return matchRepository.saveAll(knockoutStage.createOrAdvanceRound());
+        return matchRepository.saveAll(event.createOrAdvanceRound(knockoutStage));
     }
 
     // @Override

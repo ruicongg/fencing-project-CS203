@@ -21,13 +21,13 @@ public class MatchController {
     //     return matchService.addMatchforGroupStage(eventId, match);
     // }
 
-    @PostMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage")
+    @PostMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/{knockoutStageId}/matches")
     @ResponseStatus(HttpStatus.CREATED)
     public List<Match> addMatchforKnockoutStage(@PathVariable Long eventId) {
         return matchService.addMatchesforKnockoutStage(eventId);
     }
 
-    @GetMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/{knockoutStageId}")
+    @GetMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/{knockoutStageId}/matches")
     @ResponseStatus(HttpStatus.OK)
     public Set<Match> getAllMatchesForKnockoutStageByKnockoutStageId(@PathVariable Long knockoutStageId) {
         return matchService.getAllMatchesForKnockoutStageByKnockoutStageId(knockoutStageId);

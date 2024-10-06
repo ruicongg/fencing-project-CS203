@@ -2,9 +2,13 @@ package org.fencing.demo.events;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.fencing.demo.match.Match;
+import org.fencing.demo.player.Player;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.tournaments.Tournament;
@@ -63,12 +67,65 @@ public class Event {
     // @JsonIgnore // To prevent circular references during serialization
     // private GroupStage GroupStages;
 
-    // @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
-    // @JsonIgnore // To prevent circular references during serialization
-    // private KnockoutStage knockoutStage;
-
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<KnockoutStage> knockoutStages = new ArrayList<>();
+
+    public Set<Match> createOrAdvanceRound(KnockoutStage knockoutStage) {
+        
+        List<Player> players = new ArrayList<>();
+        int roundNum = knockoutStages.size() - 1;
+
+        if (roundNum == 1) {
+            // For the first round, convert PlayerRank set to a list of Players
+            List<PlayerRank> playerRankList = new ArrayList<>(rankings);
+            playerRankList.sort(Comparator.comparing(PlayerRank::getScore));
+
+        } else {
+            KnockoutStage previousRound = knockoutStages.get(roundNum - 1 - 1);
+            Set<Match> previousMatches = previousRound.getMatches();
+            for (Match match : previousMatches) {
+                players.add(match.getWinner()); // Get the winner of each match
+
+            }
+        }
+
+        roundNum++; // Increment the round number
+        // KnockoutStage nextKnockoutStage = new KnockoutStage();
+        Set<Match> nextRound = createMatches(players, knockoutStage);
+        knockoutStage.setEvent(this);
+        knockoutStage.setMatches(nextRound);
+        knockoutStage.setRoundNum(roundNum);
+        knockoutStages.add(knockoutStage);
+        return nextRound; // Create matches for the next round
+    }
+
+    // Method to create matches for both first and subsequent rounds
+    private Set<Match> createMatches(List<Player> players, KnockoutStage nextKnockoutStage) {
+        Set<Match> matches = new LinkedHashSet<>();
+        int n = players.size();
+        for (int i = 0; i < n / 2; i++) {
+            Player player1 = players.get(i);
+            Player player2 = players.get(n - 1 - i);
+
+            // Create a match between the two players
+            Match match = new Match();
+            match.setPlayer1(player1);
+            match.setPlayer2(player2);
+            match.setEvent(this);
+            match.setKnockoutStage(nextKnockoutStage);
+            matches.add(match);
+        }
+
+        return matches;
+    }
+
+    public List<Player> convertToPlayerList(Set<PlayerRank> rankings) {
+        List<Player> players = new ArrayList<>();
+        for (PlayerRank playerRank : rankings) {
+            players.add(playerRank.getPlayer()); // Extract the Player object from PlayerRank
+        }
+        return players;
+    }
 
 }
