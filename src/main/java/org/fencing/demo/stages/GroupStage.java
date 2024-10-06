@@ -41,7 +41,7 @@ public class GroupStage {
     
     // private Set<PlayerRank> rankings; -- in event le
 
-    @OneToMany(mappedBy = "group_stage_id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "groupStage", cascade = CascadeType.ALL)
     private Set<Match> matches;
     
     private boolean allMatchesCompleted;
