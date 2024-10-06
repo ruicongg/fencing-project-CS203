@@ -49,20 +49,19 @@ public class Event {
 
     // for sorting after
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore // To avoid circular references
     private Set<PlayerRank> rankings;
 
     //public TreeSet<Player> EloRank;
     //for sorting first when go to group stage
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
     
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GroupStage> GroupStages;
 
-    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
-    @JsonIgnore // To prevent circular references during serialization
-    private KnockoutStage knockoutStage;
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<KnockoutStage> knockoutStage;
 
 }

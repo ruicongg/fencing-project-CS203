@@ -50,13 +50,13 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public List<Tournament> findByStartDateTournament(LocalDate date){
 
-        return tournamentRepository.findByStartDate(date);
+        return tournamentRepository.findByTournamentStartDate(date);
     }
 
     @Override
     public List<Tournament> findByEndDateTournament(LocalDate date){
 
-        return tournamentRepository.findByEndDate(date);
+        return tournamentRepository.findByTournamentEndDate(date);
     }
 
 
@@ -108,7 +108,7 @@ public class TournamentServiceImpl implements TournamentService {
             throw new IllegalArgumentException("Error: start date is after end date");
         }
 
-        return tournamentRepository.findByStartDateLessThanEqualAndEndDateGreaterThanEqual(endDate, startDate);
+        return tournamentRepository.findByTournamentStartDateLessThanEqualAndTournamentEndDateGreaterThanEqual(endDate, startDate);
     }
 
 }

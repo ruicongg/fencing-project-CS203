@@ -38,6 +38,5 @@ public class Tournament {
     private String venue;
 
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private Set<Event> events;
 }

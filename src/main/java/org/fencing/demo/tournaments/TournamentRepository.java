@@ -6,9 +6,9 @@ import java.time.LocalDate;
 
 
 public interface TournamentRepository extends CrudRepository<Tournament, Long> {
-    public List<Tournament> findByStartDate(LocalDate startDate);
+    public List<Tournament> findByTournamentStartDate(LocalDate startDate);
 
-    public List<Tournament> findByEndDate(LocalDate endDate);
+    public List<Tournament> findByTournamentEndDate(LocalDate endDate);
 
-    public List<Tournament> findByStartDateLessThanEqualAndEndDateGreaterThanEqual(LocalDate endDate, LocalDate startDate);
+    public List<Tournament> findByTournamentStartDateLessThanEqualAndTournamentEndDateGreaterThanEqual(LocalDate endDate, LocalDate startDate);
 }

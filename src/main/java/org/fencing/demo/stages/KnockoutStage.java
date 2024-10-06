@@ -37,7 +37,7 @@ public class KnockoutStage {
     // @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne
+    @ManyToOne
     @MapsId
     @JoinColumn(name = "event_id")
     private Event event; 
