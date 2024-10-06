@@ -1,28 +1,28 @@
 package org.fencing.demo.matchMaking;
 
-// import java.util.HashSet;
-// import java.util.Set;
-// import java.util.TreeSet;
-// import java.util.TreeMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.TreeMap;
 
-// import org.fencing.demo.match.Match;
-// import org.fencing.demo.player.Player;
-// import org.fencing.demo.events.PlayerRank;
+import org.fencing.demo.match.Match;
+import org.fencing.demo.player.Player;
+import org.fencing.demo.events.PlayerRank;
 
 public class WithinGroupSort {
 
-    // public static TreeSet<Pair> permutation(Set<Player> players) {
+    public static TreeSet<Pair> permutation(Set<Player> players) {
 
-    //     TreeSet<Pair> result = new TreeSet<>();
-    //     Player[] playerArr = players.toArray(new Player[0]);
+        TreeSet<Pair> result = new TreeSet<>();
+        Player[] playerArr = players.toArray(new Player[0]);
 
-    //     for(int i = 0; i < playerArr.length - 1; i++){
-    //         for(int r = i + 1; r < playerArr.length; r++){
-    //             result.add(new Pair(playerArr[i], playerArr[r]));
-    //         }
-    //     }
-    //     return result;
-    // }
+        for(int i = 0; i < playerArr.length - 1; i++){
+            for(int r = i + 1; r < playerArr.length; r++){
+                result.add(new Pair(playerArr[i], playerArr[r]));
+            }
+        }
+        return result;
+    }
     
     // public TreeMap<Integer, Match> groupMatchMakingAlgorithm(){
     //     TreeMap<Integer, Match> resultMap = new TreeMap<>();

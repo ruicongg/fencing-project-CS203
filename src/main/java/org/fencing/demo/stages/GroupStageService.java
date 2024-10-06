@@ -1,13 +1,13 @@
-package org.fencing.demo.stages;
+// package org.fencing.demo.stages;
 
-public interface GroupStageService {
+// public interface GroupStageService {
 
-    GroupStage addGroupStage(Long eventId, GroupStage GroupStage);
+//     GroupStage addGroupStage(Long eventId, GroupStage GroupStage);
 
-    GroupStage getGroupStage(Long GroupStageId);
+//     GroupStage getGroupStage(Long GroupStageId);
 
-    GroupStage updateGroupStage(Long eventId, Long GroupStageId, GroupStage newGroupStage);
+//     GroupStage updateGroupStage(Long eventId, Long GroupStageId, GroupStage newGroupStage);
 
-    void deleteGroupStage(Long eventId, Long GroupStageId);
+//     void deleteGroupStage(Long eventId, Long GroupStageId);
 
-}
+// }
