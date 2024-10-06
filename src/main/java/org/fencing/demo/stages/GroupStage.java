@@ -3,6 +3,7 @@ package org.fencing.demo.stages;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.match.Match;
 // import org.fencing.demo.player.Player;
+import org.fencing.demo.player.Player;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -20,10 +21,15 @@ import java.util.Set;
 // import java.util.TreeMap;
 // import java.util.HashSet;
 
-// import lombok.Builder;
-// import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "groupStage")
 public class GroupStage {
@@ -38,7 +44,7 @@ public class GroupStage {
     private Event event;
 
     
-    // private Set<PlayerRank> rankings; -- in event le
+    private Set<Player> players;
 
     @OneToMany(mappedBy = "groupStage", cascade = CascadeType.ALL)
     private Set<Match> matches;

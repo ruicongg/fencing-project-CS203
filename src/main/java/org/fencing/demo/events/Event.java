@@ -6,8 +6,10 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.fencing.demo.match.Match;
+import org.fencing.demo.matchMaking.BeforeGroupStage;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.KnockoutStage;
@@ -63,15 +65,29 @@ public class Event {
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
     
-    // @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
-    // @JsonIgnore // To prevent circular references during serialization
-    // private GroupStage GroupStages;
+    @Builder.Default
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    //@JsonIgnore // To prevent circular references during serialization
+    private List<GroupStage> groupStages = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<KnockoutStage> knockoutStages = new ArrayList<>();
 
-    public Set<Match> createOrAdvanceRound(KnockoutStage knockoutStage) {
+    //HOMEWORKKKKK FOR JL
+    public List<GroupStage> createPlayerGrpsForGroupStages() {
+        TreeMap<Integer, Set<Player>> groups = BeforeGroupStage.sortByELO(rankings);
+        for(Integer i:groups.keySet()){
+            GroupStage grpStage = new GroupStage();
+            grpStage.setPlayers(groups.get(i));
+            grpStage.setEvent(this);
+            groupStages.add(grpStage);
+        }
+
+        return groupStages;
+    }
+
+    public Set<Match> createRoundForKnockoutStage(KnockoutStage knockoutStage) {
         
         List<Player> players = new ArrayList<>();
         int roundNum = knockoutStages.size() - 1;
@@ -127,5 +143,6 @@ public class Event {
         }
         return players;
     }
+
 
 }

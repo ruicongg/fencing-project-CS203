@@ -36,6 +36,14 @@ public class MatchServiceImpl implements MatchService {
     //     }).orElseThrow(() -> new EventNotFoundException(eventId));
     // }
 
+    //see how
+    
+    @Override
+    @Transactional
+    public List<Match> addMatchesforGroupStage(Long groupstageId) {
+        return null;
+    }
+
     @Override
     @Transactional
     public List<Match> addMatchesforKnockoutStage(Long eventId) {
@@ -51,7 +59,7 @@ public class MatchServiceImpl implements MatchService {
             throw new IllegalStateException("No KnockoutStage found for event " + eventId);
         }
         KnockoutStage knockoutStage = knockoutStages.get(knockoutStages.size() - 1);
-        return matchRepository.saveAll(event.createOrAdvanceRound(knockoutStage));
+        return matchRepository.saveAll(event.createRoundForKnockoutStage(knockoutStage));
     }
 
     // @Override
