@@ -2,6 +2,7 @@ package org.fencing.demo.match;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 
 import jakarta.persistence.GeneratedValue;
@@ -17,6 +18,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -54,6 +57,7 @@ public class Match {
 
     private int player1Score;
     private int player2Score;
+
 
     //added - tbc
     //private boolean matchFinished;

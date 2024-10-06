@@ -1,5 +1,6 @@
 package org.fencing.demo.player;
 
+
 // import org.fencing.demo.tournaments.Tournament;
 
 import jakarta.persistence.*;
@@ -7,8 +8,9 @@ import lombok.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Email;
 // import java.util.HashSet;
-// import java.util.Set;
-// import org.fencing.demo.match.Match;
+import java.util.Set;
+import org.fencing.demo.match.Match;
+
 
 @Entity
 @Getter
@@ -48,6 +50,16 @@ public class Player implements Comparable<Player>{
 
     // @OneToMany(mappedBy = "loser", cascade = CascadeType.ALL, orphanRemoval = true)
     // private Set<Match> lostMatches = new HashSet<>();
+
+
+    @OneToMany(mappedBy = "player1")
+    private Set<Match> matchesAsPlayer1;
+
+    @OneToMany(mappedBy = "player2")
+    private Set<Match> matchesAsPlayer2;
+
+
+
 
     public Player(String username, String password, String email) {
         this.username = username;

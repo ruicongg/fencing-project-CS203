@@ -11,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table; 
 
@@ -36,9 +37,9 @@ public class GroupStage {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    Set<PlayerRank> rankings;
-
-    public Set<Match> matches;
+   
+    @OneToMany(mappedBy = "groupStage")
+    private Set<Match> matches;
     
     private boolean allMatchesCompleted;
 
