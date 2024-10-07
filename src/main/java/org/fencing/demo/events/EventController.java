@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 public class EventController {
     
     private final EventService eventService;
@@ -29,6 +31,12 @@ public class EventController {
     @ResponseStatus(HttpStatus.OK)
     public List<Event> getAllEventsByTournamentId(@PathVariable Long tournamentId) {
         return eventService.getAllEventsByTournamentId(tournamentId);
+    }
+
+    @GetMapping("/tournaments/{tournamentId}/events/{eventId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Event getEvent(@PathVariable Long eventId) {
+        return eventService.getEvent(eventId);
     }
 
     @PutMapping("/tournaments/{tournamentId}/events/{eventId}")

@@ -5,9 +5,11 @@ import java.time.LocalDate;
 
 import org.fencing.demo.tournaments.TournamentNotFoundException;
 import org.fencing.demo.tournaments.TournamentRepository;
+import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 
+@Service
 public class EventServiceImpl implements EventService{
     private final EventRepository eventRepository;
     private final TournamentRepository tournamentRepository;
