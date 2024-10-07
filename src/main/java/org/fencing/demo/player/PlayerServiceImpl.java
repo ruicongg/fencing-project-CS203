@@ -19,10 +19,11 @@ public class PlayerServiceImpl implements PlayerService{
     private MatchRepository matchRepository;
     private PasswordEncoder passwordEncoder;
 
-    public PlayerServiceImpl(PlayerRepository playerRepository, EventRepository eventRepository, MatchRepository matchRepository){
+    public PlayerServiceImpl(PlayerRepository playerRepository, EventRepository eventRepository, MatchRepository matchRepository, PasswordEncoder passwordEncoder){
         this.playerRepository = playerRepository;
         this.eventRepository = eventRepository;
         this.matchRepository = matchRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
