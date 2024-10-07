@@ -11,5 +11,7 @@ public interface EventService {
 
     Event updateEvent(Long tournamentId, Long eventId, Event event);
 
+    Event addPlayerToEvent(Long eventId, Long playerId);
+
     void deleteEvent(Long tournamentId, Long eventId);
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,9 +46,14 @@ public class EventController {
         return eventService.updateEvent(tournamentId, eventId, event);
     }
 
+    @PostMapping("/tournaments/{tournamentId}/events/{eventId}/addPlayer/{playerId}")
+    public Event addPlayerToEvent(@PathVariable Long eventId, @PathVariable Long playerId) {
+        return eventService.addPlayerToEvent(eventId, playerId);
+    }
+
     @DeleteMapping("/tournaments/{tournamentId}/events/{eventId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteMatch(@PathVariable Long tournamentId, @PathVariable Long eventId) {
+    public void deleteEvent(@PathVariable Long tournamentId, @PathVariable Long eventId) {
         eventService.deleteEvent(tournamentId, eventId);
     }
 }

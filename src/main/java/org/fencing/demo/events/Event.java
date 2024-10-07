@@ -3,9 +3,12 @@ package org.fencing.demo.events;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.fencing.demo.match.Match;
 import org.fencing.demo.player.Player;
@@ -53,8 +56,9 @@ public class Event {
     private WeaponType weapon;
 
     // for sorting after
+    @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PlayerRank> rankings;
+    private Set<PlayerRank> rankings = new TreeSet<>();
 
     //public TreeSet<Player> EloRank;
     //for sorting first when go to group stage
@@ -74,7 +78,7 @@ public class Event {
     public Set<Match> createOrAdvanceRound(KnockoutStage knockoutStage) {
         
         List<Player> players = new ArrayList<>();
-        int roundNum = knockoutStages.size() - 1;
+        int roundNum = knockoutStages.size();
 
         if (roundNum == 1) {
             // For the first round, convert PlayerRank set to a list of Players
@@ -126,6 +130,19 @@ public class Event {
             players.add(playerRank.getPlayer()); // Extract the Player object from PlayerRank
         }
         return players;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);  // Use the unique `id` field
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Event event = (Event) o;
+        return id == event.id;  // Use only `id` for equality comparison
     }
 
 }

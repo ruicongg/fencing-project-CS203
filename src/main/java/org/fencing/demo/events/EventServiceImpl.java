@@ -3,6 +3,9 @@ package org.fencing.demo.events;
 import java.util.List;
 import java.time.LocalDate;
 
+import org.fencing.demo.player.Player;
+import org.fencing.demo.player.PlayerNotFoundException;
+import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.tournaments.TournamentNotFoundException;
 import org.fencing.demo.tournaments.TournamentRepository;
 import org.springframework.stereotype.Service;
@@ -13,10 +16,12 @@ import jakarta.transaction.Transactional;
 public class EventServiceImpl implements EventService{
     private final EventRepository eventRepository;
     private final TournamentRepository tournamentRepository;
+    private PlayerRepository playerRepository;
 
-    public EventServiceImpl(EventRepository eventRepository, TournamentRepository tournamentRepository) {
+    public EventServiceImpl(EventRepository eventRepository, TournamentRepository tournamentRepository, PlayerRepository playerRepository) {
         this.tournamentRepository = tournamentRepository;
         this.eventRepository = eventRepository;
+        this.playerRepository = playerRepository;
     }
 
     @Override
@@ -70,10 +75,26 @@ public class EventServiceImpl implements EventService{
         existingEvent.setEndDate(newEvent.getEndDate());
         // existingEvent.setGroupStages(newEvent.getGroupStages());
         existingEvent.setKnockoutStages(newEvent.getKnockoutStages());
-        existingEvent.setRankings(newEvent.getRankings());
+        // existingEvent.setRankings(newEvent.getRankings());
 
         return eventRepository.save(existingEvent);
         
+    }
+
+    public Event addPlayerToEvent(Long eventId, Long playerId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException(eventId));
+        Player player = playerRepository.findById(playerId)
+                .orElseThrow(() -> new PlayerNotFoundException(playerId));
+
+        PlayerRank playerRank = new PlayerRank();
+        playerRank.setPlayer(player);
+        playerRank.setEvent(event);
+        playerRank.setScore(0);  // Initialize score
+
+        event.getRankings().add(playerRank);  // Add PlayerRank to event rankings
+
+        return eventRepository.save(event);   // Save updated event
     }
 
     @Override

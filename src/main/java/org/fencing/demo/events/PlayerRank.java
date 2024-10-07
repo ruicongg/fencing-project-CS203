@@ -1,5 +1,9 @@
 package org.fencing.demo.events;
+import java.util.Objects;
+
 import org.fencing.demo.player.Player;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +35,7 @@ public class PlayerRank {
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
+    @JsonIgnore
     private Event event;
 
     public int score;
@@ -38,6 +43,19 @@ public class PlayerRank {
     public int winCount;
 
     public int lossCount;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);  // Use the unique `id` field
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PlayerRank that = (PlayerRank) o;
+        return id == that.id;  // Use only `id` for equality comparison
+    }
 
     public void updateAfterMatch(int pointsWon, int pointsOpponent) {
         if (pointsWon > pointsOpponent) {

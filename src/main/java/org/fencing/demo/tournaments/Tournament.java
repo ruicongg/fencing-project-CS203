@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 import org.fencing.demo.events.Event;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Set;
 
 @Data

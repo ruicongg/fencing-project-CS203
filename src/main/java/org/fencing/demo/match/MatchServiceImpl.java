@@ -9,6 +9,7 @@ import java.util.Set;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
+import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.stages.KnockoutStageNotFoundException;
 import org.fencing.demo.stages.KnockoutStageRepository;
@@ -98,7 +99,27 @@ public class MatchServiceImpl implements MatchService {
         existingMatch.setPlayer2(newMatch.getPlayer2());
         existingMatch.setPlayer1Score(newMatch.getPlayer1Score());
         existingMatch.setPlayer2Score(newMatch.getPlayer2Score());
-        existingMatch.setEvent(newMatch.getEvent());
+
+        Event event = existingMatch.getEvent();
+
+        // Fetch PlayerRank for Player 1 and Player 2
+        PlayerRank player1Rank = event.getRankings().stream()
+                                    .filter(rank -> rank.getPlayer().equals(newMatch.getPlayer1()))
+                                    .findFirst()
+                                    .orElse(null);
+
+        PlayerRank player2Rank = event.getRankings().stream()
+                                    .filter(rank -> rank.getPlayer().equals(newMatch.getPlayer2()))
+                                    .findFirst()
+                                    .orElse(null);
+        
+        if (player1Rank == null || player2Rank == null){
+            throw new IllegalArgumentException("Player is not registered in this event");
+        }
+        
+        player1Rank.updateAfterMatch(newMatch.getPlayer1Score(), newMatch.getPlayer2Score());
+        player2Rank.updateAfterMatch(newMatch.getPlayer2Score(), newMatch.getPlayer1Score());
+        
         return matchRepository.save(existingMatch);
         
     }

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/knockout")
 public class KnockoutStageController {
     private final KnockoutStageService knockoutStageService;
 

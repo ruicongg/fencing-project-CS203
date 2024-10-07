@@ -1,5 +1,6 @@
 package org.fencing.demo.stages;
 
+import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class KnockoutStageServiceImpl implements KnockoutStageService{
         }
         return eventRepository.findById(eventId).map(event -> {
             knockoutStage.setEvent(event);
+            event.getKnockoutStages().add(knockoutStage);
             return knockoutStageRepository.save(knockoutStage);
         }).orElseThrow(() -> new EventNotFoundException(eventId));
     }
@@ -50,6 +52,12 @@ public class KnockoutStageServiceImpl implements KnockoutStageService{
         if (eventId == null || knockoutStageId == null) {
             throw new IllegalArgumentException("Event ID and KnockoutStage ID cannot be null");
         }
-        knockoutStageRepository.deleteByEventIdAndId(eventId, knockoutStageId);
+        KnockoutStage knockoutStage = knockoutStageRepository.findById(knockoutStageId)
+            .orElseThrow(() -> new KnockoutStageNotFoundException(knockoutStageId));
+        Event event = eventRepository.findById(eventId)
+            .orElseThrow(() -> new EventNotFoundException(eventId));
+        event.getKnockoutStages().remove(knockoutStage);
+        
+        knockoutStageRepository.delete(knockoutStage);
     }
 }
