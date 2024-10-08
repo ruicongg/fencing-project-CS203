@@ -1,5 +1,6 @@
 package org.fencing.demo.events;
 import org.fencing.demo.player.Player;
+import org.fencing.demo.stages.GroupStage;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -32,6 +34,9 @@ public class PlayerRank {
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
+
+    @OneToMany
+    private GroupStage groupStage;
 
     public int score;
 

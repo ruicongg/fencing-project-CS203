@@ -76,7 +76,7 @@ public class Event {
 
     //HOMEWORKKKKK FOR JL
     public List<GroupStage> createPlayerGrpsForGroupStages() {
-        TreeMap<Integer, Set<Player>> groups = BeforeGroupStage.sortByELO(rankings);
+        TreeMap<Integer, Set<PlayerRank>> groups = BeforeGroupStage.sortByELO(rankings);
         for(Integer i:groups.keySet()){
             GroupStage grpStage = new GroupStage();
             grpStage.setPlayers(groups.get(i));

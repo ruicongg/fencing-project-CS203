@@ -3,7 +3,7 @@ package org.fencing.demo.stages;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.match.Match;
 // import org.fencing.demo.player.Player;
-import org.fencing.demo.player.Player;
+import org.fencing.demo.events.PlayerRank;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -43,8 +43,8 @@ public class GroupStage {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    
-    private Set<Player> players;
+    @OneToMany
+    private Set<PlayerRank> players;
 
     @OneToMany(mappedBy = "groupStage", cascade = CascadeType.ALL)
     private Set<Match> matches;
