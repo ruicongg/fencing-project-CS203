@@ -12,6 +12,7 @@ import org.fencing.demo.player.Player;
 //ELO sort
 public class BeforeGroupStage {
     
+    // return the grp number with the set of PlayerRanks
     public static TreeMap<Integer, Set<PlayerRank>> sortByELO(Set<PlayerRank> rankings){
         // Check if event and rankings exist
         if (rankings == null) {

@@ -1,21 +1,21 @@
 package org.fencing.demo.matchMaking;
 
-import org.fencing.demo.player.Player;
+import org.fencing.demo.events.PlayerRank;
 
 public class Pair {
-    Player p1;
-    Player p2;
+    PlayerRank p1;
+    PlayerRank p2;
 
-    public Pair(Player p1, Player p2){
+    public Pair(PlayerRank p1, PlayerRank p2){
         this.p1 = p1;
         this.p2 = p2;
     }
 
-    public Player getPlayer1(){
+    public PlayerRank getPlayerRank1(){
         return p1;
     }
 
-    public Player getPlayer2(){
+    public PlayerRank getPlayerRank2(){
         return p2;
     }
 }
