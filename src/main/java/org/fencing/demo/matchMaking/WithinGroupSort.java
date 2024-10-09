@@ -25,7 +25,7 @@ public class WithinGroupSort {
         return result;
     }
     
-    public TreeMap<Integer, Set<Match>> groupMatchMakingAlgorithm(Map<Integer, Set<PlayerRank>> groups, Event event){
+    public static TreeMap<Integer, Set<Match>> groupMatchMakingAlgorithm(Map<Integer, Set<PlayerRank>> groups, Event event){
         TreeMap<Integer, Set<Match>> resultMap = new TreeMap<>();
         for(int i : groups.keySet()){
             HashSet<Match> matches = new HashSet<>();

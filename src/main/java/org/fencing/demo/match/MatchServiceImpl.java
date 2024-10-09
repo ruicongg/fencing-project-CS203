@@ -9,6 +9,8 @@ import java.util.Set;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
+import org.fencing.demo.stages.GroupStage;
+import org.fencing.demo.stages.GroupStageRepository;
 import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.stages.KnockoutStageNotFoundException;
 import org.fencing.demo.stages.KnockoutStageRepository;
@@ -19,11 +21,14 @@ public class MatchServiceImpl implements MatchService {
     private final MatchRepository matchRepository;
     private final EventRepository eventRepository;
     private final KnockoutStageRepository knockoutStageRepository;
+    private final GroupStageRepository groupStageRepository;
 
-    public MatchServiceImpl(MatchRepository matchRepository, EventRepository eventRepository, KnockoutStageRepository knockoutStageRepository) {
+    public MatchServiceImpl(MatchRepository matchRepository, EventRepository eventRepository, 
+    KnockoutStageRepository knockoutStageRepository, GroupStageRepository groupStageRepository) {
         this.matchRepository = matchRepository;
         this.eventRepository = eventRepository;
         this.knockoutStageRepository = knockoutStageRepository;
+        this.groupStageRepository = groupStageRepository;
     }
 
     // public Match addMatch(Long eventId, Match match){
@@ -36,12 +41,23 @@ public class MatchServiceImpl implements MatchService {
     //     }).orElseThrow(() -> new EventNotFoundException(eventId));
     // }
 
-    //see how
     
     @Override
     @Transactional
-    public List<Match> addMatchesforGroupStage(Long groupstageId) {
-        return null;
+    public List<Match> addMatchesforGroupStage(Long groupstageId, Long eventId) {
+        if(eventId == null || groupstageId == null){
+            throw new IllegalArgumentException("Event ID and groupstage ID cannot be null");
+        }
+        if (!eventRepository.existsById(eventId)) {
+            throw new EventNotFoundException(eventId);
+        }
+        Event event = eventRepository.findById(eventId).get();
+        List<GroupStage> groupStages = event.getGroupStages();
+        if (groupStages.isEmpty()) {
+            throw new IllegalStateException("No groupStage found for event " + eventId);
+        }
+        //event.createRoundsForGroupStages() return Set of all groupMatches under a single event
+        return matchRepository.saveAll(event.createRoundsForGroupStages());
     }
 
     @Override

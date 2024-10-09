@@ -6,10 +6,12 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.TreeMap;
 
 import org.fencing.demo.match.Match;
 import org.fencing.demo.matchMaking.BeforeGroupStage;
+import org.fencing.demo.matchMaking.WithinGroupSort;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.KnockoutStage;
@@ -75,16 +77,24 @@ public class Event {
     private List<KnockoutStage> knockoutStages = new ArrayList<>();
 
     //HOMEWORKKKKK FOR JL
-    public List<GroupStage> createPlayerGrpsForGroupStages() {
+    //includes creating matches
+    public Set<Match> createRoundsForGroupStages() {
+        Set<Match> allMatchesForGroup = new HashSet<>();
+        //sort by elo ranks return grp num to playerRanks
         TreeMap<Integer, Set<PlayerRank>> groups = BeforeGroupStage.sortByELO(rankings);
+        //within groups to sort
+        TreeMap<Integer, Set<Match>> groupMatches = WithinGroupSort.groupMatchMakingAlgorithm(groups, this);
         for(Integer i:groups.keySet()){
             GroupStage grpStage = new GroupStage();
             grpStage.setPlayers(groups.get(i));
+            grpStage.setMatches(groupMatches.get(i));
+            // add all the matches to return
+            allMatchesForGroup.addAll(groupMatches.get(i));
             grpStage.setEvent(this);
             groupStages.add(grpStage);
         }
 
-        return groupStages;
+        return allMatchesForGroup;
     }
 
     public Set<Match> createRoundForKnockoutStage(KnockoutStage knockoutStage) {
