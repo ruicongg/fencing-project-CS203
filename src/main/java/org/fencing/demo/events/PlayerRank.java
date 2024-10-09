@@ -2,6 +2,7 @@ package org.fencing.demo.events;
 import java.util.Objects;
 
 import org.fencing.demo.player.Player;
+import org.fencing.demo.stages.GroupStage;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -37,6 +38,9 @@ public class PlayerRank {
     @JoinColumn(name = "event_id", nullable = false)
     @JsonIgnore
     private Event event;
+
+    @ManyToOne
+    private GroupStage groupStage;
 
     public int score;
 

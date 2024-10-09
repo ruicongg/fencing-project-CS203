@@ -5,7 +5,7 @@ import java.util.Set;
 
 public interface MatchService {
 
-    // Match addMatchforGroupStage(Long knockoutstageId, Match match);
+    List<Match> addMatchesforAllGroupStages(Long eventId);
 
     List<Match> addMatchesforKnockoutStage(Long eventId);
 

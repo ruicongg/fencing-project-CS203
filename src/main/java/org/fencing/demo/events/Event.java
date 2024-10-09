@@ -9,8 +9,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.HashSet;
+import java.util.TreeMap;
 
 import org.fencing.demo.match.Match;
+import org.fencing.demo.matchMaking.BeforeGroupStage;
+import org.fencing.demo.matchMaking.WithinGroupSort;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.KnockoutStage;
@@ -67,15 +71,37 @@ public class Event {
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
     
-    // @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
-    // @JsonIgnore // To prevent circular references during serialization
-    // private GroupStage GroupStages;
+    @Builder.Default
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    //@JsonIgnore // To prevent circular references during serialization
+    private List<GroupStage> groupStages = new ArrayList<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<KnockoutStage> knockoutStages = new ArrayList<>();
 
-    public Set<Match> createOrAdvanceRound(KnockoutStage knockoutStage) {
+    //HOMEWORKKKKK FOR JL
+    //includes creating matches
+    public Set<Match> createRoundsForGroupStages() {
+        Set<Match> allMatchesForGroup = new HashSet<>();
+        //sort by elo ranks return grp num to playerRanks
+        TreeMap<Integer, Set<PlayerRank>> groups = BeforeGroupStage.sortByELO(rankings);
+        //within groups to sort
+        TreeMap<Integer, Set<Match>> groupMatches = WithinGroupSort.groupMatchMakingAlgorithm(groups, this);
+        for(Integer i:groups.keySet()){
+            GroupStage grpStage = new GroupStage();
+            grpStage.setPlayers(groups.get(i));
+            grpStage.setMatches(groupMatches.get(i));
+            // add all the matches to return
+            allMatchesForGroup.addAll(groupMatches.get(i));
+            grpStage.setEvent(this);
+            groupStages.add(grpStage);
+        }
+
+        return allMatchesForGroup;
+    }
+
+    public Set<Match> createRoundForKnockoutStage(KnockoutStage knockoutStage) {
         
         List<Player> players = new ArrayList<>();
         int roundNum = knockoutStages.size();
