@@ -8,15 +8,21 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
+import java.util.Objects;
+
 import org.fencing.demo.events.Event;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.KnockoutStage;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 
 @Data
 @AllArgsConstructor
@@ -32,16 +38,19 @@ public class Match {
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
+    @JsonIgnore
     private Event event;
 
     // Optional ManyToOne relationship with GroupStage
     @ManyToOne
     @JoinColumn(name = "group_stage_id")
+    @JsonIgnore
     private GroupStage groupStage;
 
     // Optional ManyToOne relationship with KnockoutStage
     @ManyToOne
     @JoinColumn(name = "knockout_stage_id")
+    @JsonIgnore
     private KnockoutStage knockoutStage;
     
     @ManyToOne
@@ -74,5 +83,29 @@ public class Match {
 
     //     }
     // }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Match)) return false;
+        Match match = (Match) o;
+        return id == match.id; // Use the ID for equality check
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id); // Hash based on ID
+    }
+
+    @Override
+    public String toString() {
+        return "Match{" +
+               "id=" + id +
+               ", eventId=" + (event != null ? event.getId() : "null") +
+               ", knockoutStageId=" + (knockoutStage != null ? knockoutStage.getId() : "null") +
+               ", player1=" + (player1 != null ? player1.getUsername() : "null") + 
+               ", player2=" + (player2 != null ? player2.getUsername() : "null") +
+               '}';
+    }
 
 }

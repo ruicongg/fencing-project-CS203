@@ -2,7 +2,7 @@ package org.fencing.demo.stages;
 
 public interface KnockoutStageService {
 
-    KnockoutStage addKnockoutStage(Long eventId, KnockoutStage knockoutStage);
+    KnockoutStage addKnockoutStage(Long eventId);
 
     KnockoutStage getKnockoutStage(Long knockoutStageId);
 

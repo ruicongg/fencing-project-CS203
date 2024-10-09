@@ -52,13 +52,11 @@ public class Player implements Comparable<Player>{
     // private Set<Match> lostMatches = new HashSet<>();
 
 
-    @OneToMany(mappedBy = "player1")
-    private Set<Match> matchesAsPlayer1;
+    // @OneToMany(mappedBy = "player1")
+    // private Set<Match> matchesAsPlayer1;
 
-    @OneToMany(mappedBy = "player2")
-    private Set<Match> matchesAsPlayer2;
-
-
+    // @OneToMany(mappedBy = "player2")
+    // private Set<Match> matchesAsPlayer2;
 
 
     public Player(String username, String password, String email) {
@@ -72,6 +70,16 @@ public class Player implements Comparable<Player>{
     public int compareTo(Player otherPlayer) {
         // Sort in descending order of ELO
         return Integer.compare(otherPlayer.elo, this.elo); // Higher ELO comes first
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+               "id=" + id +
+               ", username='" + username + '\'' +
+               ", elo=" + elo +
+               // Avoid printing collections that cause recursion
+               '}';
     }
 
 }

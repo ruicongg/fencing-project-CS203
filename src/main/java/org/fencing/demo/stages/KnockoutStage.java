@@ -1,6 +1,8 @@
 package org.fencing.demo.stages;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.match.Match;
@@ -39,9 +41,22 @@ public class KnockoutStage {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event; 
 
+    @Builder.Default
     @OneToMany(mappedBy = "knockoutStage", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Match> matches; 
+    private List<Match> matches = new ArrayList<>(); 
 
-    private int roundNum;
+    // private int roundNum;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        KnockoutStage that = (KnockoutStage) o;
+        return Objects.equals(id, that.id) &&
+            Objects.equals(event, that.event);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, event);
+    }
 }

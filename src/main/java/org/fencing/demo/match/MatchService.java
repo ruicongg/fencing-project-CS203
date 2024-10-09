@@ -1,7 +1,6 @@
 package org.fencing.demo.match;
 
 import java.util.List;
-import java.util.Set;
 
 public interface MatchService {
 
@@ -11,7 +10,7 @@ public interface MatchService {
 
     // List<Match> getAllMatchesByEventId(Long eventId);
 
-   Set<Match> getAllMatchesForKnockoutStageByKnockoutStageId(Long knockoutStageId);
+    List<Match> getAllMatchesForKnockoutStageByKnockoutStageId(Long knockoutStageId);
 
     Match getMatch(Long id);
 

@@ -32,12 +32,14 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode
 @Entity
 @Table(name = "events")
 public class Event {
@@ -70,79 +72,75 @@ public class Event {
     // @OneToOne(mappedBy = "event", cascade = CascadeType.ALL)
     // @JsonIgnore // To prevent circular references during serialization
     // private GroupStage GroupStages;
-
+    
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<KnockoutStage> knockoutStages = new ArrayList<>();
 
-    public Set<Match> createOrAdvanceRound(KnockoutStage knockoutStage) {
+    public List<Match> getMatchesForKnockoutStage(KnockoutStage knockoutStage) {
         
         List<Player> players = new ArrayList<>();
-        int roundNum = knockoutStages.size();
+        int roundNum = knockoutStages.indexOf(knockoutStage);
+        
 
-        if (roundNum == 1) {
+        if (roundNum == 0) {
             // For the first round, convert PlayerRank set to a list of Players
-            List<PlayerRank> playerRankList = new ArrayList<>(rankings);
-            playerRankList.sort(Comparator.comparing(PlayerRank::getScore));
+            players = convertToPlayerList(rankings);
 
         } else {
-            KnockoutStage previousRound = knockoutStages.get(roundNum - 1 - 1);
-            Set<Match> previousMatches = previousRound.getMatches();
+            KnockoutStage previousRound = knockoutStages.get(roundNum - 1);
+            List<Match> previousMatches = previousRound.getMatches();
             for (Match match : previousMatches) {
                 players.add(match.getWinner()); // Get the winner of each match
 
             }
         }
+        System.out.println(players);
 
-        roundNum++; // Increment the round number
-        // KnockoutStage nextKnockoutStage = new KnockoutStage();
-        Set<Match> nextRound = createMatches(players, knockoutStage);
-        knockoutStage.setEvent(this);
-        knockoutStage.setMatches(nextRound);
-        knockoutStage.setRoundNum(roundNum);
-        knockoutStages.add(knockoutStage);
+        List<Match> nextRound = createMatches(players, knockoutStage);
         return nextRound; // Create matches for the next round
     }
 
     // Method to create matches for both first and subsequent rounds
-    private Set<Match> createMatches(List<Player> players, KnockoutStage nextKnockoutStage) {
-        Set<Match> matches = new LinkedHashSet<>();
+    private List<Match> createMatches(List<Player> players, KnockoutStage knockoutStage) {
+        List<Match> matches = new ArrayList<>();
         int n = players.size();
+        
         for (int i = 0; i < n / 2; i++) {
             Player player1 = players.get(i);
             Player player2 = players.get(n - 1 - i);
+            System.out.println(player1);
+            System.out.println(player2);
 
             // Create a match between the two players
             Match match = new Match();
             match.setPlayer1(player1);
             match.setPlayer2(player2);
             match.setEvent(this);
-            match.setKnockoutStage(nextKnockoutStage);
+            match.setKnockoutStage(knockoutStage);
             matches.add(match);
         }
-
         return matches;
     }
 
     public List<Player> convertToPlayerList(Set<PlayerRank> rankings) {
+        List<PlayerRank> playerRankList = new ArrayList<>(rankings);
+        playerRankList.sort(Comparator.comparing(PlayerRank::getScore));
+
         List<Player> players = new ArrayList<>();
-        for (PlayerRank playerRank : rankings) {
+        for (PlayerRank playerRank : playerRankList) {
             players.add(playerRank.getPlayer()); // Extract the Player object from PlayerRank
         }
         return players;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id);  // Use the unique `id` field
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Event event = (Event) o;
-        return id == event.id;  // Use only `id` for equality comparison
+    public String toString() {
+        return "Event{" +
+            "id=" + id +
+            ", startDate=" + startDate +
+            ", rankingsCount=" + rankings.size() + // Just print the count or IDs
+            '}';
     }
 
 }
