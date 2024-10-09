@@ -10,6 +10,8 @@ import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.PlayerRank;
+import org.fencing.demo.stages.GroupStage;
+//import org.fencing.demo.stages.GroupStageRepository;
 import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.stages.KnockoutStageNotFoundException;
 import org.fencing.demo.stages.KnockoutStageRepository;
@@ -21,10 +23,12 @@ public class MatchServiceImpl implements MatchService {
     private final EventRepository eventRepository;
     private final KnockoutStageRepository knockoutStageRepository;
 
-    public MatchServiceImpl(MatchRepository matchRepository, EventRepository eventRepository, KnockoutStageRepository knockoutStageRepository) {
+    public MatchServiceImpl(MatchRepository matchRepository, EventRepository eventRepository, 
+    KnockoutStageRepository knockoutStageRepository) {
         this.matchRepository = matchRepository;
         this.eventRepository = eventRepository;
         this.knockoutStageRepository = knockoutStageRepository;
+        // this.groupStageRepository = groupStageRepository;
     }
 
     // public Match addMatch(Long eventId, Match match){
@@ -36,6 +40,25 @@ public class MatchServiceImpl implements MatchService {
     //         return matchRepository.save(match);
     //     }).orElseThrow(() -> new EventNotFoundException(eventId));
     // }
+
+    
+    @Override
+    @Transactional
+    public List<Match> addMatchesforAllGroupStages(Long eventId) {
+        if(eventId == null){
+            throw new IllegalArgumentException("Event ID cannot be null");
+        }
+        if (!eventRepository.existsById(eventId)) {
+            throw new EventNotFoundException(eventId);
+        }
+        Event event = eventRepository.findById(eventId).get();
+        List<GroupStage> groupStages = event.getGroupStages();
+        if (groupStages.isEmpty()) {
+            throw new IllegalStateException("No groupStage found for event " + eventId);
+        }
+        //event.createRoundsForGroupStages() return Set of all groupMatches under a single event
+        return matchRepository.saveAll(event.createRoundsForGroupStages());
+    }
 
     @Override
     @Transactional
@@ -52,7 +75,7 @@ public class MatchServiceImpl implements MatchService {
             throw new IllegalStateException("No KnockoutStage found for event " + eventId);
         }
         KnockoutStage knockoutStage = knockoutStages.get(knockoutStages.size() - 1);
-        return matchRepository.saveAll(event.createOrAdvanceRound(knockoutStage));
+        return matchRepository.saveAll(event.createRoundForKnockoutStage(knockoutStage));
     }
 
     // @Override
