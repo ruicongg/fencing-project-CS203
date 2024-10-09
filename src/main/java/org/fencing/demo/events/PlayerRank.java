@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -35,7 +34,7 @@ public class PlayerRank {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @OneToMany
+    @ManyToOne
     private GroupStage groupStage;
 
     public int score;
