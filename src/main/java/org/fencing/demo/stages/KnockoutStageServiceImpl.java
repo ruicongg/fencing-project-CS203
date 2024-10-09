@@ -15,10 +15,11 @@ public class KnockoutStageServiceImpl implements KnockoutStageService{
         this.eventRepository = eventRepository;
     }
 
-    public KnockoutStage addKnockoutStage(Long eventId, KnockoutStage knockoutStage){
-        if (eventId == null || knockoutStage == null) {
+    public KnockoutStage addKnockoutStage(Long eventId){
+        if (eventId == null) {
             throw new IllegalArgumentException("Event ID and KnockoutStage cannot be null");
         }
+        KnockoutStage knockoutStage = new KnockoutStage();
         return eventRepository.findById(eventId).map(event -> {
             knockoutStage.setEvent(event);
             event.getKnockoutStages().add(knockoutStage);

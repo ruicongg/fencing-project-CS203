@@ -11,9 +11,9 @@ public interface MatchService {
 
     // List<Match> getAllMatchesByEventId(Long eventId);
 
-   Set<Match> getAllMatchesForKnockoutStageByKnockoutStageId(Long knockoutStageId);
+    List<Match> getAllMatchesForKnockoutStageByKnockoutStageId(Long knockoutStageId);
 
-   Set<Match> getAllMatchesForGroupStageByGroupStageId(Long groupStageId);
+    Set<Match> getAllMatchesForGroupStageByGroupStageId(Long groupStageId);
 
     Match getMatch(Long id);
 

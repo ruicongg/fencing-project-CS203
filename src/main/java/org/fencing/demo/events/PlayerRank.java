@@ -32,6 +32,7 @@ public class PlayerRank {
 
     @ManyToOne
     @JoinColumn(name = "player_id")
+    @JsonIgnore
     private Player player; 
 
     @ManyToOne
@@ -70,5 +71,14 @@ public class PlayerRank {
         }
         score -= pointsOpponent; // Deduct opponent's points
     }
+
+    @Override
+    public String toString() {
+        return "PlayerRank{" +
+            "playerId=" + player.getId() + // Just print the player's ID
+            ", score=" + score +
+            '}';
+    }
+
 
 }
