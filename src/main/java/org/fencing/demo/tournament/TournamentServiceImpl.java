@@ -1,4 +1,4 @@
-package org.fencing.demo.tournaments;
+package org.fencing.demo.tournament;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,40 +42,11 @@ public class TournamentServiceImpl implements TournamentService {
                 .orElseThrow(() -> new TournamentNotFoundException(tournamentId));
     }
 
-    // @Override
-    // public boolean doesTournamentExist(Long id) {
-    //     return tournamentRepository.existsById(id);
-    // }
-
-    @Override
-    public List<Tournament> findByStartDateTournament(LocalDate date){
-
-        return tournamentRepository.findByTournamentStartDate(date);
-    }
-
-    @Override
-    public List<Tournament> findByEndDateTournament(LocalDate date){
-
-        return tournamentRepository.findByTournamentEndDate(date);
-    }
-
-
-    // ! check before deleting
-    // @Override
-    // public Tournament updateTournament(Long id, Tournament tournament) {
-    //     tournament.setId(id);
-
-    //     return tournamentRepository.findById(id).map(existingTournament -> {
-    //         Optional.ofNullable(tournament.getName()).ifPresent(existingTournament::setName);
-    //         return tournamentRepository.save(existingTournament);
-    //     }).orElseThrow(() -> new RuntimeException("Tournament does not exist"));
-    // }
-
     @Override
     @Transactional
     public Tournament updateTournament(Long tournamentId, Tournament newTournament) {
         if (tournamentId == null || newTournament == null) {
-            throw new IllegalArgumentException("Tournament ID and updated Tournament cannot be null");
+            throw new TournamentNotFoundException(tournamentId);
         }
         return tournamentRepository.findById(tournamentId).map(existingTournament -> {
             existingTournament.setName(newTournament.getName());
@@ -92,7 +63,7 @@ public class TournamentServiceImpl implements TournamentService {
     @Transactional
     public void deleteTournament(Long tournamentId) {
         if (tournamentId == null) {
-            throw new IllegalArgumentException("Tournament ID cannot be null");
+            throw new TournamentNotFoundException(tournamentId);
         }
         tournamentRepository.deleteById(tournamentId);
     }

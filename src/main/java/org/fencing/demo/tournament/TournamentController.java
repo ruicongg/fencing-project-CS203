@@ -1,4 +1,4 @@
-package org.fencing.demo.tournaments;
+package org.fencing.demo.tournament;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,16 +45,6 @@ public class TournamentController {
     public Tournament createTournament(@RequestBody Tournament tournament) {
         return tournamentService.addTournament(tournament);
     }
-
-    // @PutMapping(path = "/tournaments/{id}")
-    // public ResponseEntity<Tournament> updateTournament(@PathVariable("id") Long id,
-    //         @RequestBody Tournament newTournament) {
-    //     if (!tournamentService.doesTournamentExist(id)) {
-    //         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    //     }
-    //     newTournament.setId(id);
-    //     return new ResponseEntity<>(tournamentService.saveTournament(newTournament), HttpStatus.OK);
-    // }
 
     @PutMapping(path = "/tournaments/{id}")
     @ResponseStatus(HttpStatus.OK)

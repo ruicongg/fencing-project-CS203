@@ -8,7 +8,7 @@ import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.match.MatchRepository;
-import org.fencing.demo.tournaments.Tournament;
+import org.fencing.demo.tournament.Tournament;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,8 @@
 package org.fencing.demo.exception;
 
 import java.util.*;
+
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,6 +21,13 @@ public class RestExceptionHandler {
     public ResponseEntity<Object> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         Map<String, Object> body = new HashMap<>();
         body.put("error", ex.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        // Customize the error message as needed
+        String body = "Data already exists. Please ensure the data entered is unique.";
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 

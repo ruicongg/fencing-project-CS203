@@ -6,8 +6,8 @@ import java.time.LocalDate;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerNotFoundException;
 import org.fencing.demo.player.PlayerRepository;
-import org.fencing.demo.tournaments.TournamentNotFoundException;
-import org.fencing.demo.tournaments.TournamentRepository;
+import org.fencing.demo.tournament.TournamentNotFoundException;
+import org.fencing.demo.tournament.TournamentRepository;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;

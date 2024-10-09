@@ -14,7 +14,7 @@ import org.fencing.demo.match.Match;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.KnockoutStage;
-import org.fencing.demo.tournaments.Tournament;
+import org.fencing.demo.tournament.Tournament;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

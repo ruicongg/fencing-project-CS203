@@ -1,4 +1,4 @@
-package org.fencing.demo.tournaments;
+package org.fencing.demo.tournament;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
