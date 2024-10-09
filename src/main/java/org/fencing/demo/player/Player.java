@@ -9,6 +9,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Email;
 // import java.util.HashSet;
 import java.util.Set;
+
+import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.match.Match;
 
 
@@ -58,7 +60,8 @@ public class Player implements Comparable<Player>{
     @OneToMany(mappedBy = "player2")
     private Set<Match> matchesAsPlayer2;
 
-
+    @OneToMany(mappedBy = "player")
+    Set<PlayerRank> playerRanks;
 
 
     public Player(String username, String password, String email) {

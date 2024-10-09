@@ -1,6 +1,7 @@
 package org.fencing.demo.stages;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
@@ -16,15 +17,17 @@ public class GroupStageServiceImpl implements GroupStageService{
         this.eventRepository = eventRepository;
     }
 
-    // public GroupStage addGroupStages(Long eventId){
-    //     if (eventId == null ) {
-    //         throw new IllegalArgumentException("Event ID and GroupStage cannot be null");
-    //     }
-    //     return eventRepository.findById(eventId).map(event -> {
-    //         List<GroupStage> grpStages = event.createPlayerGrpsForGroupStages();
-    //         return groupStageRepository.save(grpStages);
-    //     }).orElseThrow(() -> new EventNotFoundException(eventId));
-    // }
+    public GroupStage addGroupStage(Long eventId){
+        if (eventId == null) {
+            throw new IllegalArgumentException("Event ID and Group Stage cannot be null");
+        }
+        GroupStage grpStage = new GroupStage();
+        return eventRepository.findById(eventId).map(event -> {
+            grpStage.setEvent(event);
+            event.getGroupStages().add(grpStage);
+            return groupStageRepository.save(grpStage);
+        }).orElseThrow(() -> new EventNotFoundException(eventId));
+    }
 
     public GroupStage getGroupStage(Long groupStageId){
         if (groupStageId == null) {

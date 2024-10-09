@@ -11,7 +11,8 @@ import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.stages.GroupStage;
-//import org.fencing.demo.stages.GroupStageRepository;
+import org.fencing.demo.stages.GroupStageNotFoundException;
+import org.fencing.demo.stages.GroupStageRepository;
 import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.stages.KnockoutStageNotFoundException;
 import org.fencing.demo.stages.KnockoutStageRepository;
@@ -22,13 +23,14 @@ public class MatchServiceImpl implements MatchService {
     private final MatchRepository matchRepository;
     private final EventRepository eventRepository;
     private final KnockoutStageRepository knockoutStageRepository;
+    private final GroupStageRepository groupStageRepository;
 
     public MatchServiceImpl(MatchRepository matchRepository, EventRepository eventRepository, 
-    KnockoutStageRepository knockoutStageRepository) {
+    KnockoutStageRepository knockoutStageRepository, GroupStageRepository groupStageRepository) {
         this.matchRepository = matchRepository;
         this.eventRepository = eventRepository;
         this.knockoutStageRepository = knockoutStageRepository;
-        // this.groupStageRepository = groupStageRepository;
+        this.groupStageRepository = groupStageRepository;
     }
 
     // public Match addMatch(Long eventId, Match match){
@@ -97,6 +99,16 @@ public class MatchServiceImpl implements MatchService {
             throw new KnockoutStageNotFoundException(knockoutStageId);
         }
         return knockoutStageRepository.findById(knockoutStageId).get().getMatches();
+    }
+
+    public Set<Match> getAllMatchesForGroupStageByGroupStageId(Long groupStageId) {
+        if (groupStageId == null) {
+            throw new IllegalArgumentException("Group Stage ID cannot be null");
+        }
+        if (!groupStageRepository.existsById(groupStageId)) {
+            throw new GroupStageNotFoundException(groupStageId);
+        }
+        return groupStageRepository.findById(groupStageId).get().getMatches();
     }
 
     @Override

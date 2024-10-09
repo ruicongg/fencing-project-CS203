@@ -13,6 +13,8 @@ public interface MatchService {
 
    Set<Match> getAllMatchesForKnockoutStageByKnockoutStageId(Long knockoutStageId);
 
+   Set<Match> getAllMatchesForGroupStageByGroupStageId(Long groupStageId);
+
     Match getMatch(Long id);
 
     Match updateMatch(Long eventId, Long matchId, Match newMatch);

@@ -42,11 +42,11 @@ public class PlayerRank {
     @ManyToOne
     private GroupStage groupStage;
 
-    public int score;
+    private int score;
 
-    public int winCount;
+    private int winCount;
 
-    public int lossCount;
+    private int lossCount;
 
     @Override
     public int hashCode() {

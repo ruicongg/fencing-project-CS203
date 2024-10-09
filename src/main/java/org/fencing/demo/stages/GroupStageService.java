@@ -2,7 +2,7 @@ package org.fencing.demo.stages;
 
 public interface GroupStageService {
 
-    //GroupStage addGroupStages(Long eventId);
+    GroupStage addGroupStage(Long eventId);
 
     GroupStage getGroupStage(Long GroupStageId);
 
