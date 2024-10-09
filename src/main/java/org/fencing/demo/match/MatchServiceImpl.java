@@ -21,14 +21,13 @@ public class MatchServiceImpl implements MatchService {
     private final MatchRepository matchRepository;
     private final EventRepository eventRepository;
     private final KnockoutStageRepository knockoutStageRepository;
-    private final GroupStageRepository groupStageRepository;
 
     public MatchServiceImpl(MatchRepository matchRepository, EventRepository eventRepository, 
-    KnockoutStageRepository knockoutStageRepository, GroupStageRepository groupStageRepository) {
+    KnockoutStageRepository knockoutStageRepository) {
         this.matchRepository = matchRepository;
         this.eventRepository = eventRepository;
         this.knockoutStageRepository = knockoutStageRepository;
-        this.groupStageRepository = groupStageRepository;
+        // this.groupStageRepository = groupStageRepository;
     }
 
     // public Match addMatch(Long eventId, Match match){
@@ -44,9 +43,9 @@ public class MatchServiceImpl implements MatchService {
     
     @Override
     @Transactional
-    public List<Match> addMatchesforGroupStage(Long groupstageId, Long eventId) {
-        if(eventId == null || groupstageId == null){
-            throw new IllegalArgumentException("Event ID and groupstage ID cannot be null");
+    public List<Match> addMatchesforAllGroupStages(Long eventId) {
+        if(eventId == null){
+            throw new IllegalArgumentException("Event ID cannot be null");
         }
         if (!eventRepository.existsById(eventId)) {
             throw new EventNotFoundException(eventId);
