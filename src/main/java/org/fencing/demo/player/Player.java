@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.match.Match;
+import org.fencing.demo.user.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -19,23 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Getter
 @Setter
-@ToString(exclude = "password")
 @NoArgsConstructor
-@Table(name = "players")
-public class Player implements Comparable<Player>{
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotNull(message = "Username is required")
-    @Column(unique = true)
-    // ! might need to implement unique logic in service as well
-    private String username; 
-    @NotNull(message = "Password is required")
-    private String password; // Consider hashing passwords for security , Need Min length etc
-    @Email(message = "Email should be valid")
-    private String email;
+public class Player extends User implements Comparable<Player>{
     private int elo;
 
     private final int STARTING_ELO = 1700;
@@ -70,9 +56,7 @@ public class Player implements Comparable<Player>{
 
 
     public Player(String username, String password, String email) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
+        super(username, password, email);
         this.elo = STARTING_ELO;
     }
 
@@ -84,12 +68,7 @@ public class Player implements Comparable<Player>{
 
     @Override
     public String toString() {
-        return "Player{" +
-               "id=" + id +
-               ", username='" + username + '\'' +
-               ", elo=" + elo +
-               // Avoid printing collections that cause recursion
-               '}';
+        return super.toString() + elo;
     }
 
 }

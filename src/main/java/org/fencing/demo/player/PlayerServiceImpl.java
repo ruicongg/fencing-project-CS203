@@ -3,7 +3,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.hc.client5.http.auth.InvalidCredentialsException;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.match.Match;
@@ -17,13 +16,11 @@ public class PlayerServiceImpl implements PlayerService{
     private PlayerRepository playerRepository;
     private EventRepository eventRepository;
     private MatchRepository matchRepository;
-    private PasswordEncoder passwordEncoder;
 
     public PlayerServiceImpl(PlayerRepository playerRepository, EventRepository eventRepository, MatchRepository matchRepository, PasswordEncoder passwordEncoder){
         this.playerRepository = playerRepository;
         this.eventRepository = eventRepository;
         this.matchRepository = matchRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -37,7 +34,6 @@ public class PlayerServiceImpl implements PlayerService{
     }
     @Override
     public Player addPlayer(Player player){
-        player.setPassword(passwordEncoder.encode(player.getPassword()));
         return playerRepository.save(player);
     }
     @Override
@@ -48,17 +44,14 @@ public class PlayerServiceImpl implements PlayerService{
         if (existingPlayer.isPresent()) {
             Player updatedPlayer = existingPlayer.get();
 
-            // Update the fields of the existing player with the new player data
-            updatedPlayer.setUsername(player.getUsername());
-            updatedPlayer.setPassword(passwordEncoder.encode(player.getPassword()));
-            updatedPlayer.setEmail(player.getEmail()); 
+            // Update the fields of the existing player with the new player data 
             updatedPlayer.setElo(player.getElo());
             
             // Save the updated player
             return playerRepository.save(updatedPlayer);
         } else {
             // Return null or throw an exception if player with given id is not found
-            return null;
+            throw new PlayerNotFoundException(id);
         }
     }
     @Override
@@ -69,16 +62,6 @@ public class PlayerServiceImpl implements PlayerService{
         } else {
             // Handle the case where the player does not exist
             throw new IllegalArgumentException("Player with id " + id + " does not exist");
-        }
-    }
-
-    @Override
-    public Player login(String username, String password) throws InvalidCredentialsException {
-        Optional<Player> player = playerRepository.findByUsername(username);
-        if (player.isPresent() && passwordEncoder.matches(password, player.get().getPassword())) {
-            return player.get();
-        } else {    
-            throw new InvalidCredentialsException("Invalid username or password");
         }
     }
 
