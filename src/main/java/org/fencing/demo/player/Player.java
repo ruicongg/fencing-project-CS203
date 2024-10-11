@@ -5,9 +5,6 @@ package org.fencing.demo.player;
 
 import jakarta.persistence.*;
 import lombok.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Email;
-// import java.util.HashSet;
 import java.util.Set;
 
 import org.fencing.demo.events.PlayerRank;
@@ -24,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Player extends User implements Comparable<Player>{
     private int elo;
 
-    private final int STARTING_ELO = 1700;
+    private final int STARTING_ELO = 1700;  
 
     // @ManyToMany
     // @JoinTable(
