@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.fencing.demo.player.PlayerNotFoundException;
 
 
 import java.util.Optional;
@@ -105,7 +106,7 @@ public class PlayerTest {
         when(playerRepository.findById(1L)).thenReturn(Optional.empty());
 
 
-        assertThrows(IllegalArgumentException.class, () -> playerService.deletePlayer(1L));
+        assertThrows(PlayerNotFoundException.class, () -> playerService.deletePlayer(1L));
         verify(playerRepository, times(1)).findById(1L);
     }
 }
