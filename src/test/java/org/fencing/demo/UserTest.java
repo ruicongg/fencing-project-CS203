@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import org.apache.hc.client5.http.auth.InvalidCredentialsException;
 import org.fencing.demo.user.User;
+import org.fencing.demo.user.Role;
 import org.fencing.demo.user.UserRepository;
 import org.fencing.demo.user.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +47,7 @@ public class UserTest {
 
     @Test
     public void testCreateUser() {
-        User user = new User("testUser", "password123", "test@example.com");
+        User user = new User("testUser", "password123", "test@example.com", Role.USER);
         when(userRepository.save(any(User.class))).thenReturn(user);
 
         User createdUser = userService.addUser(user);
@@ -58,7 +59,7 @@ public class UserTest {
 
     @Test
     public void testGetUser_Success() {
-        User user = new User("testUser", "password123", "test@example.com");
+        User user = new User("testUser", "password123", "test@example.com", Role.USER);
         user.setId(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
@@ -81,7 +82,7 @@ public class UserTest {
 
     @Test
     public void testUpdateUser() {
-        User user = new User("testUser", "password123", "test@example.com");
+        User user = new User("testUser", "password123", "test@example.com", Role.USER);
         user.setId(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(user);
@@ -98,7 +99,7 @@ public class UserTest {
     @Test
     public void testDeleteUser_Success() {
         // Arrange
-        User user = new User("testUser", "password123", "test@example.com");
+        User user = new User("testUser", "password123", "test@example.com", Role.USER);
         user.setId(1L);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         doNothing().when(userRepository).delete(user);
@@ -121,7 +122,7 @@ public class UserTest {
 
     @Test
     public void testLogin_Success() {
-        User user = new User("testUser", "password123", "test@example.com");
+        User user = new User("testUser", "password123", "test@example.com", Role.USER);
         when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(user));
         when(passwordEncoder.matches("password123", user.getPassword())).thenReturn(true);
 
