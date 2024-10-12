@@ -97,15 +97,4 @@ public class Match {
         return Objects.hash(id); // Hash based on ID
     }
 
-    @Override
-    public String toString() {
-        return "Match{" +
-               "id=" + id +
-               ", eventId=" + (event != null ? event.getId() : "null") +
-               ", knockoutStageId=" + (knockoutStage != null ? knockoutStage.getId() : "null") +
-               ", player1=" + (player1 != null ? player1.getUsername() : "null") + 
-               ", player2=" + (player2 != null ? player2.getUsername() : "null") +
-               '}';
-    }
-
 }

@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.match.Match;
+import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -52,8 +53,8 @@ public class Player extends User implements Comparable<Player>{
     Set<PlayerRank> playerRanks;
 
 
-    public Player(String username, String password, String email) {
-        super(username, password, email);
+    public Player(String username, String password, String email, Role role) {
+        super(username, password, email, role);
         this.elo = STARTING_ELO;
     }
 
