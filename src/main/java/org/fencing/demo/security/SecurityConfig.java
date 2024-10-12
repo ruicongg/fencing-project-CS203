@@ -28,7 +28,7 @@ public class SecurityConfig {
 
         http
             .authorizeHttpRequests((authz) -> authz
-                .requestMatchers("/api/v1/auth/**").permitAll()  
+                .requestMatchers("/api/v1/auth/**").permitAll()  // Allow all requests to /api/v1/auth
                 .requestMatchers("/error").permitAll()  // Allow all requests to /error
                 .requestMatchers(HttpMethod.GET, "/tournaments/**").permitAll()  // Allow all GET requests to tournaments
                 .requestMatchers(HttpMethod.POST, "/tournaments").hasRole("ADMIN")  // Only admins can POST
