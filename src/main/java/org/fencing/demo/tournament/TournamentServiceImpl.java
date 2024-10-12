@@ -6,6 +6,8 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.dao.DataIntegrityViolationException;
+import jakarta.validation.Valid;
 
 import java.time.LocalDate;
 
@@ -20,9 +22,16 @@ public class TournamentServiceImpl implements TournamentService {
 
     @Override
     @Transactional
-    public Tournament addTournament(Tournament tournament) {
+    public Tournament addTournament(@Valid Tournament tournament) {
         if (tournament == null) {
             throw new IllegalArgumentException("Tournament cannot be null");
+        }
+        LocalDate currentDate = LocalDate.now();
+        if (tournament.getTournamentStartDate().isBefore(currentDate)) {
+            throw new IllegalArgumentException("Tournament start date must be after today");
+        }
+        if (tournament.getTournamentEndDate().isBefore(tournament.getTournamentStartDate())) {
+            throw new IllegalArgumentException("Tournament end date must be after start date");
         }
         return tournamentRepository.save(tournament);
     }
@@ -44,11 +53,15 @@ public class TournamentServiceImpl implements TournamentService {
 
     @Override
     @Transactional
-    public Tournament updateTournament(Long tournamentId, Tournament newTournament) {
+    public Tournament updateTournament(Long tournamentId, @Valid Tournament newTournament) {
         if (tournamentId == null || newTournament == null) {
-            throw new TournamentNotFoundException(tournamentId);
+            throw new IllegalArgumentException("Tournament ID and new Tournament data must not be null");
         }
         return tournamentRepository.findById(tournamentId).map(existingTournament -> {
+            // Validate dates before updating
+            if (newTournament.getTournamentEndDate().isBefore(newTournament.getTournamentStartDate())) {
+                throw new IllegalArgumentException("Tournament end date must be after start date");
+            }
             existingTournament.setName(newTournament.getName());
             existingTournament.setTournamentStartDate(newTournament.getTournamentStartDate());
             existingTournament.setTournamentEndDate(newTournament.getTournamentEndDate());
