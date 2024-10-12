@@ -184,27 +184,4 @@ public class BeforeGroupStageTest {
         // }
     }
 
-    // @Test
-    // public void testSortByELO_SortedByELO() {
-    //     // Test if players are sorted by their ELO properly
-    //     Set<PlayerRank> rankings = new TreeSet<>(new PlayerRankEloComparator());
-
-    //     // // Create 4 mock players with different ELOs
-    //     // rankings.add(new PlayerRank(new Player("Player 1"), 1200));
-    //     // rankings.add(new PlayerRank(new Player("Player 2"), 1300));
-    //     // rankings.add(new PlayerRank(new Player("Player 3"), 1250));
-    //     // rankings.add(new PlayerRank(new Player("Player 4"), 1100));
-
-    //     TreeMap<Integer, Set<PlayerRank>> result = BeforeGroupStage.sortByELO(rankings);
-        
-    //     // Verify that players are assigned to the correct group and sorted by ELO
-    //     int[] expectedELOs = {1300, 1250, 1200, 1100};
-    //     int index = 0;
-    //     for (Set<PlayerRank> group : result.values()) {
-    //         for (PlayerRank playerRank : group) {
-    //             assertEquals(expectedELOs[index], playerRank.getPlayer().getElo(), "Players should be sorted by ELO");
-    //             index++;
-    //         }
-    //     }
-    // }
 }
