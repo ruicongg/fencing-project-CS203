@@ -7,18 +7,17 @@ import java.util.HashSet;
 
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.events.PlayerRankEloComparator;
-import org.fencing.demo.player.Player;
 
 //ELO sort
 public class BeforeGroupStage {
     
     // return the grp number with the set of PlayerRanks
     public static TreeMap<Integer, Set<PlayerRank>> sortByELO(Set<PlayerRank> rankings){
-        // Check if event and rankings exist
+        //Check if event and rankings exist
         if (rankings == null) {
             return null;
         }
-
+    
         TreeMap<Integer, Set<PlayerRank>> resultMatches = new TreeMap<>();
 
         Set<PlayerRank> players = new TreeSet<>(new PlayerRankEloComparator());
@@ -69,8 +68,6 @@ public class BeforeGroupStage {
             numGroups++;
         }
 
-
-
         // Initialize the groups
         for (int i = 1; i <= numGroups; i++) {
             resultMatches.put(i, new HashSet<>());
@@ -79,13 +76,15 @@ public class BeforeGroupStage {
         // Distribute players across the groups in a round-robin fashion
         int currentGrp = 1;
         for (PlayerRank p : players) {
-            resultMatches.get(currentGrp).add(p);
+            Set<PlayerRank> currentPlayers = resultMatches.get(currentGrp);
+            currentPlayers.add(p); // Add player to the current group
             currentGrp++;
             if (currentGrp > numGroups) {
-                currentGrp = 1;
+                currentGrp = 1; // Reset group counter after the last group
             }
         }
 
+        
         return resultMatches;
     }
 }
