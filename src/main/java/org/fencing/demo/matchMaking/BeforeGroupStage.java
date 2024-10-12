@@ -76,15 +76,13 @@ public class BeforeGroupStage {
         // Distribute players across the groups in a round-robin fashion
         int currentGrp = 1;
         for (PlayerRank p : players) {
-            Set<PlayerRank> currentPlayers = resultMatches.get(currentGrp);
-            currentPlayers.add(p); // Add player to the current group
+            resultMatches.get(currentGrp).add(p);
             currentGrp++;
             if (currentGrp > numGroups) {
-                currentGrp = 1; // Reset group counter after the last group
+                currentGrp = 1;
             }
-        }
 
-        
+        }
         return resultMatches;
     }
 }

@@ -97,7 +97,7 @@ public class BeforeGroupStageTest {
         //Test the number of groups (should be 2 groups, each with 4 players)
         assertEquals(2, result.size(), "There should be 2 groups for 8 players");
 
-        // Check if the groups have the correct number of players
+        //Check if the groups have the correct number of players
         // for (Integer group : result.keySet()) {
         //     assertEquals(4, result.get(group).size(), "Each group should have 4 players");
         // }
