@@ -12,6 +12,7 @@ import jakarta.validation.constraints.Email;
 @ToString(exclude = "password")
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "app_user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
