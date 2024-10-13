@@ -1,8 +1,5 @@
 package org.fencing.demo.stages;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 

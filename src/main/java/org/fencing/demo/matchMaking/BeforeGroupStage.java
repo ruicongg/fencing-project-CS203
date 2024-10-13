@@ -7,7 +7,6 @@ import java.util.HashSet;
 
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.events.PlayerRankEloComparator;
-import org.fencing.demo.player.Player;
 
 //ELO sort
 public class BeforeGroupStage {

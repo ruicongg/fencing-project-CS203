@@ -17,8 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import jakarta.validation.ConstraintViolationException;
+
 @ExtendWith(MockitoExtension.class)
 public class TournamentServiceTest {
     @Mock
@@ -27,6 +26,7 @@ public class TournamentServiceTest {
     @InjectMocks
     private TournamentServiceImpl tournamentService;
 
+    // Add Tournament tests
     @Test
     public void addTournament_ValidTournament_ReturnsSavedTournament() {
         Tournament tournament = createValidTournament();
@@ -54,100 +54,6 @@ public class TournamentServiceTest {
         });
 
         verify(tournamentRepository, times(1)).save(any(Tournament.class));
-    }
-
-    @Test
-    public void getTournament_NonExistingId_ThrowsTournamentNotFoundException() {
-        when(tournamentRepository.findById(1L)).thenReturn(Optional.empty());
-
-        TournamentNotFoundException exception = assertThrows(TournamentNotFoundException.class, () -> {
-            tournamentService.getTournament(1L);
-        });
-
-        assertEquals("Could not find Tournament 1", exception.getMessage());
-        verify(tournamentRepository, times(1)).findById(1L);
-    }
-
-    @Test
-    public void updateTournament_ExistingTournament_ReturnsUpdatedTournament() {
-        Long tournamentId = 1L;
-        Tournament existingTournament = createValidTournament();
-        existingTournament.setId(tournamentId);
-
-        Tournament newTournament = createValidTournament();
-        newTournament.setName("New Name");
-
-        when(tournamentRepository.findById(tournamentId)).thenReturn(Optional.of(existingTournament));
-        when(tournamentRepository.save(any(Tournament.class))).thenReturn(existingTournament);
-
-        Tournament updatedTournament = tournamentService.updateTournament(tournamentId, newTournament);
-
-        assertNotNull(updatedTournament);
-        assertEquals("New Name", updatedTournament.getName());
-    }
-
-    @Test
-    public void updateTournament_NonExistingTournament_ThrowsTournamentNotFoundException() {
-        Long tournamentId = 1L;
-        Tournament newTournament = createValidTournament();
-
-        when(tournamentRepository.findById(tournamentId)).thenReturn(Optional.empty());
-
-        assertThrows(TournamentNotFoundException.class,
-                () -> tournamentService.updateTournament(tournamentId, newTournament));
-    }
-
-    @Test
-    public void updateTournament_InvalidDates_ThrowsIllegalArgumentException() {
-        Long tournamentId = 1L;
-        Tournament existingTournament = createValidTournament();
-        existingTournament.setId(tournamentId);
-
-        Tournament newTournament = createValidTournament();
-        newTournament.setTournamentStartDate(LocalDate.of(2023, 1, 1));
-        newTournament.setTournamentEndDate(LocalDate.of(2022, 12, 31));
-
-        when(tournamentRepository.findById(tournamentId)).thenReturn(Optional.of(existingTournament));
-
-        assertThrows(IllegalArgumentException.class,
-                () -> tournamentService.updateTournament(tournamentId, newTournament));
-
-        verify(tournamentRepository, never()).save(any(Tournament.class));
-    }
-
-    @Test
-    public void listTournaments_MultipleTournaments_ReturnsListOfTournaments() {
-        List<Tournament> tournaments = Arrays.asList(createValidTournament(), createValidTournament());
-        when(tournamentRepository.findAll()).thenReturn(tournaments);
-
-        List<Tournament> result = tournamentService.listTournaments();
-
-        assertEquals(2, result.size());
-        verify(tournamentRepository, times(1)).findAll();
-    }
-
-    @Test
-    public void findByAvailability_ValidDateRange_ReturnsTournaments() {
-        LocalDate startDate = LocalDate.of(2025, 2, 1);
-        LocalDate endDate = LocalDate.of(2025, 2, 28);
-        List<Tournament> tournaments = Arrays.asList(createValidTournament());
-
-        when(tournamentRepository.findByTournamentStartDateLessThanEqualAndTournamentEndDateGreaterThanEqual(
-                endDate, startDate)).thenReturn(tournaments);
-
-        List<Tournament> result = tournamentService.findByAvailability(startDate, endDate);
-
-        assertEquals(1, result.size());
-        verify(tournamentRepository, times(1))
-                .findByTournamentStartDateLessThanEqualAndTournamentEndDateGreaterThanEqual(endDate, startDate);
-    }
-
-    @Test
-    public void findByAvailability_InvalidDateRange_ThrowsIllegalArgumentException() {
-        LocalDate startDate = LocalDate.of(2023, 2, 28);
-        LocalDate endDate = LocalDate.of(2023, 2, 1);
-
-        assertThrows(IllegalArgumentException.class, () -> tournamentService.findByAvailability(startDate, endDate));
     }
 
     @Test
@@ -216,6 +122,105 @@ public class TournamentServiceTest {
         verify(tournamentRepository, times(1)).save(tournament);
     }
 
+    // Get Tournament tests
+    @Test
+    public void getTournament_NonExistingId_ThrowsTournamentNotFoundException() {
+        when(tournamentRepository.findById(1L)).thenReturn(Optional.empty());
+
+        TournamentNotFoundException exception = assertThrows(TournamentNotFoundException.class, () -> {
+            tournamentService.getTournament(1L);
+        });
+
+        assertEquals("Could not find Tournament 1", exception.getMessage());
+        verify(tournamentRepository, times(1)).findById(1L);
+    }
+
+    // Update Tournament tests
+    @Test
+    public void updateTournament_ExistingTournament_ReturnsUpdatedTournament() {
+        Long tournamentId = 1L;
+        Tournament existingTournament = createValidTournament();
+        existingTournament.setId(tournamentId);
+
+        Tournament newTournament = createValidTournament();
+        newTournament.setName("New Name");
+
+        when(tournamentRepository.findById(tournamentId)).thenReturn(Optional.of(existingTournament));
+        when(tournamentRepository.save(any(Tournament.class))).thenReturn(existingTournament);
+
+        Tournament updatedTournament = tournamentService.updateTournament(tournamentId, newTournament);
+
+        assertNotNull(updatedTournament);
+        assertEquals("New Name", updatedTournament.getName());
+    }
+
+    @Test
+    public void updateTournament_NonExistingTournament_ThrowsTournamentNotFoundException() {
+        Long tournamentId = 1L;
+        Tournament newTournament = createValidTournament();
+
+        when(tournamentRepository.findById(tournamentId)).thenReturn(Optional.empty());
+
+        assertThrows(TournamentNotFoundException.class,
+                () -> tournamentService.updateTournament(tournamentId, newTournament));
+    }
+
+    @Test
+    public void updateTournament_InvalidDates_ThrowsIllegalArgumentException() {
+        Long tournamentId = 1L;
+        Tournament existingTournament = createValidTournament();
+        existingTournament.setId(tournamentId);
+
+        Tournament newTournament = createValidTournament();
+        newTournament.setTournamentStartDate(LocalDate.of(2023, 1, 1));
+        newTournament.setTournamentEndDate(LocalDate.of(2022, 12, 31));
+
+        when(tournamentRepository.findById(tournamentId)).thenReturn(Optional.of(existingTournament));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> tournamentService.updateTournament(tournamentId, newTournament));
+
+        verify(tournamentRepository, never()).save(any(Tournament.class));
+    }
+
+    // List Tournaments test
+    @Test
+    public void listTournaments_MultipleTournaments_ReturnsListOfTournaments() {
+        List<Tournament> tournaments = Arrays.asList(createValidTournament(), createValidTournament());
+        when(tournamentRepository.findAll()).thenReturn(tournaments);
+
+        List<Tournament> result = tournamentService.listTournaments();
+
+        assertEquals(2, result.size());
+        verify(tournamentRepository, times(1)).findAll();
+    }
+
+    // Find By Availability tests
+    @Test
+    public void findByAvailability_ValidDateRange_ReturnsTournaments() {
+        LocalDate startDate = LocalDate.now().plusDays(1);
+        LocalDate endDate = LocalDate.now().plusDays(30);
+        List<Tournament> tournaments = Arrays.asList(createValidTournament());
+
+        when(tournamentRepository.findByTournamentStartDateLessThanEqualAndTournamentEndDateGreaterThanEqual(
+                endDate, startDate)).thenReturn(tournaments);
+
+        List<Tournament> result = tournamentService.findByAvailability(startDate, endDate);
+
+        assertEquals(1, result.size());
+        verify(tournamentRepository, times(1))
+                .findByTournamentStartDateLessThanEqualAndTournamentEndDateGreaterThanEqual(endDate, startDate);
+    }
+
+    @Test
+    public void findByAvailability_InvalidDateRange_ThrowsIllegalArgumentException() {
+        LocalDate startDate = LocalDate.of(2023, 2, 28);
+        LocalDate endDate = LocalDate.of(2023, 2, 1);
+
+        assertThrows(IllegalArgumentException.class, () -> tournamentService.findByAvailability(startDate, endDate));
+    }
+
+    // Helper method
     private Tournament createValidTournament() {
         return Tournament.builder()
                 .name("Spring Championship")

@@ -3,7 +3,6 @@ package org.fencing.demo.match;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -14,7 +13,6 @@ import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.GroupStageNotFoundException;
 import org.fencing.demo.stages.GroupStageRepository;
-import org.fencing.demo.player.Player;
 import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.stages.KnockoutStageNotFoundException;
 import org.fencing.demo.stages.KnockoutStageRepository;

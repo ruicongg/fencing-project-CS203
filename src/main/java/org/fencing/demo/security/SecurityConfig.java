@@ -27,24 +27,28 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            .authorizeHttpRequests((authz) -> authz
-                .requestMatchers("/api/v1/auth/**").permitAll()  // Allow all requests to /api/v1/auth
-                .requestMatchers("/error").permitAll()  // Allow all requests to /error
-                .requestMatchers(HttpMethod.GET, "/tournaments/**").permitAll()  // Allow all GET requests to tournaments
-                .requestMatchers(HttpMethod.POST, "/tournaments").hasRole("ADMIN")  // Only admins can POST
-                .requestMatchers(HttpMethod.PUT, "/tournaments/*").hasRole("ADMIN")  // Only admins can PUT
-                .requestMatchers(HttpMethod.DELETE, "/tournaments/*").hasRole("ADMIN")  // Only admins can DELETE
-                .anyRequest().authenticated()  // All other requests require authentication
+                .csrf(csrf -> csrf.disable()) // Disable CSRF protection
+                .authorizeHttpRequests((authz) -> authz
+                        .requestMatchers("/api/v1/auth/**").permitAll() // Allow all requests to /api/v1/auth
+                        .requestMatchers("/error").permitAll() // Allow all requests to /error
+                        .requestMatchers(HttpMethod.GET, "/tournaments/**").permitAll() // Allow all GET requests to
+                                                                                        // tournaments
+                        .requestMatchers(HttpMethod.POST, "/tournaments").hasRole("ADMIN") // Only admins can POST
+                        .requestMatchers(HttpMethod.PUT, "/tournaments/*").hasRole("ADMIN") // Only admins can PUT
+                        .requestMatchers(HttpMethod.DELETE, "/tournaments/*").hasRole("ADMIN") // Only admins can DELETE
+                        .anyRequest().authenticated() // All other requests require authentication
 
-        )
+                )
 
-        // ensure that the application won’t create any session in our stateless REST APIs
-        .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .httpBasic(Customizer.withDefaults())
-        .formLogin(form -> form.disable())
-        .headers(header -> header.disable()) // disable the security headers, as we do not return HTML in our APIs
-        .authenticationProvider(authProvider)
-        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                // ensure that the application won’t create any session in our stateless REST
+                // APIs
+                .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .httpBasic(Customizer.withDefaults())
+                .formLogin(form -> form.disable())
+                .headers(header -> header.disable()) // disable the security headers, as we do not return HTML in our
+                                                     // APIs
+                .authenticationProvider(authProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
