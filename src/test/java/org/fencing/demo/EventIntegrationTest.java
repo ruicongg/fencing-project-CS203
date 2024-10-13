@@ -66,6 +66,8 @@ public class EventIntegrationTest {
 
     private User adminUser;
 
+    private User regularUser;
+
     private final String baseUrl = "http://localhost:";
 
     @BeforeEach
@@ -75,6 +77,9 @@ public class EventIntegrationTest {
 
         tournament = createValidTournament();
         tournamentRepository.save(tournament);
+
+        regularUser = createValidRegularUser(encoder);
+        userRepository.save(regularUser);
     }
 
     @AfterEach
@@ -109,6 +114,26 @@ public class EventIntegrationTest {
         assertNotNull(result.getBody());
         assertEquals(event.getGender(), result.getBody().getGender());
         assertEquals(event.getWeapon(), result.getBody().getWeapon());
+    }
+
+    @Test
+    public void addEvent_ForbiddenForRegularUser_Failure() throws Exception {
+        // Create the URI for adding an event
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
+
+        // Create a new event
+        Event event = new Event();
+        event.setGender(Gender.MALE);
+        event.setWeapon(WeaponType.FOIL);
+        event.setStartDate(LocalDateTime.of(2025, 1, 1, 10, 0));
+        event.setEndDate(LocalDateTime.of(2025, 1, 2, 18, 0));
+
+        // Send the POST request with regular user credentials
+        ResponseEntity<Event> result = restTemplate.withBasicAuth("user", "strongpassword456")
+                                            .postForEntity(uri, event, Event.class);
+
+        // Verify the result
+        assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());  // Expecting 403 Forbidden
     }
 
     // Get All Events by Tournament ID - Success
@@ -162,6 +187,30 @@ public class EventIntegrationTest {
         assertEquals(event.getId(), result.getBody().getId());
     }
 
+    @Test
+    public void getAllEventsByTournamentId_RegularUser_Success() throws Exception {
+        // Create and save an event
+        Event event = new Event();
+        event.setGender(Gender.MALE);
+        event.setWeapon(WeaponType.FOIL);
+        event.setStartDate(LocalDateTime.of(2025, 1, 1, 10, 0));
+        event.setEndDate(LocalDateTime.of(2025, 1, 2, 18, 0));
+        event.setTournament(tournament);
+        eventRepository.save(event);
+
+        // Create the URI for retrieving events
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
+
+        // Send the GET request with regular user credentials
+        ResponseEntity<Event[]> result = restTemplate.withBasicAuth("user", "strongpassword456")
+                                                .getForEntity(uri, Event[].class);
+
+        // Verify the result
+        assertEquals(HttpStatus.OK, result.getStatusCode());  // Expecting 200 OK
+        assertNotNull(result.getBody());
+        assertEquals(1, result.getBody().length);
+    }
+
     // Update Event - Success
     @Test
     @Transactional
@@ -192,6 +241,32 @@ public class EventIntegrationTest {
         assertEquals("EPEE", result.getBody().getWeapon());
     }
 
+    @Test
+    @Transactional
+    public void updateEvent_ForbiddenForRegularUser_Failure() throws Exception {
+        // Create and save a tournament and an event
+        Event event = new Event();
+        event.setGender(Gender.MALE);
+        event.setWeapon(WeaponType.FOIL);
+        event.setStartDate(LocalDateTime.of(2025, 1, 1, 10, 0));
+        event.setEndDate(LocalDateTime.of(2025, 1, 2, 18, 0));
+        event.setTournament(tournament);
+        event = eventRepository.save(event);
+        
+        event.setGender(Gender.FEMALE);
+        event.setWeapon(WeaponType.EPEE);
+
+        // Create the URI for updating the event
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId());
+
+        // Send the PUT request with regular user credentials
+        ResponseEntity<Event> result = restTemplate.withBasicAuth("user", "strongpassword456")
+                                            .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), Event.class);
+
+        // Verify the result
+        assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());  // Expecting 403 Forbidden
+    }
+
     // Delete Event - Success
     @Test
     public void deleteEvent_Success() throws Exception {
@@ -216,6 +291,28 @@ public class EventIntegrationTest {
         assertFalse(eventRepository.findById(event.getId()).isPresent());
     }
 
+    @Test
+    public void deleteEvent_ForbiddenForRegularUser_Failure() throws Exception {
+        // Create and save a tournament and an event
+        Event event = new Event();
+        event.setGender(Gender.MALE);
+        event.setWeapon(WeaponType.FOIL);
+        event.setStartDate(LocalDateTime.of(2025, 1, 1, 10, 0));
+        event.setEndDate(LocalDateTime.of(2025, 1, 2, 18, 0));
+        event.setTournament(tournament);
+        event = eventRepository.save(event);
+
+        // Create the URI for deleting the event
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId());
+
+        // Send the DELETE request with regular user credentials
+        ResponseEntity<Void> result = restTemplate.withBasicAuth("user", "strongpassword456")
+                                            .exchange(uri, HttpMethod.DELETE, null, Void.class);
+
+        // Verify the result
+        assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());  // Expecting 403 Forbidden
+    }
+
     // Helper methods for creating valid entities
     private Tournament createValidTournament() {
         return Tournament.builder()
@@ -233,8 +330,17 @@ public class EventIntegrationTest {
         User user = new User();
         user.setUsername("admin");
         user.setPassword(encoder.encode("strongpassword123"));  // Encode the password
-        user.setEmail("validuser@example.com");  // Set a valid email
+        user.setEmail("admin@example.com");  // Set a valid email
         user.setRole(Role.ADMIN);  // Use the correct enum value for Role
+        return user;
+    }
+
+    public User createValidRegularUser(BCryptPasswordEncoder encoder) {
+        User user = new User();
+        user.setUsername("user");
+        user.setPassword(encoder.encode("strongpassword456"));  // Encode the password
+        user.setEmail("validuser@example.com");  // Set a valid email
+        user.setRole(Role.USER);  // Use the correct enum value for Role
         return user;
     }
 }

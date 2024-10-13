@@ -36,6 +36,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/tournaments").hasRole("ADMIN") // Only admins can POST
                         .requestMatchers(HttpMethod.PUT, "/tournaments/*").hasRole("ADMIN") // Only admins can PUT
                         .requestMatchers(HttpMethod.DELETE, "/tournaments/*").hasRole("ADMIN") // Only admins can DELETE
+                        // .requestMatchers(HttpMethod.POST, "/tournaments/**/events").hasRole("ADMIN")
+                        // .requestMatchers(HttpMethod.PUT, "/tournaments/**/events/*").hasRole("ADMIN")
+                        // .requestMatchers(HttpMethod.DELETE, "/tournaments/**/events/*").hasRole("ADMIN")
                         .anyRequest().authenticated() // All other requests require authentication
 
                 )
