@@ -2,7 +2,9 @@ package org.fencing.demo.stages;
 
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
+import org.springframework.stereotype.Service;
 
+@Service
 public class GroupStageServiceImpl implements GroupStageService{
     
     private final GroupStageRepository groupStageRepository;

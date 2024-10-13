@@ -38,13 +38,6 @@ public class UserController {
         return user;
     }
 
-    // Add new user 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/users")
-    public User addUser(@Valid @RequestBody User user) {  
-        return userService.addUser(user);  
-    }
-
     // Updates user info 
     @PutMapping("/users/{id}")
     public User updateUser(@PathVariable Long id, @Valid @RequestBody User updatedUserInfo) {
