@@ -1,9 +1,10 @@
 package org.fencing.demo.matchMaking;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.TreeMap;
 
 import org.fencing.demo.match.Match;
@@ -12,9 +13,9 @@ import org.fencing.demo.events.Event;
 
 public class WithinGroupSort {
 
-    public static TreeSet<Pair> permutation(Set<PlayerRank> playerRanks) {
+    public static List<Pair> permutation(List<PlayerRank> playerRanks) {
 
-        TreeSet<Pair> result = new TreeSet<>();
+        List<Pair> result = new ArrayList<>();
         PlayerRank[] playerArr = playerRanks.toArray(new PlayerRank[0]);
 
         for(int i = 0; i < playerArr.length - 1; i++){
@@ -25,11 +26,11 @@ public class WithinGroupSort {
         return result;
     }
     
-    public static TreeMap<Integer, Set<Match>> groupMatchMakingAlgorithm(Map<Integer, Set<PlayerRank>> groups, Event event){
-        TreeMap<Integer, Set<Match>> resultMap = new TreeMap<>();
+    public static TreeMap<Integer, List<Match>> groupMatchMakingAlgorithm(Map<Integer, List<PlayerRank>> groups, Event event){
+        TreeMap<Integer, List<Match>> resultMap = new TreeMap<>();
         for(int i : groups.keySet()){
-            HashSet<Match> matches = new HashSet<>();
-            TreeSet<Pair> pairings = permutation(groups.get(i));
+            List<Match> matches = new ArrayList<>();
+            List<Pair> pairings = permutation(groups.get(i));
             for(Pair p : pairings){
                 Match current = new Match();
                 current.setEvent(event);

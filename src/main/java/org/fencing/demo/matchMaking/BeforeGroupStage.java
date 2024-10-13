@@ -3,7 +3,9 @@ package org.fencing.demo.matchMaking;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.TreeMap;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.events.PlayerRankEloComparator;
@@ -12,13 +14,13 @@ import org.fencing.demo.events.PlayerRankEloComparator;
 public class BeforeGroupStage {
     
     // return the grp number with the set of PlayerRanks
-    public static TreeMap<Integer, Set<PlayerRank>> sortByELO(Set<PlayerRank> rankings){
+    public static TreeMap<Integer, List<PlayerRank>> sortByELO(Set<PlayerRank> rankings){
         //Check if event and rankings exist
         if (rankings == null) {
             return null;
         }
     
-        TreeMap<Integer, Set<PlayerRank>> resultMatches = new TreeMap<>();
+        TreeMap<Integer, List<PlayerRank>> resultMatches = new TreeMap<>();
 
         Set<PlayerRank> players = new TreeSet<>(new PlayerRankEloComparator());
 
@@ -70,7 +72,7 @@ public class BeforeGroupStage {
 
         // Initialize the groups
         for (int i = 1; i <= numGroups; i++) {
-            resultMatches.put(i, new HashSet<>());
+            resultMatches.put(i, new ArrayList<>());
         }
 
         // Distribute players across the groups in a round-robin fashion
