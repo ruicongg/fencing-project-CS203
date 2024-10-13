@@ -22,11 +22,12 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        Role userRole = Role.valueOf(request.getRole().toUpperCase());
         User user = User.builder()
             .username(request.getUsername())
             .email(request.getEmail())
             .password(passwordEncoder.encode(request.getPassword()))
-            .role(Role.USER)
+            .role(userRole)
             .build();
         userRepository.save(user);
         String jwtToken = jwtService.generateToken(user);

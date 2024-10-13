@@ -40,13 +40,11 @@ public class SecurityConfig {
 
                 )
 
-                // ensure that the application won’t create any session in our stateless REST
-                // APIs
+                // ensure that the application won’t create any session in our stateless REST APIs
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(form -> form.disable())
-                .headers(header -> header.disable()) // disable the security headers, as we do not return HTML in our
-                                                     // APIs
+                .headers(header -> header.disable()) // disable the security headers, as we do not return HTML in our APIs
                 .authenticationProvider(authProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
