@@ -5,6 +5,6 @@ import java.util.Comparator;
 public class PlayerRankEloComparator implements Comparator<PlayerRank>{
     
     public int compare(PlayerRank p1, PlayerRank p2) {
-            return p1.getPlayer().compareTo(p2.getPlayer());
+        return Integer.compare(p1.getPlayer().getElo(), p2.getPlayer().getElo());
     }
 }

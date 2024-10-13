@@ -108,7 +108,7 @@ public class MatchServiceImpl implements MatchService {
         return knockoutStageRepository.findById(knockoutStageId).get().getMatches();
     }
 
-    public Set<Match> getAllMatchesForGroupStageByGroupStageId(Long groupStageId) {
+    public List<Match> getAllMatchesForGroupStageByGroupStageId(Long groupStageId) {
         if (groupStageId == null) {
             throw new IllegalArgumentException("Group Stage ID cannot be null");
         }

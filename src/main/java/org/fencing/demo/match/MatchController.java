@@ -43,7 +43,7 @@ public class MatchController {
 
     @GetMapping("/tournaments/{tournamentId}/events/{eventId}/groupStage/{groupStageId}/matches")
     @ResponseStatus(HttpStatus.OK)
-    public Set<Match> getAllMatchesForGroupStageByGroupStageId(@PathVariable Long groupStageId) {
+    public List<Match> getAllMatchesForGroupStageByGroupStageId(@PathVariable Long groupStageId) {
         return matchService.getAllMatchesForGroupStageByGroupStageId(groupStageId);
     }
 
