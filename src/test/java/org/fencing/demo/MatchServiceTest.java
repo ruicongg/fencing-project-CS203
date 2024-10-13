@@ -456,7 +456,6 @@ public class MatchServiceTest {
     //         .build();
     // }
 
-<<<<<<< HEAD
     // private KnockoutStage createValidKnockoutStage(Event event) {
     //     return KnockoutStage.builder()
     //         .id(1L)
@@ -497,12 +496,11 @@ public class MatchServiceTest {
         assertThrows(IllegalStateException.class, () -> {
             matchService.addMatchesforAllGroupStages(eventId);
         });
-=======
+    }
     private KnockoutStage createValidKnockoutStage(Event event) {
         return KnockoutStage.builder()
             .id(1L)
             .event(event)
             .build();
->>>>>>> 51132a64981348f2d3f30f7ca77fb731f8c23655
     }
 }

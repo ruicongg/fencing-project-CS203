@@ -24,19 +24,19 @@ public class GroupStageController {
         return groupStageService.addGroupStage(eventId);
     }
 
-    @GetMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/{groupStageId}")
+    @GetMapping("/tournaments/{tournamentId}/events/{eventId}/groupStage/{groupStageId}")
     @ResponseStatus(HttpStatus.OK)
     public GroupStage getGroupStage(@PathVariable Long groupStageId) {
         return groupStageService.getGroupStage(groupStageId);
     }
 
-    @PutMapping("/tournaments/{tournamentId}/events/{eventId}/KnockoutStage/{groupStageId}")
+    @PutMapping("/tournaments/{tournamentId}/events/{eventId}/groupStage/{groupStageId}")
     @ResponseStatus(HttpStatus.OK)
     public GroupStage updateGroupStage(@PathVariable Long eventId, @PathVariable Long groupStageId, @RequestBody GroupStage groupStage) {
         return groupStageService.updateGroupStage(eventId, groupStageId, groupStage);
     }
 
-    @DeleteMapping("/tournaments/{tournamentId}/events/{eventId}/KnockoutStage/{groupStageId}")
+    @DeleteMapping("/tournaments/{tournamentId}/events/{eventId}/groupStage/{groupStageId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteGroupStage(@PathVariable Long eventId, @PathVariable Long groupStageId) {
         groupStageService.deleteGroupStage(eventId, groupStageId);
