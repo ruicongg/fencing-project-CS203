@@ -15,6 +15,11 @@ public class PlayerRankComparator implements Comparator<PlayerRank> {
         }
 
         // If both win and loss counts are the same, compare by higher score
-        return Integer.compare(p2.getScore(), p1.getScore()); // Descending order of score
+        if (p1.getScore() != p2.getScore()) {
+            return Integer.compare(p2.getScore(), p1.getScore()); // Descending order of score
+        }
+
+        // As a final tiebreaker, compare by Player ID to ensure no two PlayerRanks are considered equal unless they are for the same player
+        return Long.compare(p1.getPlayer().getId(), p2.getPlayer().getId()); 
     }
 }
