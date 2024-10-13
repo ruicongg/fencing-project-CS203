@@ -61,7 +61,7 @@ public class Event {
     // for sorting after
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<PlayerRank> rankings = new TreeSet<>();
+    private Set<PlayerRank> rankings = new TreeSet<>(new PlayerRankComparator());
 
     //public TreeSet<Player> EloRank;
     //for sorting first when go to group stage
@@ -117,7 +117,6 @@ public class Event {
 
             }
         }
-        System.out.println(players);
 
         List<Match> nextRound = createMatches(players, knockoutStage);
         return nextRound; // Create matches for the next round

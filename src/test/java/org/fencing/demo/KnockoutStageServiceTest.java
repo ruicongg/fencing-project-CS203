@@ -51,7 +51,7 @@ public class KnockoutStageServiceTest {
     
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         when(knockoutStageRepository.save(any(KnockoutStage.class))).thenReturn(knockoutStage);  // Expect a KnockoutStage with an event
-    
+
         KnockoutStage result = knockoutStageService.addKnockoutStage(eventId);
     
         assertNotNull(result);
