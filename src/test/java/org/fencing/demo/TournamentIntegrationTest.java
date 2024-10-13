@@ -8,7 +8,11 @@ import java.util.Optional;
 
 import org.fencing.demo.tournament.Tournament;
 import org.fencing.demo.tournament.TournamentRepository;
+import org.fencing.demo.user.User;
+import org.fencing.demo.user.UserRepository;
+import org.fencing.demo.user.Role;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,6 +22,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.HashSet;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -34,9 +39,30 @@ class TournamentIntegrationTest {
     @Autowired
     private TournamentRepository tournamentRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    private User adminUser;
+    private User regularUser;
+
+    @BeforeEach
+    void setUp() {
+        // Create an admin user
+        adminUser = new User("admin", passwordEncoder.encode("adminPass"), "admin@example.com", Role.ADMIN);
+        userRepository.save(adminUser);
+
+        // Create a regular user
+        regularUser = new User("user", passwordEncoder.encode("userPass"), "user@example.com", Role.USER);
+        userRepository.save(regularUser);
+    }
+
     @AfterEach
     void tearDown() {
         tournamentRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -73,18 +99,32 @@ class TournamentIntegrationTest {
     }
 
     @Test
-    public void addTournament_Success() throws Exception {
+    public void addTournament_AdminUser_Success() throws Exception {
         URI uri = new URI(baseUrl + port + "/tournaments");
         Tournament tournament = createValidTournament();
 
-        ResponseEntity<Tournament> result = restTemplate.postForEntity(uri, tournament, Tournament.class);
+        ResponseEntity<Tournament> result = restTemplate
+            .withBasicAuth("admin", "adminPass")
+            .postForEntity(uri, tournament, Tournament.class);
 
         assertEquals(201, result.getStatusCode().value());
         assertEquals(tournament.getName(), result.getBody().getName());
     }
 
     @Test
-    public void updateTournament_Success() throws Exception {
+    public void addTournament_RegularUser_Failure() throws Exception {
+        URI uri = new URI(baseUrl + port + "/tournaments");
+        Tournament tournament = createValidTournament();
+
+        ResponseEntity<Tournament> result = restTemplate
+            .withBasicAuth("user", "userPass")
+            .postForEntity(uri, tournament, Tournament.class);
+
+        assertEquals(403, result.getStatusCode().value());
+    }
+
+    @Test
+    public void updateTournament_AdminUser_Success() throws Exception {
         Tournament tournament = createValidTournament();
         Long id = tournamentRepository.save(tournament).getId();
         URI uri = new URI(baseUrl + port + "/tournaments/" + id);
@@ -92,10 +132,28 @@ class TournamentIntegrationTest {
         tournament.setName("Updated Spring Open");
         HttpEntity<Tournament> requestEntity = new HttpEntity<>(tournament);
 
-        ResponseEntity<Tournament> result = restTemplate.exchange(uri, HttpMethod.PUT, requestEntity, Tournament.class);
+        ResponseEntity<Tournament> result = restTemplate
+            .withBasicAuth("admin", "adminPass")
+            .exchange(uri, HttpMethod.PUT, requestEntity, Tournament.class);
 
         assertEquals(200, result.getStatusCode().value());
         assertEquals("Updated Spring Open", result.getBody().getName());
+    }
+
+    @Test
+    public void updateTournament_RegularUser_Failure() throws Exception {
+        Tournament tournament = createValidTournament();
+        Long id = tournamentRepository.save(tournament).getId();
+        URI uri = new URI(baseUrl + port + "/tournaments/" + id);
+
+        tournament.setName("Updated Spring Open");
+        HttpEntity<Tournament> requestEntity = new HttpEntity<>(tournament);
+
+        ResponseEntity<Tournament> result = restTemplate
+            .withBasicAuth("user", "userPass")
+            .exchange(uri, HttpMethod.PUT, requestEntity, Tournament.class);
+
+        assertEquals(403, result.getStatusCode().value());
     }
 
     @Test
@@ -104,28 +162,48 @@ class TournamentIntegrationTest {
         Tournament tournament = createValidTournament();
         HttpEntity<Tournament> requestEntity = new HttpEntity<>(tournament);
 
-        ResponseEntity<Tournament> result = restTemplate.exchange(uri, HttpMethod.PUT, requestEntity, Tournament.class);
+        ResponseEntity<Tournament> result = restTemplate
+            .withBasicAuth("admin", "adminPass")
+            .exchange(uri, HttpMethod.PUT, requestEntity, Tournament.class);
 
         assertEquals(404, result.getStatusCode().value());
     }
 
     @Test
-    public void deleteTournament_Success() throws Exception {
+    public void deleteTournament_AdminUser_Success() throws Exception {
         Tournament tournament = createValidTournament();
         Long id = tournamentRepository.save(tournament).getId();
         URI uri = new URI(baseUrl + port + "/tournaments/" + id);
 
-        ResponseEntity<Void> result = restTemplate.exchange(uri, HttpMethod.DELETE, null, Void.class);
+        ResponseEntity<Void> result = restTemplate
+            .withBasicAuth("admin", "adminPass")
+            .exchange(uri, HttpMethod.DELETE, null, Void.class);
 
         assertEquals(204, result.getStatusCode().value());
         assertFalse(tournamentRepository.existsById(id));
     }
 
     @Test
+    public void deleteTournament_RegularUser_Failure() throws Exception {
+        Tournament tournament = createValidTournament();
+        Long id = tournamentRepository.save(tournament).getId();
+        URI uri = new URI(baseUrl + port + "/tournaments/" + id);
+
+        ResponseEntity<Void> result = restTemplate
+            .withBasicAuth("user", "userPass")
+            .exchange(uri, HttpMethod.DELETE, null, Void.class);
+
+        assertEquals(403, result.getStatusCode().value());
+        assertTrue(tournamentRepository.existsById(id));
+    }
+
+    @Test
     public void deleteTournament_InvalidId_Failure() throws Exception {
         URI uri = new URI(baseUrl + port + "/tournaments/999");
 
-        ResponseEntity<Void> result = restTemplate.exchange(uri, HttpMethod.DELETE, null, Void.class);
+        ResponseEntity<Void> result = restTemplate
+            .withBasicAuth("admin", "adminPass")
+            .exchange(uri, HttpMethod.DELETE, null, Void.class);
 
         assertEquals(404, result.getStatusCode().value());
     }
