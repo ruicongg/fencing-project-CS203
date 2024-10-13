@@ -14,9 +14,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table; 
+import jakarta.persistence.Table;
 
-import java.util.Set;
+import java.util.List;
+//import java.util.Set;
 // import java.util.TreeSet;
 // import java.util.TreeMap;
 // import java.util.HashSet;
@@ -44,10 +45,10 @@ public class GroupStage {
     private Event event;
 
     @OneToMany
-    private Set<PlayerRank> players;
+    private List<PlayerRank> players;
 
     @OneToMany(mappedBy = "groupStage", cascade = CascadeType.ALL)
-    private Set<Match> matches;
+    private List<Match> matches;
     
     private boolean allMatchesCompleted;
 

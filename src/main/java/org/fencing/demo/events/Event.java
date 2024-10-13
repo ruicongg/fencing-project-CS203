@@ -3,7 +3,7 @@ package org.fencing.demo.events;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashSet;
+// import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -80,12 +80,12 @@ public class Event {
     private List<KnockoutStage> knockoutStages = new ArrayList<>();
 
     //includes creating matches
-    public Set<Match> createRoundsForGroupStages() {
-        Set<Match> allMatchesForGroup = new HashSet<>();
+    public List<Match> createRoundsForGroupStages() {
+        List<Match> allMatchesForGroup = new ArrayList<>();
         //sort by elo ranks return grp num to playerRanks
-        TreeMap<Integer, Set<PlayerRank>> groups = BeforeGroupStage.sortByELO(rankings);
+        TreeMap<Integer, List<PlayerRank>> groups = BeforeGroupStage.sortByELO(rankings);
         //within groups to sort
-        TreeMap<Integer, Set<Match>> groupMatches = WithinGroupSort.groupMatchMakingAlgorithm(groups, this);
+        TreeMap<Integer, List<Match>> groupMatches = WithinGroupSort.groupMatchMakingAlgorithm(groups, this);
         for(Integer i:groups.keySet()){
             GroupStage grpStage = new GroupStage();
             grpStage.setPlayers(groups.get(i));
