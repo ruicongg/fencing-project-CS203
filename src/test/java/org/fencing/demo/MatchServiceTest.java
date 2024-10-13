@@ -3,6 +3,8 @@ package org.fencing.demo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -36,6 +38,7 @@ import org.fencing.demo.player.Player;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.GroupStageRepository;
 import org.fencing.demo.stages.KnockoutStage;
+import org.fencing.demo.stages.KnockoutStageNotFoundException;
 import org.fencing.demo.stages.KnockoutStageRepository;
 import org.fencing.demo.tournament.Tournament;
 import org.junit.jupiter.api.Test;
@@ -83,28 +86,34 @@ public class MatchServiceTest {
         verify(eventRepository, times(1)).existsById(eventId);
     }
 
-    // @Test // ERROR expected: <1> but was: <0>
-    // public void addMatchesForKnockoutStage_ValidEvent_ReturnsSavedMatches() {
-    //     Long eventId = 1L;
-    //     Event event = createValidEvent();
-    //     KnockoutStage knockoutStage = createValidKnockoutStage(event);
-    //     event.getKnockoutStages().add(knockoutStage);
+    @Test
+    public void addMatchesForKnockoutStage_ValidEvent_ReturnsSavedMatches() {
+        Long eventId = 1L;
+        Event event = createValidEvent();
+        KnockoutStage knockoutStage = createValidKnockoutStage(event);
+        event.getKnockoutStages().add(knockoutStage);
         
-    //     // Add 8 players to the event
-    //     // wait...need player repo
-    //     Set<PlayerRank> players = createPlayers(event);
-    //     event = createValidEventWithPlayers(event, players);
+        // Add 8 players to the event
+        // wait...need player repo?
+        Set<PlayerRank> players = createPlayers(event);
+        event.getRankings().addAll(players);
 
-    //     when(eventRepository.existsById(eventId)).thenReturn(true);
-    //     when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
-    //     when(matchRepository.saveAll(anyList())).thenReturn(knockoutStage.getMatches());
+        // Mock the event repository behavior
+        when(eventRepository.existsById(eventId)).thenReturn(true);
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
 
-    //     List<Match> result = matchService.addMatchesforKnockoutStage(eventId);
+        // Create the expected matches for the knockout stage
+        List<Match> expectedMatches = event.getMatchesForKnockoutStage(knockoutStage);
+        when(matchRepository.saveAll(anyList())).thenReturn(expectedMatches);
 
-    //     assertNotNull(result);
-    //     assertEquals(1, result.size());
-    //     verify(matchRepository, times(1)).saveAll(anyList());
-    // }
+        List<Match> result = matchService.addMatchesforKnockoutStage(eventId);
+
+        assertNotNull(result);
+        assertEquals(expectedMatches.size(), result.size());
+        verify(matchRepository, times(1)).saveAll(anyList());
+        verify(eventRepository, times(1)).existsById(eventId);
+        verify(eventRepository, times(1)).findById(eventId);
+    }
 
     @Test
     public void addMatchesForKnockoutStage_NonExistingEvent_ThrowsEventNotFoundException() {
@@ -117,6 +126,28 @@ public class MatchServiceTest {
         });
 
         verify(eventRepository, times(1)).existsById(eventId);
+    }
+
+    @Test
+    public void addMatchesForKnockoutStage_NoKnockoutStage_ThrowsIllegalStateException() {
+        Long eventId = 1L;
+
+        // Create an event without knockout stages
+        Event event = createValidEvent();
+        event.setKnockoutStages(new ArrayList<>()); // Empty knockout stages
+
+        // Mock the event repository
+        when(eventRepository.existsById(eventId)).thenReturn(true);
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+
+        // Verify that IllegalStateException is thrown when there are no knockout stages
+        assertThrows(IllegalStateException.class, () -> {
+            matchService.addMatchesforKnockoutStage(eventId);
+        });
+
+        // Verify that repository methods were called correctly
+        verify(eventRepository, times(1)).existsById(eventId);
+        verify(eventRepository, times(1)).findById(eventId);
     }
 
     @Test
@@ -149,33 +180,176 @@ public class MatchServiceTest {
         verify(matchRepository, times(1)).findById(matchId);
     }
 
-    // @Test // ERROR IllegalArgument Player is not registered in this event
-    // public void updateMatch_ValidIds_ReturnsUpdatedMatch() {
-    //     Long eventId = 1L;
-    //     Long matchId = 1L;
-    //     Event event = createValidEvent();
+    @Test
+    public void getMatch_NullMatchId_ThrowsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            matchService.getMatch(null);
+        });
+    }
 
-    //     Player player1 = createValidPlayer(1);
-    //     Player player2 = createValidPlayer(2);
-    //     PlayerRank playerRank1 = createPlayerRank(1, player1, event);
-    //     PlayerRank playerRank2 = createPlayerRank(2, player2, event);
-    //     Set<PlayerRank> playerRanks = new TreeSet<>(new PlayerRankComparator());
-    //     playerRanks.add(playerRank1);
-    //     playerRanks.add(playerRank2);
-    //     event.setRankings(playerRanks);
+    @Test
+    public void getAllMatchesForKnockoutStage_NullKnockoutStageId_ThrowsIllegalArgumentException() {
+        // Test case where knockoutStageId is null
+        assertThrows(IllegalArgumentException.class, () -> {
+            matchService.getAllMatchesForKnockoutStageByKnockoutStageId(null);
+        });
+    }
 
-    //     Match existingMatch = createValidMatch(event, player1, player2);
-    //     Match newMatch = createUpdatedMatch(event, player1, player2);
+    @Test
+    public void getAllMatchesForKnockoutStage_NonExistingKnockoutStage_ThrowsKnockoutStageNotFoundException() {
+        Long knockoutStageId = 1L;
+
+        // Mock knockoutStageRepository to return false for existsById
+        when(knockoutStageRepository.existsById(knockoutStageId)).thenReturn(false);
+
+        // Verify that KnockoutStageNotFoundException is thrown
+        assertThrows(KnockoutStageNotFoundException.class, () -> {
+            matchService.getAllMatchesForKnockoutStageByKnockoutStageId(knockoutStageId);
+        });
+
+        // Verify that knockoutStageRepository was called to check for existence
+        verify(knockoutStageRepository, times(1)).existsById(knockoutStageId);
+    }
+
+    @Test
+    public void getAllMatchesForKnockoutStage_ValidKnockoutStageId_ReturnsMatches() {
+        Long knockoutStageId = 1L;
+        Event event = createValidEvent();
+
+        // Create a valid KnockoutStage with matches
+        KnockoutStage knockoutStage = createValidKnockoutStage(event);
+        List<Match> expectedMatches = knockoutStage.getMatches();
+
+        // Mock knockoutStageRepository behavior
+        when(knockoutStageRepository.existsById(knockoutStageId)).thenReturn(true);
+        when(knockoutStageRepository.findById(knockoutStageId)).thenReturn(Optional.of(knockoutStage));
+
+        // Call the service method
+        List<Match> result = matchService.getAllMatchesForKnockoutStageByKnockoutStageId(knockoutStageId);
+
+        // Verify the result
+        assertNotNull(result);
+        assertEquals(expectedMatches.size(), result.size());
+
+        // Verify repository interactions
+        verify(knockoutStageRepository, times(1)).existsById(knockoutStageId);
+        verify(knockoutStageRepository, times(1)).findById(knockoutStageId);
+    }
+
+    @Test // ERROR IllegalArgument Player is not registered in this event
+    public void updateMatch_ValidIds_ReturnsUpdatedMatch() {
+        Long eventId = 1L;
+        Long matchId = 1L;
+        Event event = createValidEvent();
+
+        Player player1 = createValidPlayer(1);
+        Player player2 = createValidPlayer(2);
+        PlayerRank playerRank1 = createPlayerRank(1, player1, event);
+        PlayerRank playerRank2 = createPlayerRank(2, player2, event);
+
+        event.getRankings().add(playerRank1);
+        event.getRankings().add(playerRank2);
+
+        Match existingMatch = createValidMatch(event, player1, player2);
+        Match newMatch = createUpdatedMatch(event, player1, player2);
         
-    //     when(matchRepository.findById(matchId)).thenReturn(Optional.of(existingMatch));
-    //     when(matchRepository.save(any(Match.class))).thenReturn(existingMatch);
+        when(matchRepository.findById(matchId)).thenReturn(Optional.of(existingMatch));
+        when(matchRepository.save(any(Match.class))).thenReturn(existingMatch);
 
-    //     Match result = matchService.updateMatch(eventId, matchId, newMatch);
+        Match result = matchService.updateMatch(eventId, matchId, newMatch);
 
-    //     assertNotNull(result);
-    //     assertEquals(newMatch.getPlayer1(), result.getPlayer1());
-    //     assertEquals(newMatch.getPlayer1Score(), result.getPlayer1Score());
-    // }
+        assertNotNull(result);
+        assertEquals(newMatch.getPlayer1(), result.getPlayer1());
+        assertEquals(newMatch.getPlayer1Score(), result.getPlayer1Score());
+
+        verify(matchRepository, times(1)).findById(matchId);
+        verify(matchRepository, times(1)).save(existingMatch);
+    }
+
+    @Test
+    public void updateMatch_NonExistingMatch_ThrowsMatchNotFoundException() {
+        Long eventId = 1L;
+        Long matchId = 1L;
+        Match newMatch = createUpdatedMatch(createValidEvent(), createValidPlayer(1), createValidPlayer(2));
+
+        // Mock repository behavior for non-existing match
+        when(matchRepository.findById(matchId)).thenReturn(Optional.empty());
+
+        // Expect MatchNotFoundException
+        assertThrows(MatchNotFoundException.class, () -> {
+            matchService.updateMatch(eventId, matchId, newMatch);
+        });
+
+        // Verify repository was called
+        verify(matchRepository, times(1)).findById(matchId);
+    }
+
+    @Test
+    public void updateMatch_PlayerNotInEvent_ThrowsIllegalArgumentException() {
+        Long eventId = 1L;
+        Long matchId = 1L;
+
+        // Create a valid event and players
+        Event event = createValidEvent();
+        Player player1 = createValidPlayer(1);
+        Player player2 = createValidPlayer(2);
+
+        // Add only player1 to the rankings, leaving out player2
+        PlayerRank playerRank1 = createPlayerRank(1, player1, event);
+        event.getRankings().add(playerRank1);
+
+        // Create existing and new matches
+        Match existingMatch = createValidMatch(event, player1, player2);
+        Match newMatch = createUpdatedMatch(event, player1, player2);
+
+        // Mock repository methods
+        when(matchRepository.findById(matchId)).thenReturn(Optional.of(existingMatch));
+
+        // Expect IllegalArgumentException when player2 is not in the event's rankings
+        assertThrows(IllegalArgumentException.class, () -> {
+            matchService.updateMatch(eventId, matchId, newMatch);
+        });
+
+        // Verify repository interaction
+        verify(matchRepository, times(1)).findById(matchId);
+    }
+
+    @Test
+    public void updateMatch_EventMismatch_ThrowsIllegalArgumentException() {
+        Long eventId = 1L;
+        Long matchId = 1L;
+
+        // Create two separate events
+        Event originalEvent = createValidEvent();
+        Event differentEvent = createValidEvent();
+        differentEvent.setId(2L); // Ensure this event is different
+
+        // Create valid players
+        Player player1 = createValidPlayer(1);
+        Player player2 = createValidPlayer(2);
+
+        // Create PlayerRank for both players in the original event
+        PlayerRank playerRank1 = createPlayerRank(1, player1, originalEvent);
+        PlayerRank playerRank2 = createPlayerRank(2, player2, originalEvent);
+        originalEvent.getRankings().add(playerRank1);
+        originalEvent.getRankings().add(playerRank2);
+
+        // Create existing match in the original event and new match in a different event
+        Match existingMatch = createValidMatch(originalEvent, player1, player2);
+        Match newMatch = createUpdatedMatch(differentEvent, player1, player2); // Different event
+
+        // Mock repository methods
+        when(matchRepository.findById(matchId)).thenReturn(Optional.of(existingMatch));
+
+        // Expect IllegalArgumentException due to event mismatch
+        assertThrows(IllegalArgumentException.class, () -> {
+            matchService.updateMatch(eventId, matchId, newMatch);
+        });
+
+        // Verify repository interaction
+        verify(matchRepository, times(1)).findById(matchId);
+    }
+
 
     @Test
     public void deleteMatch_ValidIds_SuccessfullyDeletesMatch() {
@@ -199,6 +373,8 @@ public class MatchServiceTest {
         assertThrows(MatchNotFoundException.class, () -> {
             matchService.deleteMatch(eventId, matchId);
         });
+
+        verify(matchRepository, times(1)).deleteByEventIdAndId(eventId, matchId);
     }
 
     // Helper methods to create valid entities
@@ -216,7 +392,6 @@ public class MatchServiceTest {
         event.setEndDate(LocalDateTime.of(2025, 1, 2, 18, 0));
         event.setGender(Gender.MALE);
         event.setWeapon(WeaponType.FOIL);
-        event.setRankings(new TreeSet<>(new PlayerRankComparator()));
         event.setGroupStages(new ArrayList<>());
         event.setKnockoutStages(new ArrayList<>());
         event.setTournament(createValidTournament());
@@ -231,11 +406,6 @@ public class MatchServiceTest {
             players.add(playerRank);
         }
         return players;
-    }
-
-    private Event createValidEventWithPlayers(Event event, Set<PlayerRank> playerRanks) {
-        event.setRankings(playerRanks);
-        return event;
     }
 
     private Player createValidPlayer(int id) {
@@ -286,6 +456,7 @@ public class MatchServiceTest {
     //         .build();
     // }
 
+<<<<<<< HEAD
     // private KnockoutStage createValidKnockoutStage(Event event) {
     //     return KnockoutStage.builder()
     //         .id(1L)
@@ -326,5 +497,12 @@ public class MatchServiceTest {
         assertThrows(IllegalStateException.class, () -> {
             matchService.addMatchesforAllGroupStages(eventId);
         });
+=======
+    private KnockoutStage createValidKnockoutStage(Event event) {
+        return KnockoutStage.builder()
+            .id(1L)
+            .event(event)
+            .build();
+>>>>>>> 51132a64981348f2d3f30f7ca77fb731f8c23655
     }
 }

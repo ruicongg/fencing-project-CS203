@@ -103,7 +103,8 @@ public class EventServiceImpl implements EventService{
         if (tournamentId == null || eventId == null) {
             throw new IllegalArgumentException("Tournament ID and Event ID cannot be null");
         }
-        eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
+        eventRepository.findById(eventId)
+.orElseThrow(() -> new EventNotFoundException(eventId));
         eventRepository.deleteByTournamentIdAndId(tournamentId, eventId);
     }
 
