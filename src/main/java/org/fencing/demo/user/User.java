@@ -33,9 +33,8 @@ public class User implements UserDetails{
     @NotNull(message = "Password is required")
     private String password; // Consider hashing passwords for security , Need Min length etc
     
-
-    @NotNull(message = "Email is required")
     @Email(message = "Email should be valid")
+    @NotNull(message = "Email is required")
     private String email;
 
     @Enumerated(EnumType.STRING)
