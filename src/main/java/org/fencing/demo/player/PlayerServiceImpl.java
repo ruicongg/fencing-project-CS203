@@ -1,4 +1,5 @@
 package org.fencing.demo.player;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,7 +18,7 @@ public class PlayerServiceImpl implements PlayerService{
     private EventRepository eventRepository;
     private MatchRepository matchRepository;
 
-    public PlayerServiceImpl(PlayerRepository playerRepository, EventRepository eventRepository, MatchRepository matchRepository, PasswordEncoder passwordEncoder){
+    public PlayerServiceImpl(PlayerRepository playerRepository, EventRepository eventRepository, MatchRepository matchRepository){
         this.playerRepository = playerRepository;
         this.eventRepository = eventRepository;
         this.matchRepository = matchRepository;
@@ -25,7 +26,8 @@ public class PlayerServiceImpl implements PlayerService{
 
     @Override
     public List<Player> listPlayers(){
-        return playerRepository.findAll();
+        List<Player> players = playerRepository.findAll();
+        return players != null ? players : Collections.emptyList();
     }
 
     @Override

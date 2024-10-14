@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;

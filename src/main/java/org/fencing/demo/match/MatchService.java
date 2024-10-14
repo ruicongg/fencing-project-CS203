@@ -1,7 +1,6 @@
 package org.fencing.demo.match;
 
 import java.util.List;
-import java.util.Set;
 
 public interface MatchService {
 

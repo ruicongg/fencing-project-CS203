@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 
+
 @RestController
 public class PlayerController {
     private PlayerService playerService;
@@ -37,6 +38,13 @@ public class PlayerController {
         if (player == null)
             throw new PlayerNotFoundException(id);
         return player;
+    }
+
+    // Add a player
+    @PostMapping("/players")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Player addPlayer(@Valid @RequestBody Player player) {
+        return playerService.addPlayer(player); 
     }
 
     // updates player info
