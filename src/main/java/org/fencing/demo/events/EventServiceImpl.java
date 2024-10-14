@@ -30,7 +30,14 @@ public class EventServiceImpl implements EventService{
         if (tournamentId == null || event == null) {
             throw new IllegalArgumentException("Tournament ID and Event cannot be null");
         }
+
         return tournamentRepository.findById(tournamentId).map(tournament -> {
+            if (event.getStartDate().toLocalDate().isBefore(tournament.getTournamentStartDate())) {
+                throw new IllegalArgumentException("Event start date cannt be earlier than Tournament start date");
+            }
+            if (event.getEndDate().isBefore(event.getStartDate())) {
+                throw new IllegalArgumentException("Event end date must be after start date");
+            }
             event.setTournament(tournament);
             return eventRepository.save(event);
         }).orElseThrow(() -> new TournamentNotFoundException(tournamentId));
@@ -66,8 +73,14 @@ public class EventServiceImpl implements EventService{
         if (!existingEvent.getTournament().equals(newEvent.getTournament())) {
             throw new IllegalArgumentException("Tournament cannot be changed");
         }
-        if (!(LocalDate.now().isBefore(newEvent.getStartDate().toLocalDate()))){
-            throw new IllegalArgumentException("One player will not have an opponent");
+        // if (!(LocalDate.now().isBefore(newEvent.getStartDate().toLocalDate()))){
+        //     throw new IllegalArgumentException("One player will not have an opponent");
+        // }
+        if (!newEvent.getStartDate().toLocalDate().isAfter(newEvent.getTournament().getTournamentStartDate())) {
+            throw new IllegalArgumentException("Event start date cannt be earlier than Tournament start date");
+        }
+        if (newEvent.getEndDate().isBefore(newEvent.getStartDate())) {
+            throw new IllegalArgumentException("Event end date must be after start date");
         }
         existingEvent.setGender(newEvent.getGender());
         existingEvent.setWeapon(newEvent.getWeapon());

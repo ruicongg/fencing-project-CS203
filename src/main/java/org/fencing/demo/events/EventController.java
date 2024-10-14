@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class EventController {
     
@@ -23,7 +25,7 @@ public class EventController {
 
     @PostMapping("/tournaments/{tournamentId}/events")
     @ResponseStatus(HttpStatus.CREATED)
-    public Event addEvent(@PathVariable Long tournamentId, @RequestBody Event event) {
+    public Event addEvent(@PathVariable Long tournamentId, @Valid @RequestBody Event event) {
         return eventService.addEvent(tournamentId, event);
     }
 
@@ -41,7 +43,7 @@ public class EventController {
 
     @PutMapping("/tournaments/{tournamentId}/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
-    public Event updateEvent(@PathVariable Long tournamentId, @PathVariable Long eventId, @RequestBody Event event) {
+    public Event updateEvent(@PathVariable Long tournamentId, @PathVariable Long eventId, @Valid @RequestBody Event event) {
         return eventService.updateEvent(tournamentId, eventId, event);
     }
 

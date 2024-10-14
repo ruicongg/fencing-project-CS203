@@ -3,6 +3,7 @@ package org.fencing.demo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 import java.net.http.HttpHeaders;
@@ -138,6 +139,77 @@ public class EventIntegrationTest {
         assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());  // Expecting 403 Forbidden
     }
 
+    @Test
+    public void addEvent_NullTournamentId_Failure() throws Exception {
+        // Create the URI with a null tournament ID
+        URI uri = new URI(baseUrl + port + "/tournaments/null/events");
+
+        // Create a new event
+        Event event = new Event();
+        event.setGender(Gender.MALE);
+        event.setWeapon(WeaponType.FOIL);
+        event.setStartDate(LocalDateTime.of(2025, 1, 1, 10, 0));
+        event.setEndDate(LocalDateTime.of(2025, 1, 2, 18, 0));
+
+        // Send the POST request
+        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "strongpassword123")
+                .postForEntity(uri, event, String.class);
+
+        // Verify the result (expecting 404 Not Found or 400 Bad Request)
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    @Test
+    public void addEvent_NullEvent_Failure() throws Exception {
+        // Create the URI for adding an event
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
+
+        // Send the POST request with a null event
+        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "strongpassword123")
+                .postForEntity(uri, null, String.class);
+
+        // Verify the result (expecting 400 Bad Request)
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    @Test
+    public void addEvent_MissingRequiredFields_Failure() throws Exception {
+        // Create the URI for adding an event
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
+
+        // Create an event with missing required fields
+        Event event = new Event();
+        event.setGender(Gender.MALE);  // No weapon, startDate, or endDate
+
+        // Send the POST request
+        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "strongpassword123")
+                .postForEntity(uri, event, String.class);
+
+        // Verify the result (expecting 400 Bad Request)
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    @Test
+    public void addEvent_NonExistentTournamentId_Failure() throws Exception {
+        // Use a non-existent tournament ID
+        Long nonExistentTournamentId = 999L;  // Assume this ID doesn't exist
+        URI uri = new URI(baseUrl + port + "/tournaments/" + nonExistentTournamentId + "/events");
+
+        // Create a new event
+        Event event = new Event();
+        event.setGender(Gender.MALE);
+        event.setWeapon(WeaponType.FOIL);
+        event.setStartDate(LocalDateTime.of(2025, 1, 1, 10, 0));
+        event.setEndDate(LocalDateTime.of(2025, 1, 2, 18, 0));
+
+        // Send the POST request
+        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "strongpassword123")
+                .postForEntity(uri, event, String.class);
+
+        // Verify the result (expecting 404 Not Found)
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+    }
+
     // Get All Events by Tournament ID - Success
     @Test
     public void getAllEventsByTournamentId_Success() throws Exception {
@@ -213,34 +285,92 @@ public class EventIntegrationTest {
         assertEquals(1, result.getBody().length);
     }
 
+    @Test
+    public void addEvent_StartDateBeforeTournamentStartDate_Failure() throws Exception {
+        // Set tournament start date
+        tournament.setTournamentStartDate(LocalDate.of(2025, 1, 10)); 
+        tournamentRepository.save(tournament);
+
+        // Create the URI for adding an event
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
+
+        // Create an event where the start date is before the tournament start date
+        Event event = new Event();
+        event.setGender(Gender.MALE);
+        event.setWeapon(WeaponType.FOIL);
+        event.setStartDate(LocalDateTime.of(2025, 1, 5, 10, 0)); // Earlier than tournament start date
+        event.setEndDate(LocalDateTime.of(2025, 1, 11, 18, 0));
+
+        // Send the POST request
+        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "strongpassword123")
+                .postForEntity(uri, event, String.class);
+
+        // Verify the result (expecting 400 Bad Request)
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertTrue(result.getBody().contains("Event start date cannt be earlier than Tournament start date"));
+    }
+
+    @Test
+    public void addEvent_EndDateBeforeStartDate_Failure() throws Exception {
+        // Set tournament start date
+        tournament.setTournamentStartDate(LocalDate.of(2025, 1, 10)); 
+        tournamentRepository.save(tournament);
+
+        // Create the URI for adding an event
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
+
+        // Create an event where the end date is before the start date
+        Event event = new Event();
+        event.setGender(Gender.MALE);
+        event.setWeapon(WeaponType.FOIL);
+        event.setStartDate(LocalDateTime.of(2025, 1, 12, 10, 0));
+        event.setEndDate(LocalDateTime.of(2025, 1, 11, 18, 0)); // End date is earlier than start date
+
+        // Send the POST request
+        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "strongpassword123")
+                .postForEntity(uri, event, String.class);
+
+        // Verify the result (expecting 400 Bad Request)
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertTrue(result.getBody().contains("Event end date must be after start date"));
+    }
+
     // Update Event - Success
     @Test
     @Transactional
     public void updateEvent_Success() throws Exception {
         // Create and save a tournament and an event
+        tournament.setTournamentStartDate(LocalDate.of(2025, 1, 1));
+        tournamentRepository.save(tournament);
+
         Event event = new Event();
         event.setGender(Gender.MALE);
         event.setWeapon(WeaponType.FOIL);
-        event.setStartDate(LocalDateTime.of(2025, 1, 1, 10, 0));
-        event.setEndDate(LocalDateTime.of(2025, 1, 2, 18, 0));
+        event.setStartDate(LocalDateTime.of(2025, 1, 10, 10, 0));
+        event.setEndDate(LocalDateTime.of(2025, 1, 11, 18, 0));
         event.setTournament(tournament);
         event = eventRepository.save(event);
-        
+
+        // Update event details
         event.setGender(Gender.FEMALE);
         event.setWeapon(WeaponType.EPEE);
+        event.setStartDate(LocalDateTime.of(2025, 1, 12, 10, 0));
+        event.setEndDate(LocalDateTime.of(2025, 1, 13, 18, 0));
 
         // Create the URI for updating the event
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId());
 
         // Send the PUT request
         ResponseEntity<Event> result = restTemplate.withBasicAuth("admin", "strongpassword123")
-                                        .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), Event.class);
+                .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), Event.class);
 
         // Verify the result
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertNotNull(result.getBody());
-        assertEquals("FEMALE", result.getBody().getGender());
-        assertEquals("EPEE", result.getBody().getWeapon());
+        assertEquals(Gender.FEMALE, result.getBody().getGender());
+        assertEquals(WeaponType.EPEE, result.getBody().getWeapon());
+        assertEquals(event.getStartDate(), result.getBody().getStartDate());
+        assertEquals(event.getEndDate(), result.getBody().getEndDate());
     }
 
     @Test
@@ -268,6 +398,101 @@ public class EventIntegrationTest {
         // Verify the result
         assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());  // Expecting 403 Forbidden
     }
+
+    @Test
+    public void updateEvent_NullIdsOrEvent_Failure() throws Exception {
+        // Create the URI with null event ID
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/null");
+
+        // Try sending a PUT request with null event
+        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "strongpassword123")
+                .exchange(uri, HttpMethod.PUT, new HttpEntity<>(null), String.class);
+
+        // Verify the result (expecting 400 Bad Request)
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    @Test
+    public void updateEvent_StartDateBeforeTournamentStartDate_Failure() throws Exception {
+        // Set the tournament start date
+        tournament.setTournamentStartDate(LocalDate.of(2025, 1, 10));
+        tournamentRepository.save(tournament);
+
+        // Create and save an event
+        Event event = new Event();
+        event.setGender(Gender.MALE);
+        event.setWeapon(WeaponType.FOIL);
+        event.setStartDate(LocalDateTime.of(2025, 1, 12, 10, 0));
+        event.setEndDate(LocalDateTime.of(2025, 1, 13, 18, 0));
+        event.setTournament(tournament);
+        event = eventRepository.save(event);
+
+        // Try updating with a start date earlier than the tournament start date
+        event.setStartDate(LocalDateTime.of(2025, 1, 5, 10, 0));
+
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId());
+
+        // Send the PUT request
+        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "strongpassword123")
+                .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), String.class);
+
+        // Verify the result (expecting 400 Bad Request)
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertTrue(result.getBody().contains("Event start date cannt be earlier than Tournament start date"));
+    }
+
+    @Test
+    public void updateEvent_EndDateBeforeStartDate_Failure() throws Exception {
+        // Create and save an event
+        tournament.setTournamentStartDate(LocalDate.of(2025, 1, 1));
+        tournamentRepository.save(tournament);
+
+        Event event = new Event();
+        event.setGender(Gender.MALE);
+        event.setWeapon(WeaponType.FOIL);
+        event.setStartDate(LocalDateTime.of(2025, 1, 10, 10, 0));
+        event.setEndDate(LocalDateTime.of(2025, 1, 11, 18, 0));
+        event.setTournament(tournament);
+        event = eventRepository.save(event);
+
+        // Update event details where end date is before start date
+        event.setEndDate(LocalDateTime.of(2025, 1, 9, 18, 0));  // End date before start date
+
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId());
+
+        // Send the PUT request
+        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "strongpassword123")
+                .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), String.class);
+
+        // Verify the result (expecting 400 Bad Request)
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertTrue(result.getBody().contains("Event end date must be after start date"));
+    }
+
+    @Test
+    public void updateEvent_NonExistentEvent_Failure() throws Exception {
+        // Create a tournament
+        tournament.setTournamentStartDate(LocalDate.of(2025, 1, 1));
+        tournamentRepository.save(tournament);
+
+        // Try to update a non-existent event
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/9999");
+
+        // Send the PUT request
+        Event newEvent = new Event();
+        newEvent.setGender(Gender.MALE);
+        newEvent.setWeapon(WeaponType.FOIL);
+        newEvent.setStartDate(LocalDateTime.of(2025, 1, 10, 10, 0));
+        newEvent.setEndDate(LocalDateTime.of(2025, 1, 11, 18, 0));
+
+        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "strongpassword123")
+                .exchange(uri, HttpMethod.PUT, new HttpEntity<>(newEvent), String.class);
+
+        // Verify the result (expecting 404 Not Found)
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertTrue(result.getBody().contains("Event not found"));
+    }
+
 
     // Delete Event - Success
     @Test
