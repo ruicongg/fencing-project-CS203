@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-
+@RestController
 public class UserController {
     private UserService userService; 
 
@@ -35,13 +36,6 @@ public class UserController {
             throw new UserNotFoundException(id);  
         }
         return user;
-    }
-
-    // Add new user 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/users")
-    public User addUser(@Valid @RequestBody User user) {  
-        return userService.addUser(user);  
     }
 
     // Updates user info 

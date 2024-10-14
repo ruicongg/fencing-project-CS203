@@ -27,7 +27,6 @@ public class User implements UserDetails{
 
     @NotNull(message = "Username is required")
     @Column(unique = true)
-    // ! might need to implement unique logic in service as well
     private String username; 
 
     @NotNull(message = "Password is required")
@@ -49,7 +48,7 @@ public class User implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override

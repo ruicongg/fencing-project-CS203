@@ -74,7 +74,7 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     @Transactional
     public void deleteTournament(Long tournamentId) {
-        if (tournamentId == null) {
+        if (tournamentId == null || !tournamentRepository.existsById(tournamentId)) {
             throw new TournamentNotFoundException(tournamentId);
         }
         tournamentRepository.deleteById(tournamentId);

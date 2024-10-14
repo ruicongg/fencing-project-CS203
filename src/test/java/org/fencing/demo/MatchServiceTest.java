@@ -7,12 +7,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -461,6 +464,47 @@ public class MatchServiceTest {
     //         .build();
     // }
 
+    // private KnockoutStage createValidKnockoutStage(Event event) {
+    //     return KnockoutStage.builder()
+    //         .id(1L)
+    //         .event(event)
+    //         .matches(new ArrayList<>())  // Initialize an empty list for matches
+    //         .build();
+    // }
+
+    @Test
+    public void testAddMatchesForAllGroupStages_success() {
+        Long eventId = 1L;
+        Event event = mock(Event.class);
+        GroupStage groupStage = mock(GroupStage.class);
+        
+        when(eventRepository.existsById(eventId)).thenReturn(true);
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(event.getGroupStages()).thenReturn(Arrays.asList(groupStage));
+        
+        List<Match> matches = Arrays.asList(mock(Match.class), mock(Match.class));
+        when(event.createRoundsForGroupStages()).thenReturn(matches);
+        when(matchRepository.saveAll(matches)).thenReturn(matches);
+
+        List<Match> result = matchService.addMatchesforAllGroupStages(eventId);
+        assertNotNull(result);
+        assertEquals(matches.size(), result.size());
+    }
+
+
+    @Test
+    public void testAddMatchesForAllGroupStages_noGroupStages() {
+        Long eventId = 1L;
+        Event event = mock(Event.class);
+
+        when(eventRepository.existsById(eventId)).thenReturn(true);
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(event.getGroupStages()).thenReturn(Collections.emptyList());
+
+        assertThrows(IllegalStateException.class, () -> {
+            matchService.addMatchesforAllGroupStages(eventId);
+        });
+    }
     private KnockoutStage createValidKnockoutStage(Event event) {
         return KnockoutStage.builder()
             .id(1L)

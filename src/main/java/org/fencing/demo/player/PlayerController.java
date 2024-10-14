@@ -39,13 +39,6 @@ public class PlayerController {
         return player;
     }
 
-    // Add new player
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/players")
-    public Player addPlayer(@Valid @RequestBody Player player) {
-        return playerService.addPlayer(player);
-    }
-
     // updates player info
     @PutMapping("/players/{id}")
     public Player updatePlayer(@PathVariable Long id, @Valid @RequestBody Player updatedPlayerInfo) {
