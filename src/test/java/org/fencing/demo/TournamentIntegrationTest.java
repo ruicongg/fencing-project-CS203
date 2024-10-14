@@ -51,6 +51,7 @@ class TournamentIntegrationTest {
     @BeforeEach
     void setUp() {
         // Create an admin user
+        userRepository.deleteAll();
         adminUser = new User("admin", passwordEncoder.encode("adminPass"), "admin@example.com", Role.ADMIN);
         userRepository.save(adminUser);
 
@@ -121,6 +122,34 @@ class TournamentIntegrationTest {
             .postForEntity(uri, tournament, Tournament.class);
 
         assertEquals(403, result.getStatusCode().value());
+    }
+
+    @Test
+    public void addTournament_InvalidDates_Failure() throws Exception {
+        URI uri = new URI(baseUrl + port + "/tournaments");
+        Tournament tournament = createValidTournament();
+        tournament.setTournamentEndDate(tournament.getTournamentStartDate().minusDays(1)); // Invalid end date
+
+        ResponseEntity<String> result = restTemplate
+            .withBasicAuth("admin", "adminPass")
+            .postForEntity(uri, tournament, String.class);
+
+        assertEquals(400, result.getStatusCode().value());
+        assertTrue(result.getBody().contains("Tournament end date must be after start date"));
+    }
+
+    @Test
+    public void addTournament_NullName_Failure() throws Exception {
+        URI uri = new URI(baseUrl + port + "/tournaments");
+        Tournament tournament = createValidTournament();
+        tournament.setName(null);
+
+        ResponseEntity<String> result = restTemplate
+            .withBasicAuth("admin", "adminPass")
+            .postForEntity(uri, tournament, String.class);
+
+        assertEquals(400, result.getStatusCode().value());
+        assertTrue(result.getBody().contains("Tournament name cannot be null"));
     }
 
     @Test
