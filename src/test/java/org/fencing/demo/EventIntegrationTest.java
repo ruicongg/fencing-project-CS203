@@ -72,6 +72,8 @@ public class EventIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        userRepository.deleteAll();
+
         adminUser = createValidAdminUser(encoder);
         userRepository.save(adminUser);
 

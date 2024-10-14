@@ -32,12 +32,14 @@ import org.fencing.demo.match.MatchNotFoundException;
 import org.fencing.demo.match.MatchRepository;
 import org.fencing.demo.match.MatchServiceImpl;
 import org.fencing.demo.player.Player;
+import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.GroupStageRepository;
 import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.stages.KnockoutStageNotFoundException;
 import org.fencing.demo.stages.KnockoutStageRepository;
 import org.fencing.demo.tournament.Tournament;
+import org.fencing.demo.tournament.TournamentRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -58,6 +60,12 @@ public class MatchServiceTest {
 
     @Mock
     private GroupStageRepository groupStageRepository;
+
+    @Mock
+    private TournamentRepository tournamentRepository;
+
+    @Mock
+    private PlayerRepository playerRepository;
 
     @InjectMocks
     private EventServiceImpl eventService;

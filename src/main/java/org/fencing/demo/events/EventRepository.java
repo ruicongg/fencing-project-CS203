@@ -11,7 +11,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findByTournamentId(Long tournamentId);
 
-    void deleteByTournamentIdAndId(Long tournamentId, Long eventId);
+    void deleteByTournamentIdAndId(Long tournamentId, Long id);
 
     KnockoutStage findKnockoutStageById(Long eventId);
 

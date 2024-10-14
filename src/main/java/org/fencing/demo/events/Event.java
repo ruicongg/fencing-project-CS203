@@ -72,11 +72,12 @@ public class Event {
     
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
-    //@JsonIgnore // To prevent circular references during serialization
+    @JsonIgnore // To prevent circular references during serialization
     private List<GroupStage> groupStages = new ArrayList<>();
     
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<KnockoutStage> knockoutStages = new ArrayList<>();
 
     //includes creating matches
