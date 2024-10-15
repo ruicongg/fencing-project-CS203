@@ -16,6 +16,8 @@ import java.time.LocalDate;
 import jakarta.persistence.Column;
 
 import org.fencing.demo.events.Event;
+
+import java.util.Objects;
 import java.util.Set;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Future;
@@ -61,4 +63,27 @@ public class Tournament {
 
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Event> events;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Tournament that = (Tournament) o;
+
+        // Compare all relevant fields for equality
+        return id == that.id &&
+               Objects.equals(name, that.name) &&
+               Objects.equals(registrationStartDate, that.registrationStartDate) &&
+               Objects.equals(registrationEndDate, that.registrationEndDate) &&
+               Objects.equals(tournamentStartDate, that.tournamentStartDate) &&
+               Objects.equals(tournamentEndDate, that.tournamentEndDate) &&
+               Objects.equals(venue, that.venue);
+    }
+
+    @Override
+    public int hashCode() {
+        // Include all relevant fields in hashCode calculation
+        return Objects.hash(id, name, registrationStartDate, registrationEndDate, tournamentStartDate, tournamentEndDate, venue);
+    }
 }

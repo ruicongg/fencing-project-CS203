@@ -33,7 +33,6 @@ public class MatchController {
         return matchService.addMatchesforAllGroupStages(eventId);
     }
 
-    
 
     @GetMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/{knockoutStageId}/matches")
     @ResponseStatus(HttpStatus.OK)

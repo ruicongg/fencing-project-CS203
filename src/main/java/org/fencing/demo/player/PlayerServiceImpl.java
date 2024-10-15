@@ -10,6 +10,7 @@ import org.fencing.demo.match.MatchRepository;
 import org.fencing.demo.tournament.Tournament;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PlayerServiceImpl implements PlayerService{
@@ -32,11 +33,15 @@ public class PlayerServiceImpl implements PlayerService{
     public Player getPlayer(Long id){
         return playerRepository.findById(id).orElse(null);
     }
+
     @Override
+    @Transactional
     public Player addPlayer(Player player){
         return playerRepository.save(player);
     }
+
     @Override
+    @Transactional
     public Player updatePlayer(Long id, Player player) {
         // Find the existing player by id
         Optional<Player> existingPlayer = playerRepository.findById(id);
@@ -54,7 +59,9 @@ public class PlayerServiceImpl implements PlayerService{
             throw new PlayerNotFoundException(id);
         }
     }
+
     @Override
+    @Transactional
     public void deletePlayer(Long id){
         Optional<Player> player = playerRepository.findById(id);
         if (player.isPresent()) {

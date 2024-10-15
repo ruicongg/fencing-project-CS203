@@ -4,11 +4,14 @@ import org.apache.hc.client5.http.auth.InvalidCredentialsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+    
     private UserRepository userRepository;
     
     @Autowired
@@ -29,12 +32,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User addUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
     @Override
+    @Transactional
     public User updateUser(Long id, User user) {
         // Find the existing user by id
         Optional<User> existingUser = userRepository.findById(id);
@@ -55,6 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {

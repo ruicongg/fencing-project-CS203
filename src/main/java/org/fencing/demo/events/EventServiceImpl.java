@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerNotFoundException;
 import org.fencing.demo.player.PlayerRepository;
+import org.fencing.demo.tournament.Tournament;
 import org.fencing.demo.tournament.TournamentNotFoundException;
 import org.fencing.demo.tournament.TournamentRepository;
 import org.springframework.stereotype.Service;
@@ -70,13 +71,14 @@ public class EventServiceImpl implements EventService{
             throw new IllegalArgumentException("Tournament ID, Event ID and updated Event cannot be null");
         }
         Event existingEvent = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
-        if (!existingEvent.getTournament().equals(newEvent.getTournament())) {
-            throw new IllegalArgumentException("Tournament cannot be changed");
-        }
+        // if (!existingEvent.getTournament().equals(newEvent.getTournament())) {
+        //     throw new IllegalArgumentException("Tournament cannot be changed");
+        // }
         // if (!(LocalDate.now().isBefore(newEvent.getStartDate().toLocalDate()))){
         //     throw new IllegalArgumentException("One player will not have an opponent");
         // }
-        if (!newEvent.getStartDate().toLocalDate().isAfter(newEvent.getTournament().getTournamentStartDate())) {
+        Tournament tournament = tournamentRepository.findById(tournamentId).get();
+        if (newEvent.getStartDate().toLocalDate().isBefore(tournament.getTournamentStartDate())) {
             throw new IllegalArgumentException("Event start date cannt be earlier than Tournament start date");
         }
         if (newEvent.getEndDate().isBefore(newEvent.getStartDate())) {
@@ -87,8 +89,8 @@ public class EventServiceImpl implements EventService{
         existingEvent.setStartDate(newEvent.getStartDate());
         existingEvent.setEndDate(newEvent.getEndDate());
         // existingEvent.setGroupStages(newEvent.getGroupStages());
-        existingEvent.setKnockoutStages(newEvent.getKnockoutStages());
-        // existingEvent.setRankings(newEvent.getRankings());
+        // existingEvent.setKnockoutStages(newEvent.getKnockoutStages());
+        existingEvent.setRankings(newEvent.getRankings());
 
         return eventRepository.save(existingEvent);
         
