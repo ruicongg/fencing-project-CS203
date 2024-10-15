@@ -81,10 +81,10 @@ public class UserIntegrationTest {
     public void deleteUser_Success() throws Exception {
         User user = new User("user1", "password", "test@email.com", Role.USER);
         userRepository.save(user);
-        URL uri = new URL(baseUrl + port + "/users/" + user.getId().longValue());
+        URI uri = new URI(baseUrl + port + "/users/" + user.getId().longValue());
         userRepository.save(adminUser);
 
-        ResponseEntity<User> response = restTemplate.withBasicAuth("admin", "adminPass").exchange(uri, HttpMethod.DELETE, null, Void.class);
+        ResponseEntity<Void> response = restTemplate.withBasicAuth("admin", "adminPass").exchange(uri, HttpMethod.DELETE, null, Void.class);
 
         assertEquals(200, response.getStatusCode().value());
         Optional<User> empty = Optional.empty();

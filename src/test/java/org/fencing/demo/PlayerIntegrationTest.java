@@ -19,6 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -77,9 +79,8 @@ public class PlayerIntegrationTest {
     public void getPlayer_Success() throws Exception {
         URI uri = new URI(baseUrl + port + "/players");
         Player player = new Player("user2", "pasword", "user@example.com", Role.USER);
-        Long id = players.save(player).getId();
 
-        ResponseEntity<Player> result = restTemplate.getForEntity(uri, Player.class);
+        ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass").getForEntity(uri, Player.class);
 
         assertEquals(200, result.getStatusCode().value());
         assertEquals(player.getId(), result.getBody().getId());
@@ -89,14 +90,26 @@ public class PlayerIntegrationTest {
     public void addPlayer_Success() throws Exception {
         URI uri = new URI(baseUrl + port + "/players");
         Player player = new Player("user2", "pasword", "user@example.com", Role.USER);
-        Long id = players.save(player).getId();
 
-        ResponseEntity<Player> result = restTemplate.getForEntity(uri, Player.class);
-                
-        assertEquals(200, result.getStatusCode().value());
+        ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass").postForEntity(uri, player, Player.class);
+          
         assertEquals(player.getId(), result.getBody().getId());
-
+        assertEquals(201, result.getStatusCode().value());
     }
+
+    @Test
+    public void updatePlayer_Success() throws Exception {
+        URI uri = new URI(baseUrl + port + "/players");
+        Player player = new Player("user2", "pasword", "user@example.com", Role.USER);
+        Player newPlayer = new Player("user3", "password", "user3@example.com", Role.USER);
+
+        ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass")
+        .exchange(uri, HttpMethod.PUT, new HttpEntity<>(newPlayer), Player.class);
+        
+        assertEquals(newPlayer.getId(), result.getBody().getId()); 
+        assertEquals(200, result.getStatusCode().value()); 
+    }
+
 
 }
 

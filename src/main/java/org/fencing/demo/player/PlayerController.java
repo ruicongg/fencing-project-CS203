@@ -44,7 +44,10 @@ public class PlayerController {
     @PostMapping("/players")
     @ResponseStatus(HttpStatus.CREATED)
     public Player addPlayer(@Valid @RequestBody Player player) {
-        return playerService.addPlayer(player); 
+        Player savedPlayer = playerService.addPlayer(player);
+        if (savedPlayer == null)
+            throw new PlayerExistException(player.getUsername());
+        return savedPlayer;
     }
 
     // updates player info
