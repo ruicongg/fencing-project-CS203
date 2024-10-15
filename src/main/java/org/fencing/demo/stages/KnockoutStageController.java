@@ -1,6 +1,5 @@
 package org.fencing.demo.stages;
 
-import org.fencing.demo.events.EventNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
 
 @RestController
 @RequestMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage")
@@ -31,7 +31,7 @@ public class KnockoutStageController {
     public KnockoutStage addKnockoutStage(@PathVariable Long eventId) {
         return knockoutStageService.addKnockoutStage(eventId);
     }
-
+    
     // GET: Get a specific KnockoutStage by ID (Accessible by anyone)
     @GetMapping("/{knockoutStageId}")
     @ResponseStatus(HttpStatus.OK)
@@ -42,11 +42,7 @@ public class KnockoutStageController {
     // PUT: Update an existing KnockoutStage for a specific event (Admin Only)
     @PutMapping("/{knockoutStageId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<KnockoutStage> updateKnockoutStage(
-            @PathVariable Long eventId,
-            @PathVariable Long knockoutStageId,
-            @RequestBody KnockoutStage knockoutStage) {
-        
+    public ResponseEntity<KnockoutStage> updateKnockoutStage(@PathVariable Long eventId, @PathVariable Long knockoutStageId, @RequestBody KnockoutStage knockoutStage) {
         if (knockoutStageService.getKnockoutStage(knockoutStageId).getEvent().getId() != eventId) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Event mismatch check
         }
@@ -66,4 +62,5 @@ public class KnockoutStageController {
         knockoutStageService.deleteKnockoutStage(eventId, knockoutStageId);
         return ResponseEntity.noContent().build();
     }
+
 }

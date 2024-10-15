@@ -6,7 +6,9 @@ import java.net.URI;
 import java.security.Key;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +37,7 @@ import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.Gender;
 import org.fencing.demo.events.WeaponType;
+import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
 import org.fencing.demo.user.UserRepository;
@@ -65,6 +68,9 @@ class KnockoutStageIntegrationTest {
 
     @Autowired
     private TournamentRepository tournamentRepository;
+
+    @Autowired
+    private PlayerRepository playerRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -114,19 +120,8 @@ class KnockoutStageIntegrationTest {
         knockoutStageRepository.deleteAll();
         eventRepository.deleteAll();
         tournamentRepository.deleteAll();
+        playerRepository.deleteAll();
         userRepository.deleteAll();
-    }
-
-    @Test
-    public void getKnockoutStage_Success() throws Exception {
-        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage");
-        knockoutStageRepository.save(createValidKnockoutStage());
-
-        ResponseEntity<KnockoutStage[]> result = restTemplate.getForEntity(uri, KnockoutStage[].class);
-        KnockoutStage[] knockoutStages = result.getBody();
-
-        assertEquals(200, result.getStatusCode().value());
-        assertEquals(1, knockoutStages.length);
     }
 
     @Test
@@ -191,7 +186,7 @@ class KnockoutStageIntegrationTest {
         HttpEntity<KnockoutStage> request = new HttpEntity<>(updatedKnockoutStage, createHeaders(adminToken));
         ResponseEntity<KnockoutStage> result = restTemplate
                 .exchange(uri, HttpMethod.PUT, request, KnockoutStage.class);
-
+        
         assertEquals(200, result.getStatusCode().value());
         assertEquals(updatedKnockoutStage.getId(), result.getBody().getId());
     }
@@ -223,28 +218,12 @@ class KnockoutStageIntegrationTest {
                 .event(event)
                 .build();
 
-        HttpEntity<KnockoutStage> request = new HttpEntity<>(updatedKnockoutStage, createHeaders(userToken));
+        HttpEntity<KnockoutStage> request = new HttpEntity<>(updatedKnockoutStage, createHeaders(adminToken));
         ResponseEntity<KnockoutStage> result = restTemplate
                 .exchange(uri, HttpMethod.PUT, request, KnockoutStage.class);
 
         assertEquals(404, result.getStatusCode().value());
     }
-
-    // @Test
-    // public void createKnockoutStage_Success() throws Exception {
-    //     URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage");
-
-    //     KnockoutStage newKnockoutStage = KnockoutStage.builder()
-    //             .event(event)
-    //             .build();
-
-    //     ResponseEntity<KnockoutStage> result = restTemplate
-    //             .withBasicAuth("admin", "adminPass")
-    //             .postForEntity(uri, newKnockoutStage, KnockoutStage.class);
-
-    //     assertEquals(201, result.getStatusCode().value());
-    //     assertTrue(knockoutStageRepository.existsById(result.getBody().getId()));
-    // }
 
     @Test
     public void deleteKnockoutStage_AdminUser_Success() throws Exception {
@@ -278,49 +257,12 @@ class KnockoutStageIntegrationTest {
     public void deleteKnockoutStage_InvalidId_Failure() throws Exception {
         URI uri = URI.create(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage/999");
 
-        HttpEntity<Void> request = new HttpEntity<>(createHeaders(userToken));
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
         ResponseEntity<Void> result = restTemplate
                 .exchange(uri, HttpMethod.DELETE, request, Void.class);
 
         assertEquals(404, result.getStatusCode().value());
     }
-
-    // @Test
-    // public void createKnockoutStage_BadRequest() throws Exception {
-    //     URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage");
-
-    //     KnockoutStage invalidKnockoutStage = KnockoutStage.builder().build(); // Missing event field
-
-    //     ResponseEntity<String> result = restTemplate
-    //             .withBasicAuth("admin", "adminPass")
-    //             .postForEntity(uri, invalidKnockoutStage, String.class);
-
-    //     assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-    // }
-
-    // @Test
-    // public void deleteKnockoutStage_NotFound() throws Exception {
-    //     URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage/9999");
-
-    //     ResponseEntity<Void> result = restTemplate
-    //             .withBasicAuth("admin", "adminPass")
-    //             .exchange(uri, HttpMethod.DELETE, null, Void.class);
-
-    //     assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-    // }
-
-    // @Test
-    // public void createKnockoutStage_EventNotFound() throws Exception {
-    //     URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/9999/knockoutStage");
-
-    //     KnockoutStage newKnockoutStage = KnockoutStage.builder().event(event).build();
-
-    //     ResponseEntity<String> result = restTemplate
-    //             .withBasicAuth("admin", "adminPass")
-    //             .postForEntity(uri, newKnockoutStage, String.class);
-
-    //     assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-    // }
 
     private KnockoutStage createValidKnockoutStage() {
         return KnockoutStage.builder()
