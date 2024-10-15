@@ -26,7 +26,7 @@ public class PlayerController {
 
     // List players (all? or in a tournament? or works for both)
     @GetMapping("/players")
-    public List<Player> listPlayers() {
+    public List<Player> getPlayers() {
         return playerService.listPlayers();
     }
 
@@ -37,7 +37,7 @@ public class PlayerController {
 
         if (player == null)
             throw new PlayerNotFoundException(id);
-        return player;
+        return playerService.getPlayer(id);
     }
 
     // Add a player

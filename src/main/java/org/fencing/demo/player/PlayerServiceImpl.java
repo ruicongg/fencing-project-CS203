@@ -26,14 +26,14 @@ public class PlayerServiceImpl implements PlayerService{
 
     @Override
     public List<Player> listPlayers(){
-        List<Player> players = playerRepository.findAll();
-        return players != null ? players : Collections.emptyList();
+        return playerRepository.findAll();
     }
 
     @Override
     public Player getPlayer(Long id){
         return playerRepository.findById(id).orElse(null);
     }
+
     @Override
     public Player addPlayer(Player player){
         List<Player> sameUser = playerRepository.findByUsername(player.getUsername());
@@ -43,6 +43,7 @@ public class PlayerServiceImpl implements PlayerService{
         else
             return null;
     }
+
     @Override
     public Player updatePlayer(Long id, Player player) {
         // Find the existing player by id
@@ -52,6 +53,9 @@ public class PlayerServiceImpl implements PlayerService{
             Player updatedPlayer = existingPlayer.get();
 
             // Update the fields of the existing player with the new player data 
+            updatedPlayer.setUsername(player.getUsername());
+            updatedPlayer.setEmail(player.getEmail());
+            updatedPlayer.setPassword(player.getPassword());
             updatedPlayer.setElo(player.getElo());
             
             // Save the updated player
@@ -61,6 +65,7 @@ public class PlayerServiceImpl implements PlayerService{
             throw new PlayerNotFoundException(id);
         }
     }
+
     @Override
     public void deletePlayer(Long id){
         Optional<Player> player = playerRepository.findById(id);

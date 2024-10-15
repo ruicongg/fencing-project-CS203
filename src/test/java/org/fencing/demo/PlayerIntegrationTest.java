@@ -26,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class PlayerIntegrationTest {
+
     @LocalServerPort
     private int port;
 
@@ -60,20 +61,18 @@ public class PlayerIntegrationTest {
         users.deleteAll();
     }
 
-    //     @Test
-    // public void getPlayers_Success() throws Exception {
-    //     URI uri = new URI(baseUrl + port + "/players");
-    //     players.save(new Player("user2", "pasword", "user@example.com", Role.USER));
+    @Test
+    public void getPlayers_Success() throws Exception {
+        URI uri = new URI(baseUrl + port + "/players");
+        players.save(new Player("user2", "password", "user@example.com", Role.USER));
 
-    //     // Continue with the original test logic
+        ResponseEntity<Player[]> response = restTemplate.getForEntity(uri, Player[].class);
+        Player[] players = response.getBody();
 
-    //     ResponseEntity<Player[]> response = restTemplate.getForEntity(uri, Player[].class);
-    //     Player[] players = response.getBody();
-
-    //     assertEquals(200, response.getStatusCode().value());
-    //     assertNotNull(players);
-    //     assertEquals(1, players.length);
-    // }
+        assertEquals(200, response.getStatusCode().value());
+        assertNotNull(players);
+        assertEquals(1, players.length);
+    }
 
     @Test
     public void getPlayer_Success() throws Exception {
@@ -88,28 +87,44 @@ public class PlayerIntegrationTest {
 
     @Test
     public void addPlayer_Success() throws Exception {
-        URI uri = new URI(baseUrl + port + "/players");
         Player player = new Player("user2", "pasword", "user@example.com", Role.USER);
+        Long id = players.save(player).getId();
+        URI uri = new URI(baseUrl + port + "/players/" + id);
 
         ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass").postForEntity(uri, player, Player.class);
-          
-        assertEquals(player.getId(), result.getBody().getId());
+       
         assertEquals(201, result.getStatusCode().value());
+        assertEquals(player.getUsername(), result.getBody().getUsername());
+        
     }
 
     @Test
     public void updatePlayer_Success() throws Exception {
-        URI uri = new URI(baseUrl + port + "/players");
-        Player player = new Player("user2", "pasword", "user@example.com", Role.USER);
-        Player newPlayer = new Player("user3", "password", "user3@example.com", Role.USER);
+        Player player = new Player("user2", "password", "user@example.com", Role.USER);
+        Long id = players.save(player).getId();
+        URI uri = new URI(baseUrl + port + "/players/" + id);
+        Player newPlayer = new Player("user3", "password3", "user3@example.com", Role.USER);
 
         ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass")
         .exchange(uri, HttpMethod.PUT, new HttpEntity<>(newPlayer), Player.class);
         
-        assertEquals(newPlayer.getId(), result.getBody().getId()); 
         assertEquals(200, result.getStatusCode().value()); 
+        assertEquals(newPlayer.getId(), result.getBody().getId()); 
     }
 
+    @Test
+    public void deletePlayer_Success() throws Exception {
+        URI uri = new URI(baseUrl + port + "/players");
+        Player player = new Player("user2", "password", "user@example.com", Role.USER);
+        players.save(player);
+
+        ResponseEntity<Void> result = restTemplate.withBasicAuth("admin", "adminPass")
+        .exchange(uri, HttpMethod.DELETE, null, Void.class);
+
+        assertEquals(200, result.getStatusCode().value());
+        Optional<Player> emptyValue = Optional.empty();
+        assertEquals(emptyValue, players.findById(player.getId()));
+    }
 
 }
 
