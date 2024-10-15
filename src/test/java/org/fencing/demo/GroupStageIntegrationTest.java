@@ -109,12 +109,31 @@ public class GroupStageIntegrationTest {
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournamentId + "/events/" + eventId +"/groupStage/" + grpStageId);
 
-		HttpEntity<GroupStage> requestEntity = new HttpEntity<>(findGrpStage);
-		ResponseEntity<GroupStage> result = restTemplate.withBasicAuth("user", "userPass")
-										.exchange(uri, HttpMethod.GET, requestEntity, GroupStage.class);
+		// HttpEntity<GroupStage> requestEntity = new HttpEntity<>(findGrpStage);
+		// ResponseEntity<GroupStage> result = restTemplate.withBasicAuth("admin", "adminPass")
+		// 								.exchange(uri, HttpMethod.GET, requestEntity, GroupStage.class);
+
+        // assertEquals(200, result.getStatusCode().value());
+		ResponseEntity<GroupStage> result = restTemplate.getForEntity(uri, GroupStage.class);
 
         assertEquals(200, result.getStatusCode().value());
+    }
 
+
+	@Test
+    public void getGroupStage_InvalidGroupStageId_Failure() throws Exception {
+		Tournament findTournament = createValidTournament();
+		Long tournamentId = tournamentRepository.save(findTournament).getId();
+		Event findEvent = createValidEvent(findTournament);
+		Long eventId = eventsRepository.save(findEvent).getId();
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournamentId + "/events/" + eventId +"/groupStage/999");
+
+		HttpEntity<GroupStage> requestEntity = new HttpEntity<>(new GroupStage());
+        ResponseEntity<GroupStage> result = restTemplate.withBasicAuth("user", "userPass")
+										.exchange(uri, HttpMethod.GET, requestEntity, GroupStage.class);
+
+
+        assertEquals(404, result.getStatusCode().value());
     }
 
 
