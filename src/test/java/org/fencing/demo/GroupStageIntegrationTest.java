@@ -41,7 +41,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class GroupStageIntegrationTest {
     @LocalServerPort
@@ -73,16 +75,18 @@ public class GroupStageIntegrationTest {
 
 	@BeforeEach
     void setUp() {
-        // Create an admin user
-        userRepository.deleteAll();
-        adminUser = new User("admin", passwordEncoder.encode("adminPass"), "admin@example.com", Role.ADMIN);
-        userRepository.save(adminUser);
+		userRepository.deleteAll();
+		if (userRepository.findByUsername("admin") == null) {
+			adminUser = new User("admin", passwordEncoder.encode("adminPass"), "admin@example.com", Role.ADMIN);
+			userRepository.save(adminUser);
+		}
+	
+		if (userRepository.findByUsername("user") == null) {
+			regularUser = new User("user", passwordEncoder.encode("userPass"), "user@example.com", Role.USER);
+			userRepository.save(regularUser);
+		}
 
-        // Create a regular user
-        regularUser = new User("user", passwordEncoder.encode("userPass"), "user@example.com", Role.USER);
-        userRepository.save(regularUser);
     }
-
 
     @AfterEach
 	void tearDown(){
@@ -90,7 +94,30 @@ public class GroupStageIntegrationTest {
 		grpStagesRepository.deleteAll();
 		eventsRepository.deleteAll();
 		tournamentRepository.deleteAll();
+		userRepository.deleteAll();
 	}
+
+	@Test
+	@Transactional
+    public void getGrpStageById_Success() throws Exception {
+		Tournament findTournament = createValidTournament();
+		Long tournamentId = tournamentRepository.save(findTournament).getId();
+		Event findEvent = createValidEvent(findTournament);
+		Long eventId = eventsRepository.save(findEvent).getId();
+		GroupStage findGrpStage = createValidGrpStage(findEvent);
+		Long grpStageId = grpStagesRepository.save(findGrpStage).getId();
+
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournamentId + "/events/" + eventId +"/groupStage/" + grpStageId);
+
+		HttpEntity<GroupStage> requestEntity = new HttpEntity<>(findGrpStage);
+		ResponseEntity<GroupStage> result = restTemplate.withBasicAuth("user", "userPass")
+										.exchange(uri, HttpMethod.GET, requestEntity, GroupStage.class);
+
+        assertEquals(200, result.getStatusCode().value());
+
+    }
+
+
 
 	private Tournament createValidTournament() {
         return Tournament.builder()
@@ -126,26 +153,6 @@ public class GroupStageIntegrationTest {
 
 		return grpStage;
 	}
-
-	@Test
-    public void getGrpStageById_Success() throws Exception {
-		Tournament findTournament = createValidTournament();
-		Long tournamentId = tournamentRepository.save(findTournament).getId();
-		Event findEvent = createValidEvent(findTournament);
-		Long eventId = eventsRepository.save(findEvent).getId();
-		GroupStage findGrpStage = createValidGrpStage(findEvent);
-		Long grpStageId = grpStagesRepository.save(findGrpStage).getId();
-
-        URI uri = new URI(baseUrl + port + "/tournaments/" + tournamentId + "/events/" + eventId +"/groupStage/" + grpStageId);
-        tournamentRepository.save(createValidTournament());
-
-        ResponseEntity<GroupStage> result = restTemplate.getForEntity(uri, GroupStage.class);
-
-        assertEquals(200, result.getStatusCode().value());
-    }
-
-	
-
 
 
 }
