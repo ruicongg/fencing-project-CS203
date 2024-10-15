@@ -24,6 +24,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -37,6 +39,8 @@ import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.Gender;
 import org.fencing.demo.events.WeaponType;
+import org.fencing.demo.match.Match;
+import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
@@ -57,6 +61,8 @@ class KnockoutStageIntegrationTest {
     private User regularUser;
     private Tournament tournament;
     private Event event;
+    private Player player1;
+    private Player player2;
     private String adminToken;
     private String userToken;
 
@@ -91,6 +97,15 @@ class KnockoutStageIntegrationTest {
 
         adminToken = "Bearer " + generateToken(adminUser);
         userToken = "Bearer " + generateToken(regularUser);
+
+        // Initialize players for the matches
+        player1 = new Player("player1", passwordEncoder.encode("password1"), "player1@example.com", Role.USER);
+        player1.setElo(1700);
+        playerRepository.save(player1);
+
+        player2 = new Player("player2", passwordEncoder.encode("password2"), "player2@example.com", Role.USER);
+        player2.setElo(1700);
+        playerRepository.save(player2);
 
         // Initialize and save a Tournament object
         tournament = Tournament.builder()
@@ -178,10 +193,18 @@ class KnockoutStageIntegrationTest {
         Long id = knockoutStageRepository.save(knockoutStage).getId();
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage/" + id);
 
-        KnockoutStage updatedKnockoutStage = KnockoutStage.builder()
-                .id(id)
-                .event(event)
-                .build();
+        List<Match> updatedMatches = new ArrayList<>();
+        updatedMatches.add(Match.builder()
+                .player1(player1)
+                .player2(player2)
+                .player1Score(15)
+                .player2Score(10)
+                .knockoutStage(knockoutStage)  // Ensure knockoutStage is set here
+                .event(event)  // Make sure event is associated with the match
+                .build());
+
+        knockoutStage.setMatches(updatedMatches);
+        KnockoutStage updatedKnockoutStage = knockoutStage;
 
         HttpEntity<KnockoutStage> request = new HttpEntity<>(updatedKnockoutStage, createHeaders(adminToken));
         ResponseEntity<KnockoutStage> result = restTemplate
