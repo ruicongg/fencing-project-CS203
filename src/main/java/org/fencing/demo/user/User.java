@@ -27,7 +27,6 @@ public class User implements UserDetails{
 
     @NotNull(message = "Username is required")
     @Column(unique = true)
-    // ! might need to implement unique logic in service as well
     private String username; 
 
     @NotNull(message = "Password is required")
