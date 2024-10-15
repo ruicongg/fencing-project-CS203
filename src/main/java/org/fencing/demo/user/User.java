@@ -10,7 +10,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Email;
 import java.util.*;
 
-
 @Entity
 @Getter
 @Setter

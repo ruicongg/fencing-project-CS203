@@ -71,7 +71,7 @@ public class Event {
 
     // for sorting after
     @Builder.Default
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private Set<PlayerRank> rankings = new TreeSet<>(new PlayerRankComparator());
 
     //public TreeSet<Player> EloRank;
@@ -82,7 +82,7 @@ public class Event {
     private Tournament tournament;
     
     @Builder.Default
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore // To prevent circular references during serialization
     private List<GroupStage> groupStages = new ArrayList<>();
     

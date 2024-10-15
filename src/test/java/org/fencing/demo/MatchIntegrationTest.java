@@ -43,6 +43,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -72,7 +73,7 @@ public class MatchIntegrationTest {
     private PlayerRepository playerRepository;
 
     @Autowired
-    private BCryptPasswordEncoder encoder;
+    private PasswordEncoder passwordEncoder;
 
     private Event event;
 
@@ -88,34 +89,67 @@ public class MatchIntegrationTest {
 
     private final String baseUrl = "http://localhost:";
 
-    @BeforeEach
-    void setUp() {
+    // @BeforeEach
+    // void setUp() {
         
-        adminUser = createValidAdminUser(encoder);
-        if (!userRepository.existsByUsername(adminUser.getUsername())) {
-            userRepository.save(adminUser);
-        }
+    //     adminUser = createValidAdminUser(encoder);
+    //     if (!userRepository.existsByUsername(adminUser.getUsername())) {
+    //         userRepository.save(adminUser);
+    //     }
 
-        tournament = createValidTournament();
-        tournamentRepository.save(tournament);
+    //     tournament = createValidTournament();
+    //     tournamentRepository.save(tournament);
 
-        regularUser = createValidRegularUser(encoder);
-        if (!userRepository.existsByUsername(regularUser.getUsername())) {
-            userRepository.save(regularUser);
-        }
+    //     regularUser = createValidRegularUser(encoder);
+    //     if (!userRepository.existsByUsername(regularUser.getUsername())) {
+    //         userRepository.save(regularUser);
+    //     }
 
-        Set<PlayerRank> players = createPlayers(event);
+    //     event = createValidEvent(tournament, new HashSet<>());
+    //     eventRepository.save(event);
 
-        event = createValidEvent(tournament, players);
-        eventRepository.save(event);
+    //     // Now create players after event is saved
+    //     Set<PlayerRank> players = createPlayers(event);
+    //     event.setRankings(players);  // Update event rankings
+    //     eventRepository.save(event);
 
-        groupStage = createValidGroupStage(event, new ArrayList<>(players));
-        groupStageRepository.save(groupStage);
+    //     groupStage = createValidGroupStage(event, new ArrayList<>(players));
+    //     groupStageRepository.save(groupStage);
 
-        knockoutStage = createValidKnockoutStage(event);
-        knockoutStageRepository.save(knockoutStage);
+    //     knockoutStage = createValidKnockoutStage(event);
+    //     knockoutStageRepository.save(knockoutStage);
 
-    }
+    // }
+
+    // @BeforeEach
+    // void setUp() {
+    //     userRepository.deleteAll();
+    //     adminUser = new User("admin", passwordEncoder.encode("adminPass"), "admin@example.com", Role.ADMIN);
+    //     userRepository.save(adminUser);
+
+    //     regularUser = new User("user", passwordEncoder.encode("userPass"), "user@example.com", Role.USER);
+    //     userRepository.save(regularUser);
+
+    //     tournamentRepository.deleteAll();
+    //     tournament = createValidTournament();
+    //     tournamentRepository.save(tournament);
+
+    //     eventRepository.deleteAll();
+    //     event = createValidEvent(tournament);
+    //     eventRepository.save(event);
+    //     Set<PlayerRank> players = createPlayers(event);
+    //     // event = addPlayers(players);
+    //     // event = eventRepository.saveAndFlush(event);
+
+    //     groupStageRepository.deleteAll();
+    //     groupStage = createValidGroupStage(event, new ArrayList<>(players));
+    //     groupStageRepository.saveAndFlush(groupStage);
+
+    //     knockoutStageRepository.deleteAll();
+    //     knockoutStage = createValidKnockoutStage(event);
+    //     knockoutStageRepository.saveAndFlush(knockoutStage);
+    // }
+
 
     @AfterEach
     void tearDown() {
@@ -124,20 +158,45 @@ public class MatchIntegrationTest {
         groupStageRepository.deleteAll();
         knockoutStageRepository.deleteAll();
         userRepository.deleteAll();
-        // entityManager.flush();
+        playerRepository.deleteAll();
     }
 
     @Test
-    @Transactional
-    public void addInitialMatchForGroupStage_Success() throws Exception {
+     public void addInitialMatchForGroupStage_Success() throws Exception {
+        userRepository.deleteAll();
+        adminUser = new User("admin", passwordEncoder.encode("adminPass"), "admin@example.com", Role.ADMIN);
+        userRepository.save(adminUser);
+
+        regularUser = new User("user", passwordEncoder.encode("userPass"), "user@example.com", Role.USER);
+        userRepository.save(regularUser);
+
+        tournamentRepository.deleteAll();
+        tournament = createValidTournament();
+        tournamentRepository.save(tournament);
+
+        eventRepository.deleteAll();
+        event = createValidEvent(tournament);
+        eventRepository.save(event);
+
+        groupStageRepository.deleteAll();
+        groupStage = createValidGroupStage(event, new ArrayList<>());
+        groupStageRepository.save(groupStage);
+
+        playerRepository.deleteAll();
+        addPlayersToEvent(event, groupStage);
+
+        groupStage = createValidGroupStage(event, new ArrayList<>(event.getRankings()));
+        groupStageRepository.save(groupStage);
+
+        knockoutStageRepository.deleteAll();
+        knockoutStage = createValidKnockoutStage(event);
+        knockoutStageRepository.save(knockoutStage);
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/matches");
 
-        // When: Sending a POST request to add matches for the group stage
-        ResponseEntity<Match[]> result = restTemplate.withBasicAuth("admin", "strongpassword123")
+        ResponseEntity<Match[]> result = restTemplate.withBasicAuth("admin", "adminUser")
                                                     .postForEntity(uri, null, Match[].class);
 
-        // Then: Assert that matches are created successfully
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertNotNull(result.getBody());
         assertTrue(result.getBody().length > 0);
@@ -146,7 +205,7 @@ public class MatchIntegrationTest {
     @Test
     @Transactional
     public void addMatchesForKnockoutStage_Success() throws Exception {
-
+        
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage/" + knockoutStage.getId() + "/matches");
 
         // When: Sending a POST request to add matches for the knockout stage
@@ -229,26 +288,28 @@ public class MatchIntegrationTest {
         return Tournament.builder()
                 .name("Spring Championship")
                 .registrationStartDate(LocalDate.now().plusDays(1))
-                .registrationEndDate(LocalDate.now().plusDays(30))
-                .tournamentStartDate(LocalDate.now().plusDays(60))
-                .tournamentEndDate(LocalDate.now().plusDays(65))
+                .registrationEndDate(LocalDate.now().plusDays(20))
+                .tournamentStartDate(LocalDate.now().plusDays(25))
+                .tournamentEndDate(LocalDate.now().plusDays(30))
                 .venue("Sports Arena")
                 .events(new HashSet<>())
                 .build();
     }
 
-    private Event createValidEvent(Tournament tournament, Set<PlayerRank> players) {
+    private Event createValidEvent(Tournament tournament) {
         return Event.builder()
-            .startDate(LocalDateTime.now().plusDays(10))  // Set a start date in the future
-            .endDate(LocalDateTime.now().plusDays(11))    // Set an end date after the start date
-            .gender(Gender.MALE)                          // Set a valid gender
-            .weapon(WeaponType.FOIL)                      // Set a valid weapon type
-            .tournament(tournament)                       // Set the related tournament
-            .rankings(players)  // Initialize rankings set
-            .groupStages(new ArrayList<>())                      // Initialize group stages list
-            .knockoutStages(new ArrayList<>())                   // Initialize knockout stages list
-            .build();
+        .tournament(tournament)
+        .gender(Gender.MALE)
+        .weapon(WeaponType.FOIL)  
+        .startDate(LocalDateTime.now().plusDays(25))  
+        .endDate(LocalDateTime.now().plusDays(26))
+        .build();
     }
+
+    // private Event addPlayers(Set<PlayerRank> players){
+    //     event.setRankings(players);
+    //     return eventRepository.save(event);
+    // }
 
     public GroupStage createValidGroupStage(Event event, List<PlayerRank> players) {
         return GroupStage.builder()
@@ -266,51 +327,62 @@ public class MatchIntegrationTest {
             .build();
     }
 
-    private Set<PlayerRank> createPlayers(Event event) {
-        Set<PlayerRank> players = new TreeSet<>(new PlayerRankComparator());
+    // private Set<PlayerRank> createPlayers(Event event) {
+    //     Set<PlayerRank> players = new TreeSet<>(new PlayerRankComparator());
+    //     for (int i = 1; i <= 8; i++) {
+    //         Player player = createValidPlayer(i); 
+    //         playerRepository.save(player);
+    //         PlayerRank playerRank = createPlayerRank(player, event);
+    //         players.add(playerRank);
+    //     }
+    //     return players;
+    // }
+
+    private Event addPlayersToEvent(Event event, GroupStage groupStage) {
         for (int i = 1; i <= 8; i++) {
             Player player = createValidPlayer(i); 
-            PlayerRank playerRank = createPlayerRank(i, player, event);
-            players.add(playerRank);
+            PlayerRank playerRank = createPlayerRank(player, event, groupStage);
+            event.getRankings().add(playerRank);
+            // eventRepository.save(event);
         }
-        return players;
+        // return players;
+        return eventRepository.save(event);
     }
 
-    private PlayerRank createPlayerRank(int id, Player player, Event event) {
+    private PlayerRank createPlayerRank(Player player, Event event, GroupStage groupStage) {
         PlayerRank playerRank = new PlayerRank();
-        playerRank.setId((long) id);
         playerRank.setEvent(event);
         playerRank.setPlayer(player);
+        playerRank.setGroupStage(groupStage);
         return playerRank;
+        // event.getRankings().add(playerRank);
+        // return eventRepository.save(event);
     }
 
     private Player createValidPlayer(int id) {
         Player player = new Player();
-        player.setId((long) id);
-        player.setUsername("Player" + id);
-        player.setElo(1700);
         player.setEmail("player"+id+"@email.com");
         player.setUsername("player"+id);
-        player .setPassword("123456");
-        playerRepository.save(player);
-        return player;
+        player.setPassword(passwordEncoder.encode("playerPass"));
+        player.setRole(Role.USER);
+        return playerRepository.save(player);
     }
 
-    public User createValidAdminUser(BCryptPasswordEncoder encoder) {
-        User user = new User();
-        user.setUsername("admin");
-        user.setPassword(encoder.encode("strongpassword123"));  // Encode the password
-        user.setEmail("admin@example.com");  // Set a valid email
-        user.setRole(Role.ADMIN);  // Use the correct enum value for Role
-        return user;
-    }
+    // public User createValidAdminUser(BCryptPasswordEncoder encoder) {
+    //     User user = new User();
+    //     user.setUsername("admin");
+    //     user.setPassword(encoder.encode("strongpassword123"));  // Encode the password
+    //     user.setEmail("admin@example.com");  // Set a valid email
+    //     user.setRole(Role.ADMIN);  // Use the correct enum value for Role
+    //     return user;
+    // }
 
-    public User createValidRegularUser(BCryptPasswordEncoder encoder) {
-        User user = new User();
-        user.setUsername("user");
-        user.setPassword(encoder.encode("strongpassword456"));  // Encode the password
-        user.setEmail("validuser@example.com");  // Set a valid email
-        user.setRole(Role.USER);  // Use the correct enum value for Role
-        return user;
-    }
+    // public User createValidRegularUser(BCryptPasswordEncoder encoder) {
+    //     User user = new User();
+    //     user.setUsername("user");
+    //     user.setPassword(encoder.encode("strongpassword456"));  // Encode the password
+    //     user.setEmail("validuser@example.com");  // Set a valid email
+    //     user.setRole(Role.USER);  // Use the correct enum value for Role
+    //     return user;
+    // }
 }

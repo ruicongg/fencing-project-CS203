@@ -41,6 +41,7 @@ public class PlayerRank {
     private Event event;
 
     @ManyToOne
+    @JoinColumn(name = "group_stage_id")
     private GroupStage groupStage;
 
     private int score;
