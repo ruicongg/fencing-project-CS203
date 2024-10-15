@@ -31,7 +31,7 @@ public class BeforeGroupStageTest {
     }
 
     @Test
-    public void testSortByELO_PerfectDivision() {
+    public void testSortByELO_Perfect4() {
         // Test with number of players that perfectly divides into groups
         Set<PlayerRank> rankings = new TreeSet<>(new PlayerRankEloComparator());
 
@@ -111,6 +111,89 @@ public class BeforeGroupStageTest {
             assertEquals(4, result.get(group).size(), "Each group should have 4 players");
         }
     }
+
+
+    @Test
+    public void testSortByELO_Perfect5(){
+        Set<PlayerRank> rankings = new TreeSet<>(new PlayerRankEloComparator());
+
+        int[] elos = {1200, 1400, 1900, 2000, 1500, 1300, 1600, 1700, 1000, 1150};
+
+        for(int i = 0; i < 10; i++){
+            Player p = new Player();
+            p.setElo(elos[i]);
+            PlayerRank pr = new PlayerRank();
+            pr.setPlayer(p);
+            rankings.add(pr);
+        }
+
+        TreeMap<Integer, List<PlayerRank>> result = BeforeGroupStage.sortByELO(rankings);
+        
+        //Test the number of groups (should be 2 groups, each with 4 players)
+        assertEquals(2, result.size(), "There should be 2 groups for 8 players");
+
+        //Check if the groups have the correct number of players
+        for (Integer group : result.keySet()) {
+            assertEquals(5, result.get(group).size(), "Each group should have 4 players");
+        }
+
+    }
+
+    @Test
+    public void testSortByELO_Perfect6(){
+        Set<PlayerRank> rankings = new TreeSet<>(new PlayerRankEloComparator());
+
+        int[] elos = {1200, 1400, 1900, 2000, 1500, 1300, 1600, 1700, 1000, 1150,
+        1221, 1331, 1441, 1505, 1670, 1234, 1501, 1360};
+
+        for(int i = 0; i < 18; i++){
+            Player p = new Player();
+            p.setElo(elos[i]);
+            PlayerRank pr = new PlayerRank();
+            pr.setPlayer(p);
+            rankings.add(pr);
+        }
+
+        TreeMap<Integer, List<PlayerRank>> result = BeforeGroupStage.sortByELO(rankings);
+        
+        //Test the number of groups (should be 2 groups, each with 4 players)
+        assertEquals(3, result.size(), "There should be 2 groups for 8 players");
+
+        //Check if the groups have the correct number of players
+        for (Integer group : result.keySet()) {
+            assertEquals(6, result.get(group).size(), "Each group should have 4 players");
+        }
+
+    }
+
+
+    @Test
+    public void testSortByELO_Perfect7(){
+        Set<PlayerRank> rankings = new TreeSet<>(new PlayerRankEloComparator());
+
+        int[] elos = {1200, 1400, 1900, 2000, 1500, 1300, 1600, 1700, 1000, 1150,
+        1221, 1331, 1441, 1501};
+
+        for(int i = 0; i < 14; i++){
+            Player p = new Player();
+            p.setElo(elos[i]);
+            PlayerRank pr = new PlayerRank();
+            pr.setPlayer(p);
+            rankings.add(pr);
+        }
+
+        TreeMap<Integer, List<PlayerRank>> result = BeforeGroupStage.sortByELO(rankings);
+        
+        //Test the number of groups (should be 2 groups, each with 4 players)
+        assertEquals(2, result.size(), "There should be 2 groups for 8 players");
+
+        //Check if the groups have the correct number of players
+        for (Integer group : result.keySet()) {
+            assertEquals(7, result.get(group).size(), "Each group should have 4 players");
+        }
+
+    }
+
 
     @Test
     public void testSortByELO_WithRemainder() {
@@ -203,4 +286,6 @@ public class BeforeGroupStageTest {
                 assertTrue(result.get(1).size() == 5 && result.get(2).size() == 4, 
                            "Groups should be balanced, 4-5 players per group");
     }
+
+
 }
