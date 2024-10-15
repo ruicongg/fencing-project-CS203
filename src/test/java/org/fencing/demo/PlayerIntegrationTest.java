@@ -4,10 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.Optional;
 
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
+import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
 import org.fencing.demo.user.UserRepository;
@@ -20,9 +22,16 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import java.security.Key;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class PlayerIntegrationTest {
@@ -44,6 +53,7 @@ public class PlayerIntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    private String adminToken;
     private User adminUser;
 
     @BeforeEach
@@ -52,6 +62,8 @@ public class PlayerIntegrationTest {
         users.deleteAll();
         adminUser = new User("admin", passwordEncoder.encode("adminPass"), "admin@example.com", Role.ADMIN);
         users.save(adminUser);
+
+        adminToken = "Bearer " + generateToken(adminUser);
     }
     
     @AfterEach
@@ -80,7 +92,7 @@ public class PlayerIntegrationTest {
         Long id = players.save(player).getId();
         URI uri = new URI(baseUrl + port + "/players/" + id);
 
-        ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass").getForEntity(uri, Player.class);
+        ResponseEntity<Player> result = restTemplate.getForEntity(uri, Player.class);
 
         assertEquals(200, result.getStatusCode().value());
         assertEquals(player.getId(), result.getBody().getId());
@@ -92,8 +104,9 @@ public class PlayerIntegrationTest {
         players.save(player);
         URI uri = new URI(baseUrl + port + "/players");
 
-        ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass").postForEntity(uri, player, Player.class);
-       
+        HttpEntity<Player> request = new HttpEntity<>(player, createHeaders(adminToken));
+        ResponseEntity<Player> result = restTemplate
+                .exchange(uri, HttpMethod.POST, request, Player.class);
         assertEquals(201, result.getStatusCode().value());
         assertEquals(player.getUsername(), result.getBody().getUsername());
         
@@ -127,6 +140,29 @@ public class PlayerIntegrationTest {
         assertEquals(200, result.getStatusCode().value());
         Optional<Player> emptyValue = Optional.empty();
         assertEquals(emptyValue, players.findById(player.getId()));
+    }
+
+    private static final String SECRET_KEY = "okLzUXUdbiclWJtW5hXRabO10nXGqWdCFQodkuPpnKI=";
+
+    private String generateToken(User user) {
+        return Jwts
+            .builder()
+            .setSubject(user.getUsername())
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+            .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+            .compact();
+    }
+
+    private Key getSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    private HttpHeaders createHeaders(String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", token);
+        return headers;
     }
 
 }
