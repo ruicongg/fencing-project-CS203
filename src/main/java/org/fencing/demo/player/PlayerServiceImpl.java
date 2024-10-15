@@ -68,13 +68,7 @@ public class PlayerServiceImpl implements PlayerService{
 
     @Override
     public void deletePlayer(Long id){
-        Optional<Player> player = playerRepository.findById(id);
-        if (player.isPresent()) {
-            playerRepository.delete(player.get());
-        } else {
-            // Handle the case where the player does not exist
-            throw new PlayerNotFoundException(id);
-        }
+        playerRepository.deleteById(id);
     }
 
     // Get all tournaments a player participated in

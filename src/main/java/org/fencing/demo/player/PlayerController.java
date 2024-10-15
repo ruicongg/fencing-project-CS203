@@ -63,11 +63,9 @@ public class PlayerController {
     // Deletes player (from tournament or sys?)
     @DeleteMapping("/players/{id}")
     public void deletePlayer(@PathVariable Long id) {
-        try {
-            playerService.deletePlayer(id);
-        } catch (EmptyResultDataAccessException e) {
+        if (playerService.getPlayer(id) == null)
             throw new PlayerNotFoundException(id);
-        }
+        playerService.deletePlayer(id);
     }
 
 }
