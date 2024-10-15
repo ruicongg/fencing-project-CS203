@@ -77,8 +77,8 @@ public class PlayerIntegrationTest {
     @Test
     public void getPlayer_Success() throws Exception {
         Player player = new Player("user2", "pasword", "user@example.com", Role.USER);
-        Long id = player.getId();
-        URI uri = new URI(baseUrl + port + "/players" + id);
+        Long id = players.save(player).getId();
+        URI uri = new URI(baseUrl + port + "/players/" + id);
 
         ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass").getForEntity(uri, Player.class);
 
@@ -89,8 +89,8 @@ public class PlayerIntegrationTest {
     @Test
     public void addPlayer_Success() throws Exception {
         Player player = new Player("user2", "pasword", "user@example.com", Role.USER);
-        Long id = players.save(player).getId();
-        URI uri = new URI(baseUrl + port + "/players/" + id);
+        players.save(player);
+        URI uri = new URI(baseUrl + port + "/players");
 
         ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass").postForEntity(uri, player, Player.class);
        
@@ -102,7 +102,8 @@ public class PlayerIntegrationTest {
     @Test
     public void updatePlayer_Success() throws Exception {
         Player player = new Player("user2", "password", "user@example.com", Role.USER);
-        Long id = players.save(player).getId();
+        players.save(player);
+        Long id = player.getId();
         URI uri = new URI(baseUrl + port + "/players/" + id);
         Player newPlayer = new Player("user3", "password3", "user3@example.com", Role.USER);
 
@@ -118,7 +119,7 @@ public class PlayerIntegrationTest {
         Player player = new Player("user2", "password", "user@example.com", Role.USER);
         players.save(player);
         Long id = player.getId();
-        URI uri = new URI(baseUrl + port + "/players" + id);
+        URI uri = new URI(baseUrl + port + "/players/" + id);
 
         ResponseEntity<Void> result = restTemplate.withBasicAuth("admin", "adminPass")
         .exchange(uri, HttpMethod.DELETE, null, Void.class);
