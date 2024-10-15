@@ -76,7 +76,7 @@ public class PlayerIntegrationTest {
 
     @Test
     public void getPlayer_Success() throws Exception {
-        Player player = new Player("user2", "pasword", "user@example.com", Role.USER);
+        Player player = new Player("user2", "password", "user@example.com", Role.USER);
         Long id = players.save(player).getId();
         URI uri = new URI(baseUrl + port + "/players/" + id);
 
@@ -88,7 +88,7 @@ public class PlayerIntegrationTest {
 
     @Test
     public void addPlayer_Success() throws Exception {
-        Player player = new Player("user2", "pasword", "user@example.com", Role.USER);
+        Player player = new Player("user69", "password", "user69@example.com", Role.USER);
         players.save(player);
         URI uri = new URI(baseUrl + port + "/players");
 
