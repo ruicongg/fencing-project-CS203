@@ -63,8 +63,8 @@ public class PlayerIntegrationTest {
 
     @Test
     public void getPlayers_Success() throws Exception {
-        URI uri = new URI(baseUrl + port + "/players");
         players.save(new Player("user2", "password", "user@example.com", Role.USER));
+        URI uri = new URI(baseUrl + port + "/players");
 
         ResponseEntity<Player[]> response = restTemplate.getForEntity(uri, Player[].class);
         Player[] players = response.getBody();
@@ -76,8 +76,9 @@ public class PlayerIntegrationTest {
 
     @Test
     public void getPlayer_Success() throws Exception {
-        URI uri = new URI(baseUrl + port + "/players");
         Player player = new Player("user2", "pasword", "user@example.com", Role.USER);
+        Long id = player.getId();
+        URI uri = new URI(baseUrl + port + "/players" + id);
 
         ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass").getForEntity(uri, Player.class);
 
@@ -114,9 +115,10 @@ public class PlayerIntegrationTest {
 
     @Test
     public void deletePlayer_Success() throws Exception {
-        URI uri = new URI(baseUrl + port + "/players");
         Player player = new Player("user2", "password", "user@example.com", Role.USER);
         players.save(player);
+        Long id = player.getId();
+        URI uri = new URI(baseUrl + port + "/players" + id);
 
         ResponseEntity<Void> result = restTemplate.withBasicAuth("admin", "adminPass")
         .exchange(uri, HttpMethod.DELETE, null, Void.class);
