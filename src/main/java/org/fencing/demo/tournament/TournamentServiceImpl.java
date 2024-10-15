@@ -21,7 +21,7 @@ public class TournamentServiceImpl implements TournamentService {
 
     @Override
     @Transactional
-    public Tournament addTournament(@Valid Tournament tournament) {
+    public Tournament addTournament(Tournament tournament) {
         if (tournament == null) {
             throw new IllegalArgumentException("Tournament cannot be null");
         }
@@ -52,7 +52,7 @@ public class TournamentServiceImpl implements TournamentService {
 
     @Override
     @Transactional
-    public Tournament updateTournament(Long tournamentId, @Valid Tournament newTournament) {
+    public Tournament updateTournament(Long tournamentId, Tournament newTournament) {
         if (tournamentId == null || newTournament == null) {
             throw new IllegalArgumentException("Tournament ID and new Tournament data must not be null");
         }
