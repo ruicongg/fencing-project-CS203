@@ -3,7 +3,6 @@ package org.fencing.demo.player;
 import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.web.bind.annotation.DeleteMapping;

@@ -28,16 +28,17 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    @Override
-    public User addUser(User user) {
-        Optional<User> sameUsers = userRepository.findByUsername(user.getUsername());
-        if (!sameUsers.isPresent()) {
-            return userRepository.save(user);
-        }
-        else {
-            return null;
-        }
-    }
+    // Not Needed for now
+    // @Override
+    // public User addUser(User user) {
+    //     Optional<User> sameUsers = userRepository.findByUsername(user.getUsername());
+    //     if (!sameUsers.isPresent()) {
+    //         return userRepository.save(user);
+    //     }
+    //     else {
+    //         return null;
+    //     }
+    // }
 
     @Override
     public User updateUser(Long id, User user) {

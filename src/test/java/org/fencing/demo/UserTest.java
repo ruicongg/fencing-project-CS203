@@ -46,18 +46,19 @@ public class UserTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    public void testCreateUser() {
-        User user = new User("testUser", "password123", "test@example.com", Role.USER);
-        // Mock the save method to return the same user when called
-        when(userRepository.save(any(User.class))).thenReturn(user);
+    // Test for Post user
+    // @Test
+    // public void testCreateUser() {
+    //     User user = new User("testUser", "password123", "test@example.com", Role.USER);
+    //     // Mock the save method to return the same user when called
+    //     when(userRepository.save(any(User.class))).thenReturn(user);
 
-        User createdUser = userService.addUser(user);
+    //     User createdUser = userService.addUser(user);
 
-        assertNotNull(createdUser);
-        assertEquals("testUser", createdUser.getUsername());
-        verify(userRepository, times(1)).save(user);
-    }
+    //     assertNotNull(createdUser);
+    //     assertEquals("testUser", createdUser.getUsername());
+    //     verify(userRepository, times(1)).save(user);
+    // }
 
     @Test
     public void testGetUser_Success() {

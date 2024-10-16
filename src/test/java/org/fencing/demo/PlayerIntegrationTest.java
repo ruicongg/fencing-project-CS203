@@ -121,7 +121,7 @@ public class PlayerIntegrationTest {
     }
 
     @Test
-    public void addPlayer_Failure_Sameusername() throws Exception {
+    public void addPlayer_Failure_Same_Username() throws Exception {
         Player player = new Player("user69", "password", "user69@example.com", Role.USER);
         players.save(player);
         Player player2 = new Player("user69", "password", "user70@example.com", Role.USER);

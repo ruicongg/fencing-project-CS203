@@ -38,15 +38,16 @@ public class UserController {
         return user;
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/users")
-    public User addUser(@Valid @RequestBody User user) {
-        User savedUser = userService.addUser(user);
-        if (savedUser == null) {
-            throw new UserExistException(user.getUsername());  
-        }
-        return savedUser;
-    }
+    // Add user - not needed for now 
+    // @ResponseStatus(HttpStatus.CREATED)
+    // @PostMapping("/users")
+    // public User addUser(@Valid @RequestBody User user) {
+    //     User savedUser = userService.addUser(user);
+    //     if (savedUser == null) {
+    //         throw new UserExistException(user.getUsername());  
+    //     }
+    //     return savedUser;
+    // }
 
     // Updates user info 
     @PutMapping("/users/{id}")
