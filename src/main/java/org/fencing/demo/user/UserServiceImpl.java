@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User addUser(User user) {
         Optional<User> sameUsers = userRepository.findByUsername(user.getUsername());
-        if (sameUsers == null) {
+        if (!sameUsers.isPresent()) {
             return userRepository.save(user);
         }
         else {

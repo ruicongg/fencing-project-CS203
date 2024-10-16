@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Player extends User implements Comparable<Player>{
     private int elo;
 
-    private final int STARTING_ELO = 1700;  
+    private static int STARTING_ELO = 1700;  
 
 
     @OneToMany(mappedBy = "player1")

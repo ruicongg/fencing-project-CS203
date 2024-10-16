@@ -42,12 +42,14 @@ public class UserTest {
 
     @BeforeEach
     public void setUp() {
+        userRepository.deleteAll();
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
     public void testCreateUser() {
         User user = new User("testUser", "password123", "test@example.com", Role.USER);
+        // Mock the save method to return the same user when called
         when(userRepository.save(any(User.class))).thenReturn(user);
 
         User createdUser = userService.addUser(user);

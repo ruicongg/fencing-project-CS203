@@ -9,7 +9,6 @@ import java.util.Optional;
 
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
-import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
 import org.fencing.demo.user.UserRepository;
@@ -59,6 +58,7 @@ public class PlayerIntegrationTest {
     @BeforeEach
     void setUp() {
         // Create an admin user
+        players.deleteAll();
         users.deleteAll();
         adminUser = new User("admin", passwordEncoder.encode("adminPass"), "admin@example.com", Role.ADMIN);
         users.save(adminUser);
@@ -99,32 +99,63 @@ public class PlayerIntegrationTest {
     }
 
     @Test
+    public void getPlayer_InvalidId_Failure() throws Exception {
+        URI uri = new URI(baseUrl + port + "/players/1");
+
+        ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
+
+        assertEquals(404, result.getStatusCode().value());
+    }
+
+
+    @Test
     public void addPlayer_Success() throws Exception {
         Player player = new Player("user69", "password", "user69@example.com", Role.USER);
-        players.save(player);
         URI uri = new URI(baseUrl + port + "/players");
 
-        HttpEntity<Player> request = new HttpEntity<>(player, createHeaders(adminToken));
-        ResponseEntity<Player> result = restTemplate
-                .exchange(uri, HttpMethod.POST, request, Player.class);
+        ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass").postForEntity(uri, player, Player.class);
+        
         assertEquals(201, result.getStatusCode().value());
         assertEquals(player.getUsername(), result.getBody().getUsername());
         
     }
 
     @Test
-    public void updatePlayer_Success() throws Exception {
-        Player player = new Player("user2", "password", "user@example.com", Role.USER);
+    public void addPlayer_Failure_Sameusername() throws Exception {
+        Player player = new Player("user69", "password", "user69@example.com", Role.USER);
         players.save(player);
-        Long id = player.getId();
+        Player player2 = new Player("user69", "password", "user70@example.com", Role.USER);
+        URI uri = new URI(baseUrl + port + "/players");
+
+        HttpEntity<Player> request = new HttpEntity<>(player2, createHeaders(adminToken));
+        ResponseEntity<String> result = restTemplate
+                .exchange(uri, HttpMethod.POST, request, String.class);
+
+        assertEquals(409, result.getStatusCode().value());
+    }
+
+    @Test
+    public void updatePlayer_Success() throws Exception {
+        Player player =  players.save(new Player("user2", "password", "user@example.com", Role.USER));
+        Long id = player.getId().longValue();
         URI uri = new URI(baseUrl + port + "/players/" + id);
         Player newPlayer = new Player("user3", "password3", "user3@example.com", Role.USER);
+        
 
         ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass")
         .exchange(uri, HttpMethod.PUT, new HttpEntity<>(newPlayer), Player.class);
         
         assertEquals(200, result.getStatusCode().value()); 
-        assertEquals(newPlayer.getId(), result.getBody().getId()); 
+        assertEquals(newPlayer.getUsername(), result.getBody().getUsername()); 
+    }
+
+    @Test
+    public void updatePlayer_Failure_InvalidId() throws Exception {
+        URI uri = new URI(baseUrl + port + "/players/1");
+        Player newPlayer = new Player("user2", "password", "user@example.com", Role.USER);
+        ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass")
+        .exchange(uri, HttpMethod.PUT, new HttpEntity<>(newPlayer), Player.class);
+        assertEquals(404, result.getStatusCode().value());
     }
 
     @Test
@@ -140,6 +171,14 @@ public class PlayerIntegrationTest {
         assertEquals(200, result.getStatusCode().value());
         Optional<Player> emptyValue = Optional.empty();
         assertEquals(emptyValue, players.findById(player.getId()));
+    }
+
+    @Test
+	public void deletePlayer_InvalidId_Failure() throws Exception {
+		URI uri = new URI(baseUrl + port + "/players/1");
+		ResponseEntity<Void> result = restTemplate.withBasicAuth("admin", "adminPass")
+		.exchange(uri, HttpMethod.DELETE, null, Void.class);
+		assertEquals(404, result.getStatusCode().value());
     }
 
     private static final String SECRET_KEY = "okLzUXUdbiclWJtW5hXRabO10nXGqWdCFQodkuPpnKI=";

@@ -37,8 +37,7 @@ public class PlayerServiceImpl implements PlayerService{
     @Override
     public Player addPlayer(Player player){
         List<Player> sameUser = playerRepository.findByUsername(player.getUsername());
-        System.out.println("" + player.getUsername());
-        if(sameUser.size() == 0)
+        if(sameUser.isEmpty())
             return playerRepository.save(player);
         else
             return null;

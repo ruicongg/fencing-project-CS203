@@ -37,7 +37,9 @@ public class PlayerController {
 
         if (player == null)
             throw new PlayerNotFoundException(id);
-        return playerService.getPlayer(id);
+        else {
+            return player;
+        }
     }
 
     // Add a player
