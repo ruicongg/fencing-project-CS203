@@ -200,7 +200,7 @@ class KnockoutStageIntegrationTest {
                 .tournament(tournament)
                 .build();
         
-        long newEventId = eventRepository.save(newEvent).getId();
+        Long newEventId = eventRepository.save(newEvent).getId();
         knockoutStage.setEvent(newEvent);
         KnockoutStage updatedKnockoutStage = knockoutStage;
 
@@ -210,32 +210,6 @@ class KnockoutStageIntegrationTest {
         assertEquals(200, result.getStatusCode().value());
         assertEquals(updatedKnockoutStage.getEvent().getId(), newEventId);
     }
-    // @Test
-    // public void updateKnockoutStage_AdminUser_Success() throws Exception {
-    //     KnockoutStage knockoutStage = createValidKnockoutStage();
-    //     Long id = knockoutStageRepository.save(knockoutStage).getId();
-    //     URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage/" + id);
-
-    //     List<Match> updatedMatches = new ArrayList<>();
-    //     updatedMatches.add(Match.builder()
-    //             .player1(player1)
-    //             .player2(player2)
-    //             .player1Score(15)
-    //             .player2Score(10)
-    //             .knockoutStage(knockoutStage)  // Ensure knockoutStage is set here
-    //             .event(event)  // Make sure event is associated with the match
-    //             .build());
-
-    //     knockoutStage.setMatches(updatedMatches);
-    //     KnockoutStage updatedKnockoutStage = knockoutStage;
-
-    //     HttpEntity<KnockoutStage> request = new HttpEntity<>(updatedKnockoutStage, createHeaders(adminToken));
-    //     ResponseEntity<KnockoutStage> result = restTemplate
-    //             .exchange(uri, HttpMethod.PUT, request, KnockoutStage.class);
-        
-    //     assertEquals(200, result.getStatusCode().value());
-    //     assertEquals(updatedKnockoutStage.getId(), result.getBody().getId());
-    // }
 
     @Test
     public void updateKnockoutStage_RegularUser_Failure() throws Exception {
@@ -243,10 +217,16 @@ class KnockoutStageIntegrationTest {
         Long id = knockoutStageRepository.save(knockoutStage).getId();
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage/" + id);
 
-        KnockoutStage updatedKnockoutStage = KnockoutStage.builder()
-                .id(id)
-                .event(event)
+        Event newEvent = Event.builder()
+                .startDate(LocalDateTime.now().plusDays(13))
+                .endDate(LocalDateTime.now().plusDays(17))
+                .gender(Gender.FEMALE)
+                .weapon(WeaponType.EPEE)
+                .tournament(tournament)
                 .build();
+        
+        knockoutStage.setEvent(newEvent);
+        KnockoutStage updatedKnockoutStage = knockoutStage;
 
         HttpEntity<KnockoutStage> request = new HttpEntity<>(updatedKnockoutStage, createHeaders(userToken));
         ResponseEntity<KnockoutStage> result = restTemplate
@@ -313,6 +293,7 @@ class KnockoutStageIntegrationTest {
     private KnockoutStage createValidKnockoutStage() {
         return KnockoutStage.builder()
                 .event(event)
+                .matches(new ArrayList<Match>())
                 .build();
     }
 
