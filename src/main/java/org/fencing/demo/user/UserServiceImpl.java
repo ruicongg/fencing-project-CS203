@@ -31,12 +31,17 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    @Override
-    @Transactional
-    public User addUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
-    }
+    // Not Needed for now
+    // @Override
+    // public User addUser(User user) {
+    //     Optional<User> sameUsers = userRepository.findByUsername(user.getUsername());
+    //     if (!sameUsers.isPresent()) {
+    //         return userRepository.save(user);
+    //     }
+    //     else {
+    //         return null;
+    //     }
+    // }
 
     @Override
     @Transactional

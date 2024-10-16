@@ -8,8 +8,8 @@ public interface UserService {
     
     User getUser(Long id);
 
-    // Add a new user 
-    User addUser(User user);
+    // Add a new user  - not needed for now
+    //User addUser(User user);
 
     // Update user info 
     User updateUser(Long id, User user);
