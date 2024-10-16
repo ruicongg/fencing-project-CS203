@@ -18,7 +18,10 @@ import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.tournament.Tournament;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -43,9 +46,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode
 @Entity
 @Table(name = "events")
+// @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,7 +80,6 @@ public class Event {
     //public TreeSet<Player> EloRank;
     //for sorting first when go to group stage
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
     

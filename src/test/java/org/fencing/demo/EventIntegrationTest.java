@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.contains;
 
 import java.net.URI;
 import java.net.http.HttpHeaders;
@@ -79,21 +80,16 @@ public class EventIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        // adminUser = createValidAdminUser(encoder);
-        // userRepository.save(adminUser);
-    
-        // regularUser = createValidRegularUser(encoder);
-        // userRepository.save(regularUser);
 
         // Create an admin user
         userRepository.deleteAll();
         adminUser = new User("admin", passwordEncoder.encode("adminPass"), "admin@example.com", Role.ADMIN);
         userRepository.save(adminUser);
-
         // Create a regular user
         regularUser = new User("user", passwordEncoder.encode("userPass"), "user@example.com", Role.USER);
         userRepository.save(regularUser);
         
+        tournamentRepository.deleteAll();
         tournament = createValidTournament();
         tournamentRepository.save(tournament);
     }
@@ -262,19 +258,18 @@ public class EventIntegrationTest {
         Event event = createValidEvent(tournament);
         long id = eventRepository.save(event).getId();
         
+        tournament.getEvents().add(event);
+        tournamentRepository.save(tournament);
+        
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
 
         event.setGender(Gender.FEMALE);
         event.setWeapon(WeaponType.EPEE);
 
-        // ResponseEntity<Event> result = restTemplate.withBasicAuth("admin", "adminPass")
-        //                                     .getForEntity(uri, Event.class);
-
         ResponseEntity<Event> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), Event.class);
 
-        // assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals("smth", result.getBody());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(Gender.FEMALE, result.getBody().getGender());
         assertEquals(WeaponType.EPEE, result.getBody().getWeapon());
     }
@@ -283,6 +278,10 @@ public class EventIntegrationTest {
     public void updateEvent_ForbiddenForRegularUser_Failure() throws Exception {
         Event event = createValidEvent(tournament);
         long id = eventRepository.save(event).getId();
+
+        tournament.getEvents().add(event);
+        tournamentRepository.save(tournament);
+
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
         
         event.setGender(Gender.FEMALE);
@@ -308,6 +307,10 @@ public class EventIntegrationTest {
     public void updateEvent_StartDateBeforeTournamentStartDate_Failure() throws Exception {
         Event event = createValidEvent(tournament);
         long id = eventRepository.save(event).getId();
+
+        tournament.getEvents().add(event);
+        tournamentRepository.save(tournament);
+
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
 
         LocalDate tournamentStartDate = tournament.getTournamentStartDate();
@@ -317,8 +320,7 @@ public class EventIntegrationTest {
         ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), String.class);
 
-        // assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-        assertEquals("smth", result.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
         assertTrue(result.getBody().contains("Event start date cannt be earlier than Tournament start date"));
     }
 
@@ -326,6 +328,10 @@ public class EventIntegrationTest {
     public void updateEvent_EndDateBeforeStartDate_Failure() throws Exception {
         Event event = createValidEvent(tournament);
         long id = eventRepository.save(event).getId();
+
+        tournament.getEvents().add(event);
+        tournamentRepository.save(tournament);
+
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
 
         event.setEndDate(LocalDateTime.now().plusDays(24));  // End date before start date
@@ -341,6 +347,9 @@ public class EventIntegrationTest {
     public void updateEvent_NonExistentEvent_Failure() throws Exception {
         Event event = createValidEvent(tournament);
 
+        tournament.getEvents().add(event);
+        tournamentRepository.save(tournament);
+
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/9999");
 
         ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
@@ -355,6 +364,10 @@ public class EventIntegrationTest {
     public void deleteEvent_Success() throws Exception {
         Event event = createValidEvent(tournament);
         long id = eventRepository.save(event).getId();
+
+        tournament.getEvents().add(event);
+        tournamentRepository.save(tournament);
+
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
 
         ResponseEntity<Void> result = restTemplate.withBasicAuth("admin", "adminPass")
@@ -368,6 +381,10 @@ public class EventIntegrationTest {
     public void deleteEvent_ForbiddenForRegularUser_Failure() throws Exception {
         Event event = createValidEvent(tournament);
         long id = eventRepository.save(event).getId();
+
+        tournament.getEvents().add(event);
+        tournamentRepository.save(tournament);
+
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
 
         ResponseEntity<Void> result = restTemplate.withBasicAuth("user", "userPass")
@@ -399,22 +416,5 @@ public class EventIntegrationTest {
         .build();
     }
 
-    public User createValidAdminUser(BCryptPasswordEncoder encoder) {
-        User user = new User();
-        user.setUsername("admin");
-        user.setPassword(encoder.encode("strongpassword123"));  // Encode the password
-        user.setEmail("admin@example.com");  // Set a valid email
-        user.setRole(Role.ADMIN);  // Use the correct enum value for Role
-        return user;
-    }
-
-    public User createValidRegularUser(BCryptPasswordEncoder encoder) {
-        User user = new User();
-        user.setUsername("user");
-        user.setPassword(encoder.encode("strongpassword456"));  // Encode the password
-        user.setEmail("validuser@example.com");  // Set a valid email
-        user.setRole(Role.USER);  // Use the correct enum value for Role
-        return user;
-    }
 }
 
