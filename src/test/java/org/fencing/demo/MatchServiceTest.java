@@ -280,45 +280,12 @@ public class MatchServiceTest {
         Long matchId = 1L;
         Match newMatch = createUpdatedMatch(createValidEvent(), createValidPlayer(1), createValidPlayer(2));
 
-        // Mock repository behavior for non-existing match
         when(matchRepository.findById(matchId)).thenReturn(Optional.empty());
 
-        // Expect MatchNotFoundException
         assertThrows(MatchNotFoundException.class, () -> {
             matchService.updateMatch(eventId, matchId, newMatch);
         });
 
-        // Verify repository was called
-        verify(matchRepository, times(1)).findById(matchId);
-    }
-
-    @Test
-    public void updateMatch_PlayerNotInEvent_ThrowsIllegalArgumentException() {
-        Long eventId = 1L;
-        Long matchId = 1L;
-
-        // Create a valid event and players
-        Event event = createValidEvent();
-        Player player1 = createValidPlayer(1);
-        Player player2 = createValidPlayer(2);
-
-        // Add only player1 to the rankings, leaving out player2
-        PlayerRank playerRank1 = createPlayerRank(1, player1, event);
-        event.getRankings().add(playerRank1);
-
-        // Create existing and new matches
-        Match existingMatch = createValidMatch(event, player1, player2);
-        Match newMatch = createUpdatedMatch(event, player1, player2);
-
-        // Mock repository methods
-        when(matchRepository.findById(matchId)).thenReturn(Optional.of(existingMatch));
-
-        // Expect IllegalArgumentException when player2 is not in the event's rankings
-        assertThrows(IllegalArgumentException.class, () -> {
-            matchService.updateMatch(eventId, matchId, newMatch);
-        });
-
-        // Verify repository interaction
         verify(matchRepository, times(1)).findById(matchId);
     }
 
@@ -327,48 +294,64 @@ public class MatchServiceTest {
         Long eventId = 1L;
         Long matchId = 1L;
 
-        // Create two separate events
         Event originalEvent = createValidEvent();
         Event differentEvent = createValidEvent();
-        differentEvent.setId(2L); // Ensure this event is different
+        differentEvent.setId(2L);
 
-        // Create valid players
         Player player1 = createValidPlayer(1);
         Player player2 = createValidPlayer(2);
 
-        // Create PlayerRank for both players in the original event
-        PlayerRank playerRank1 = createPlayerRank(1, player1, originalEvent);
-        PlayerRank playerRank2 = createPlayerRank(2, player2, originalEvent);
-        originalEvent.getRankings().add(playerRank1);
-        originalEvent.getRankings().add(playerRank2);
-
-        // Create existing match in the original event and new match in a different event
         Match existingMatch = createValidMatch(originalEvent, player1, player2);
-        Match newMatch = createUpdatedMatch(differentEvent, player1, player2); // Different event
+        Match newMatch = createUpdatedMatch(differentEvent, player1, player2);
 
-        // Mock repository methods
         when(matchRepository.findById(matchId)).thenReturn(Optional.of(existingMatch));
 
-        // Expect IllegalArgumentException due to event mismatch
         assertThrows(IllegalArgumentException.class, () -> {
             matchService.updateMatch(eventId, matchId, newMatch);
         });
 
-        // Verify repository interaction
         verify(matchRepository, times(1)).findById(matchId);
     }
 
+    @Test
+    public void updateMatch_PlayerNotInEvent_ThrowsIllegalArgumentException() {
+        Long eventId = 1L;
+        Long matchId = 1L;
+
+        Event event = createValidEvent();
+        Player player1 = createValidPlayer(1);
+        Player player2 = createValidPlayer(2);
+
+        PlayerRank playerRank1 = createPlayerRank(1, player1, event);
+        event.getRankings().add(playerRank1);
+
+        Match existingMatch = createValidMatch(event, player1, player2);
+        Match newMatch = createUpdatedMatch(event, player1, player2);
+
+        when(matchRepository.findById(matchId)).thenReturn(Optional.of(existingMatch));
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            matchService.updateMatch(eventId, matchId, newMatch);
+        });
+
+        verify(matchRepository, times(1)).findById(matchId);
+    }
 
     @Test
     public void deleteMatch_ValidIds_SuccessfullyDeletesMatch() {
         Long eventId = 1L;
         Long matchId = 1L;
+        Event event = createValidEvent();
+        Match match = createValidMatch(event, createValidPlayer(1), createValidPlayer(2));
 
-        doNothing().when(matchRepository).deleteByEventIdAndId(eventId, matchId);
+        when(matchRepository.findById(matchId)).thenReturn(Optional.of(match));
+
+        doNothing().when(matchRepository).delete(match);
 
         matchService.deleteMatch(eventId, matchId);
 
-        verify(matchRepository, times(1)).deleteByEventIdAndId(eventId, matchId);
+        verify(matchRepository, times(1)).findById(matchId);
+        verify(matchRepository, times(1)).delete(match);
     }
 
     @Test
@@ -376,13 +359,13 @@ public class MatchServiceTest {
         Long eventId = 1L;
         Long matchId = 1L;
 
-        doThrow(new MatchNotFoundException(matchId)).when(matchRepository).deleteByEventIdAndId(eventId, matchId);
+        when(matchRepository.findById(matchId)).thenReturn(Optional.empty());
 
         assertThrows(MatchNotFoundException.class, () -> {
             matchService.deleteMatch(eventId, matchId);
         });
 
-        verify(matchRepository, times(1)).deleteByEventIdAndId(eventId, matchId);
+        verify(matchRepository, times(1)).findById(matchId);
     }
 
     // Helper methods to create valid entities

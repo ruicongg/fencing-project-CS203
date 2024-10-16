@@ -16,15 +16,10 @@ import org.fencing.demo.player.Player;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.KnockoutStage;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 
 @Data
 @AllArgsConstructor
@@ -34,27 +29,25 @@ import lombok.NoArgsConstructor;
 @Table(name = "matches")
 
 public class Match {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
-    @JsonIgnore
     private Event event;
 
     // Optional ManyToOne relationship with GroupStage
     @ManyToOne
     @JoinColumn(name = "group_stage_id")
-    @JsonBackReference
     private GroupStage groupStage;
 
     // Optional ManyToOne relationship with KnockoutStage
     @ManyToOne
     @JoinColumn(name = "knockout_stage_id")
     private KnockoutStage knockoutStage;
-    
+
     @ManyToOne
     @JoinColumn(name = "player1_id", nullable = false)
     private Player player1;
@@ -66,30 +59,29 @@ public class Match {
     private int player1Score;
     private int player2Score;
 
+    // added - tbc
+    // private boolean matchFinished;
 
-    //added - tbc
-    //private boolean matchFinished;
-
-
-    public Player getWinner(){
+    public Player getWinner() {
         return player1Score > player2Score ? player1 : player2;
     }
 
-    //need the number of k value in player
+    // need the number of k value in player
     // add the number of matches played in player
     // public void updateEloRanking(){
-    //     if(matchFinished){
-    //         int elo1 = this.player1.getElo();
-    //         int elo2 = this.player2.getElo();
+    // if(matchFinished){
+    // int elo1 = this.player1.getElo();
+    // int elo2 = this.player2.getElo();
 
-
-    //     }
+    // }
     // }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Match)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Match))
+            return false;
         Match match = (Match) o;
         return id == match.id; // Use the ID for equality check
     }
@@ -98,15 +90,5 @@ public class Match {
     public int hashCode() {
         return Objects.hash(id); // Hash based on ID
     }
-
-    // @Override
-    // public String toString() {
-    //     return "Match(id=" + id + ", event=" + (event != null ? event.getId() : null) + 
-    //            ", groupStage=" + (groupStage != null ? groupStage.getId() : null) + 
-    //            ", knockoutStage=" + (knockoutStage != null ? knockoutStage.getId() : null) + 
-    //            ", player1=" + (player1 != null ? player1.getId() : null) + 
-    //            ", player2=" + (player2 != null ? player2.getId() : null) + 
-    //            ", player1Score=" + player1Score + ", player2Score=" + player2Score + ")";
-    // }
 
 }

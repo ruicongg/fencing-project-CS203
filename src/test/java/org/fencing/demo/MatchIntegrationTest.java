@@ -143,54 +143,52 @@ public class MatchIntegrationTest {
         playerRepository.deleteAll();
     }
 
-    @Test //expected true, was false (@ assertTrue) 
-     public void addInitialMatchForGroupStage_Success() throws Exception {
-
+    @Test
+    public void addInitialGroupStageMatches_ShouldSucceed() throws Exception {
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/matches");
 
-        ResponseEntity<Match[]> result = restTemplate.withBasicAuth("admin", "adminPass")
+        ResponseEntity<Match[]> response = restTemplate.withBasicAuth("admin", "adminPass")
                                                     .postForEntity(uri, null, Match[].class);
 
-        assertEquals(HttpStatus.CREATED, result.getStatusCode());
-        assertNotNull(result.getBody());
-        assertTrue(result.getBody().length > 0);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().length > 0);
     }
 
-    @Test // passed
-    public void addMatchesForKnockoutStage_Success() throws Exception {
-        
+    @Test
+    public void addKnockoutStageMatches_ShouldSucceed() throws Exception {
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage/" + knockoutStage.getId() + "/matches");
 
-        ResponseEntity<Match[]> result = restTemplate.withBasicAuth("admin", "adminPass")
+        ResponseEntity<Match[]> response = restTemplate.withBasicAuth("admin", "adminPass")
                                                     .postForEntity(uri, null, Match[].class);
 
-        assertEquals(HttpStatus.CREATED, result.getStatusCode());
-        assertNotNull(result.getBody());
-        assertTrue(result.getBody().length > 0);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().length > 0);
     }
 
-    @Test // passed
-    public void addInitialMatchForGroupStage_EventNotFound_Failure() throws Exception {
+    @Test
+    public void addInitialGroupStageMatches_WithNonExistentEvent_ShouldFail() throws Exception {
         long nonExistentEventId = 999L;
 
         URI uri = new URI(baseUrl + port + "/tournaments/1/events/" + nonExistentEventId + "/groupStage/matches");
 
-        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
+        ResponseEntity<String> response = restTemplate.withBasicAuth("admin", "adminPass")
                                                     .postForEntity(uri, null, String.class);
 
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
-    @Test // passed
-    public void addMatchesForKnockoutStage_EventNotFound_Failure() throws Exception {
+    @Test
+    public void addKnockoutStageMatches_WithNonExistentEvent_ShouldFail() throws Exception {
         long nonExistentEventId = 999L;
         
         URI uri = new URI(baseUrl + port + "/tournaments/1/events/" + nonExistentEventId + "/knockoutStage/1/matches");
 
-        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
+        ResponseEntity<String> response = restTemplate.withBasicAuth("admin", "adminPass")
                                                     .postForEntity(uri, null, String.class);
 
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     // @Test
@@ -229,66 +227,57 @@ public class MatchIntegrationTest {
     // }
 
     @Test
-    public void getAllMatchesGroupStage_Success() throws Exception {
+    public void getAllGroupStageMatches_ShouldSucceed() throws Exception {
         List<PlayerRank> players = new ArrayList<>(event.getRankings());
         
-        Match match1 = createMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
-        match1.setGroupStage(groupStage);
-        matchRepository.save(match1);
+        Match groupMatch1 = createGroupStageMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
+        matchRepository.save(groupMatch1);
 
-        Match match2 = createMatch(event, players.get(2).getPlayer(), players.get(3).getPlayer());
-        match2.setGroupStage(groupStage);
-        matchRepository.save(match2);
+        Match groupMatch2 = createGroupStageMatch(event, players.get(2).getPlayer(), players.get(3).getPlayer());
+        matchRepository.save(groupMatch2);
 
         groupStage.getMatches().clear();
-        groupStage.getMatches().add(match1);
-        groupStage.getMatches().add(match2);
+        groupStage.getMatches().add(groupMatch1);
+        groupStage.getMatches().add(groupMatch2);
         groupStageRepository.save(groupStage);
 
         URI uri = new URI("/tournaments/1/events/" + event.getId() + "/groupStage/" + groupStage.getId() + "/matches");
 
-        ResponseEntity<Match[]> result = restTemplate.withBasicAuth("admin", "adminPass")
+        ResponseEntity<Match[]> response = restTemplate.withBasicAuth("admin", "adminPass")
                 .getForEntity(uri, Match[].class);
 
-        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        Match[] matches = result.getBody();
+        Match[] matches = response.getBody();
         assertNotNull(matches);
         assertEquals(2, matches.length);
-        // assertEquals("Match 1", matches[0].getName());
-        // assertEquals("Match 2", matches[1].getName());
     }
 
     @Test
-    public void getAllMatchesForKnockoutStage_Success() throws Exception {
+    public void getAllKnockoutStageMatches_ShouldSucceed() throws Exception {
         List<PlayerRank> players = new ArrayList<>(event.getRankings());
         
-        Match match1 = createMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
-        match1.setKnockoutStage(knockoutStage);
-        matchRepository.save(match1);
+        Match knockoutMatch1 = createKnockoutStageMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
+        matchRepository.save(knockoutMatch1);
 
-        Match match2 = createMatch(event, players.get(2).getPlayer(), players.get(3).getPlayer());
-        match2.setKnockoutStage(knockoutStage);
-        matchRepository.save(match2);
+        Match knockoutMatch2 = createKnockoutStageMatch(event, players.get(2).getPlayer(), players.get(3).getPlayer());
+        matchRepository.save(knockoutMatch2);
 
         knockoutStage.getMatches().clear();
-        knockoutStage.getMatches().add(match1);
-        knockoutStage.getMatches().add(match2);
+        knockoutStage.getMatches().add(knockoutMatch1);
+        knockoutStage.getMatches().add(knockoutMatch2);
         knockoutStageRepository.save(knockoutStage);
-
 
         URI uri = new URI("/tournaments/1/events/" + event.getId() + "/knockoutStage/" + knockoutStage.getId() + "/matches");
 
-        ResponseEntity<Match[]> result = restTemplate.withBasicAuth("admin", "adminPass")
+        ResponseEntity<Match[]> response = restTemplate.withBasicAuth("admin", "adminPass")
                 .getForEntity(uri, Match[].class);
 
-        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        Match[] matches = result.getBody();
+        Match[] matches = response.getBody();
         assertNotNull(matches);
         assertEquals(2, matches.length);
-        // assertEquals("Match 1", matches[0].getName());
-        // assertEquals("Match 2", matches[1].getName());
     }
 
     // @Test
@@ -337,163 +326,142 @@ public class MatchIntegrationTest {
     //     assertTrue(errorMessage.contains("Invalid parameter: knockoutStageId. Expected type: Long"));
     // }
 
+
     @Test
-    public void updateMatch_Success() throws Exception {
+    public void updateMatch_ShouldSucceed() throws Exception {
         List<PlayerRank> players = new ArrayList<>(event.getRankings());
         
-        Match match = createMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
-        match.setKnockoutStage(knockoutStage);
+        Match match = createKnockoutStageMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
         matchRepository.save(match);
 
         match.setPlayer1Score(7);
         match.setPlayer2Score(6);
 
-        URI uri = new URI("/tournaments/1/events/" + event.getId() + "/match/" + match.getId());
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/match/" + match.getId());
 
-        ResponseEntity<Match> result = restTemplate.withBasicAuth("admin", "adminPass")
+        ResponseEntity<Match> response = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(match), Match.class);
-        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 
-        Match savedMatch = result.getBody();
-        assertNotNull(savedMatch);
-        assertEquals(7, savedMatch.getPlayer1Score());
-        assertEquals(6, savedMatch.getPlayer2Score());
+        Match updatedMatch = response.getBody();
+        assertNotNull(updatedMatch);
+        assertEquals(7, updatedMatch.getPlayer1Score());
+        assertEquals(6, updatedMatch.getPlayer2Score());
     }
 
     @Test
-    public void updateMatch_MatchNotFound() throws Exception {
+    public void updateMatch_WithNonExistentMatch_ShouldFail() throws Exception {
         List<PlayerRank> players = new ArrayList<>(event.getRankings());
 
-        Match match = createMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
-        match.setKnockoutStage(knockoutStage);
+        Match match = createKnockoutStageMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
         matchRepository.save(match);
 
-        Long invalidMatchId = 9999L;
+        Long nonExistentMatchId = 9999L;
 
-        URI uri = new URI("/tournaments/1/events/" + event.getId() + "/match/" + invalidMatchId);
+        URI uri = new URI("/tournaments/1/events/" + event.getId() + "/match/" + nonExistentMatchId);
 
-        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
+        ResponseEntity<String> response = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(match), String.class);
 
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    public void updateMatch_EventMismatch() throws Exception {
+    public void updateMatch_WithEventMismatch_ShouldFail() throws Exception {
         Event anotherEvent = createValidEvent(tournament);
         eventRepository.save(anotherEvent);
 
         List<PlayerRank> players = new ArrayList<>(event.getRankings());
 
-        Match match = createMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
-        match.setKnockoutStage(knockoutStage);
-        match.setEvent(anotherEvent);
+        Match match = createKnockoutStageMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
         matchRepository.save(match);
 
-        URI uri = new URI("/tournaments/1/events/" + event.getId() + "/match/" + match.getId());
+        URI uri = new URI("/tournaments/1/events/" + anotherEvent.getId() + "/match/" + match.getId());
 
-        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
+        ResponseEntity<String> response = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(match), String.class);
 
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-        String errorMessage = result.getBody();
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        String errorMessage = response.getBody();
         assertTrue(errorMessage.contains("Event cannot be changed"));
     }
 
     @Test
-    public void updateMatch_PlayerNotInEvent() throws Exception {
+    public void updateMatch_WithPlayerNotInEvent_ShouldFail() throws Exception {
         List<PlayerRank> players = new ArrayList<>(event.getRankings());
 
-        Match match = createMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
-        match.setKnockoutStage(knockoutStage);
+        Match match = createKnockoutStageMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
         matchRepository.save(match);
-        System.out.println("OG EVENT:" + match.getEvent());
 
-        Player newPlayer = createValidPlayer(99);
+        Player playerNotInEvent = createValidPlayer(99);
+        match.setPlayer1(playerNotInEvent);
 
-        match.setPlayer1(newPlayer);  // Player not in event
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/match/" + match.getId());
 
-        System.out.println("UPDATED EVENT:"+match.getEvent());
-
-        URI uri = new URI("/tournaments/1/events/" + event.getId() + "/match/" + match.getId());
-
-        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
+        ResponseEntity<String> response = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(match), String.class);
 
-        // assertEquals("smth", result.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-        String errorMessage = result.getBody();
-        assertTrue(errorMessage.contains("Player is not registered in this event"));
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertTrue(response.getBody().contains("is not registered in this event"));
     }
 
     @Test
-    public void deleteMatch_Success() throws Exception {
+    public void deleteMatch_ShouldSucceed() throws Exception {
         List<PlayerRank> players = new ArrayList<>(event.getRankings());
 
-        Match match = createMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
-        match.setKnockoutStage(knockoutStage);
+        Match match = createKnockoutStageMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
         matchRepository.save(match);
 
         URI uri = new URI("/tournaments/1/events/" + event.getId() + "/match/" + match.getId());
 
-        ResponseEntity<Void> result = restTemplate.withBasicAuth("admin", "adminPass")
+        ResponseEntity<Void> response = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.DELETE, null, Void.class);
 
-        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         assertFalse(matchRepository.existsById(match.getId()));
     }
 
     @Test
-    public void deleteMatch_MatchNotFound() throws Exception {
-        Long invalidMatchId = 9999L;
+    public void deleteMatch_WithNonExistentMatch_ShouldFail() throws Exception {
+        Long nonExistentMatchId = 9999L;
 
-        List<PlayerRank> players = new ArrayList<>(event.getRankings());
+        URI uri = new URI("/tournaments/1/events/" + event.getId() + "/match/" + nonExistentMatchId);
 
-        Match match = createMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
-        match.setKnockoutStage(knockoutStage);
-        matchRepository.save(match);
-
-        URI uri = new URI("/tournaments/1/events/" + event.getId() + "/match/" + invalidMatchId);
-
-        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
+        ResponseEntity<String> response = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.DELETE, null, String.class);
 
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    public void getMatch_Success() throws Exception {
+    public void getMatch_ShouldSucceed() throws Exception {
         List<PlayerRank> players = new ArrayList<>(event.getRankings());
 
-        Match match = createMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
-        match.setKnockoutStage(knockoutStage);
+        Match match = createKnockoutStageMatch(event, players.get(0).getPlayer(), players.get(1).getPlayer());
         matchRepository.save(match);
 
         URI uri = new URI("/tournaments/1/events/" + event.getId() + "/match/" + match.getId());
 
-        ResponseEntity<Match> result = restTemplate.withBasicAuth("admin", "adminPass")
+        ResponseEntity<Match> response = restTemplate.withBasicAuth("admin", "adminPass")
                 .getForEntity(uri, Match.class);
 
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        Match retrievedMatch = result.getBody();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Match retrievedMatch = response.getBody();
         assertNotNull(retrievedMatch);
         assertEquals(match.getPlayer1(), retrievedMatch.getPlayer1());
         assertEquals(match.getPlayer2(), retrievedMatch.getPlayer2());
     }
 
     @Test
-    public void getMatch_MatchNotFound() throws Exception {
-        Long invalidMatchId = 9999L;
+    public void getMatch_WithNonExistentMatch_ShouldFail() throws Exception {
+        Long nonExistentMatchId = 9999L;
 
-        URI uri = new URI("/tournaments/1/events/" + event.getId() + "/match/" + invalidMatchId);
+        URI uri = new URI("/tournaments/1/events/" + event.getId() + "/match/" + nonExistentMatchId);
 
-        // Call the get endpoint with an invalid match ID
-        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
+        ResponseEntity<String> response = restTemplate.withBasicAuth("admin", "adminPass")
                 .getForEntity(uri, String.class);
 
-        // Assert the response status is NOT_FOUND
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     // Helper methods for creating valid entities
@@ -562,11 +530,23 @@ public class MatchIntegrationTest {
         return playerRepository.save(player);
     }
 
-    private Match createMatch(Event event, Player player1, Player player2) {
-        return Match.builder()
+    private Match createGroupStageMatch(Event event, Player player1, Player player2) {
+        Match match = Match.builder()
             .event(event)
             .player1(player1)
             .player2(player2)
             .build();
+        match.setGroupStage(groupStage);
+        return match;
+    }
+
+    private Match createKnockoutStageMatch(Event event, Player player1, Player player2) {
+        Match match = Match.builder()
+            .event(event)
+            .player1(player1)
+            .player2(player2)
+            .build();
+        match.setKnockoutStage(knockoutStage);
+        return match;
     }
 }

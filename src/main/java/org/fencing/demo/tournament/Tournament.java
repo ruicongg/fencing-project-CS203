@@ -23,10 +23,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;    
+import com.fasterxml.jackson.annotation.JsonIgnore;   
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,7 +31,6 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @Data
 @Entity
 @Table(name = "tournaments")
-// @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Tournament {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

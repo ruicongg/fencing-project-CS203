@@ -133,19 +133,10 @@ public class MatchServiceImpl implements MatchService {
             throw new IllegalArgumentException("Event ID, Match ID and updated Match cannot be null");
         }
         Match existingMatch = matchRepository.findById(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
-        System.out.println("WORKING");
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println("EXISTING MATCH EVENT"+existingMatch.getEvent());
-        System.out.println("UPDATED MATCH EVENT"+newMatch.getEvent());
-        // if (!existingMatch.getEvent().equals(newMatch.getEvent())) {
-        //     throw new IllegalArgumentException("Event cannot be changed");
-        // }
-        existingMatch.setPlayer1(newMatch.getPlayer1());
-        existingMatch.setPlayer2(newMatch.getPlayer2());
-        existingMatch.setPlayer1Score(newMatch.getPlayer1Score());
-        existingMatch.setPlayer2Score(newMatch.getPlayer2Score());
+        
+        if (existingMatch.getEvent().getId() != eventId) {
+            throw new IllegalArgumentException("Event cannot be changed");
+        }
 
         Event event = existingMatch.getEvent();
 
@@ -153,22 +144,22 @@ public class MatchServiceImpl implements MatchService {
         PlayerRank player1Rank = event.getRankings().stream()
                                     .filter(rank -> rank.getPlayer().equals(newMatch.getPlayer1()))
                                     .findFirst()
-                                    .orElse(null);
+                                    .orElseThrow(() -> new IllegalArgumentException("Player 1 is not registered in this event"));
 
         PlayerRank player2Rank = event.getRankings().stream()
                                     .filter(rank -> rank.getPlayer().equals(newMatch.getPlayer2()))
                                     .findFirst()
-                                    .orElse(null);
+                                    .orElseThrow(() -> new IllegalArgumentException("Player 2 is not registered in this event"));
         
-        if (player1Rank == null || player2Rank == null){
-            throw new IllegalArgumentException("Player is not registered in this event");
-        }
+        existingMatch.setPlayer1(newMatch.getPlayer1());
+        existingMatch.setPlayer2(newMatch.getPlayer2());
+        existingMatch.setPlayer1Score(newMatch.getPlayer1Score());
+        existingMatch.setPlayer2Score(newMatch.getPlayer2Score());
         
         player1Rank.updateAfterMatch(newMatch.getPlayer1Score(), newMatch.getPlayer2Score());
         player2Rank.updateAfterMatch(newMatch.getPlayer2Score(), newMatch.getPlayer1Score());
         
         return matchRepository.save(existingMatch);
-        
     }
 
     @Override
@@ -177,8 +168,13 @@ public class MatchServiceImpl implements MatchService {
         if (eventId == null || matchId == null) {
             throw new IllegalArgumentException("Event ID and Match ID cannot be null");
         }
-        matchRepository.findById(matchId)
+        Match match = matchRepository.findById(matchId)
             .orElseThrow(() -> new MatchNotFoundException(matchId));
-        matchRepository.deleteByEventIdAndId(eventId, matchId);
+        
+        if (match.getEvent() == null || match.getEvent().getId() != eventId) {
+            throw new IllegalArgumentException("Match does not belong to the specified event");
+        }
+        
+        matchRepository.delete(match);
     }
 }

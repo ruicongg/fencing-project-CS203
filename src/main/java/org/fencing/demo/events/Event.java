@@ -48,7 +48,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "events")
-// @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,6 +74,7 @@ public class Event {
     // for sorting after
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<PlayerRank> rankings = new TreeSet<>(new PlayerRankComparator());
 
     //public TreeSet<Player> EloRank;
@@ -113,6 +113,7 @@ public class Event {
             grpStage.setEvent(this);
             groupStages.add(grpStage);
         }
+        System.out.println(allMatchesForGroup);
 
         return allMatchesForGroup;
     }

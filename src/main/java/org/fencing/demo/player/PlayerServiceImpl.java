@@ -1,5 +1,4 @@
 package org.fencing.demo.player;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -9,7 +8,6 @@ import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.match.MatchRepository;
 import org.fencing.demo.tournament.Tournament;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,8 +68,10 @@ public class PlayerServiceImpl implements PlayerService{
 
     @Override
     @Transactional
-    public void deletePlayer(Long id){
-        playerRepository.deleteById(id);
+    public void deletePlayer(Long id) {
+        Player player = playerRepository.findById(id)
+            .orElseThrow(() -> new PlayerNotFoundException(id));
+        playerRepository.delete(player);
     }
 
     // Get all tournaments a player participated in

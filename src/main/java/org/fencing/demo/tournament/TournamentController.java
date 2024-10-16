@@ -10,14 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.lang.Long;
 import java.time.LocalDate;
 import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
-// ! might want to use @response status
 @RestController
 @Validated
 public class TournamentController {

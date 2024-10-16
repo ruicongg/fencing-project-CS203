@@ -3,9 +3,6 @@ import java.util.Objects;
 
 import org.fencing.demo.player.Player;
 import org.fencing.demo.stages.GroupStage;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -32,12 +29,10 @@ public class PlayerRank {
 
     @ManyToOne
     @JoinColumn(name = "player_id")
-    @JsonIgnore
     private Player player; 
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
-    @JsonIgnore
     private Event event;
 
     @ManyToOne
