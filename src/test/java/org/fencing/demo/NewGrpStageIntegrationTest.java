@@ -211,18 +211,7 @@ class NewGrpStageIntegrationTest {
         // Create the URI for the PUT request
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/" + id);
     
-        // Add a new match to the GroupStage
-        Match newMatch = Match.builder()
-                .player1(player1)
-                .player2(player2)
-                .player1Score(15)
-                .player2Score(10)
-                .event(event) // Make sure event is associated with the match
-                .groupStage(groupStage)
-                .build();
-        matchRepository.save(newMatch);
-        groupStage.getMatches().add(newMatch);
-    
+        groupStage.setAllMatchesCompleted(true);
     
         // Create the HTTP request with the updated GroupStage
         HttpEntity<GroupStage> request = new HttpEntity<>(groupStage, createHeaders(adminToken));
@@ -233,7 +222,7 @@ class NewGrpStageIntegrationTest {
                     .exchange(uri, HttpMethod.PUT, request, GroupStage.class);
             
             assertEquals(200, result.getStatusCode().value());
-            assertEquals(groupStage.getId(), result.getBody().getId());
+            assertEquals(groupStage.isAllMatchesCompleted(), result.getBody().isAllMatchesCompleted());
             // Assert the results
         // assertEquals("smtth", result.getBody());
     }
