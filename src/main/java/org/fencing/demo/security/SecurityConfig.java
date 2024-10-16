@@ -34,9 +34,10 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll() // Allow all requests to /error
                         .requestMatchers(HttpMethod.GET, "/tournaments").permitAll() // Allow all GET requests to tournaments
                         .requestMatchers(HttpMethod.GET, "/tournaments/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/tournaments", "/tournaments/**").permitAll() // Allow all GET requests to tournaments
                         .requestMatchers(HttpMethod.POST, "/tournaments", "/tournaments/**").hasRole("ADMIN") // Only admins can POST
-                        .requestMatchers(HttpMethod.PUT, "/tournaments, /tournaments/**").hasRole("ADMIN") // Only admins can PUT
-                        .requestMatchers(HttpMethod.DELETE, "/tournaments, /tournaments/**").hasRole("ADMIN") // Only admins can
+                        .requestMatchers(HttpMethod.PUT, "/tournaments", "/tournaments/**").hasRole("ADMIN") // Only admins can PUT
+                        .requestMatchers(HttpMethod.DELETE, "/tournaments", "/tournaments/**").hasRole("ADMIN") // Only admins can
                         .requestMatchers(HttpMethod.GET, "/users, /users/**").hasRole("ADMIN") // Only admins can GET users
                         .requestMatchers(HttpMethod.PUT, "/users/*").hasRole("ADMIN") // Only admins can PUT users (next time users should be able to update their own stuff)
                         .requestMatchers(HttpMethod.DELETE, "/users/*").hasRole("ADMIN") // Only admins can DELETE users
