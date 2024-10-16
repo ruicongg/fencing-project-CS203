@@ -37,12 +37,12 @@ public class KnockoutStage {
     private long id;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "event_id", nullable = false)
     private Event event; 
 
     @Builder.Default
     @OneToMany(mappedBy = "knockoutStage", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Match> matches = new ArrayList<>(); 
 
     // private int roundNum;
