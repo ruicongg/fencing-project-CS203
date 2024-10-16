@@ -4,6 +4,7 @@ import org.fencing.demo.events.Event;
 import org.fencing.demo.match.Match;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 // import org.fencing.demo.player.Player;
 import org.fencing.demo.events.PlayerRank;
@@ -32,6 +33,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @AllArgsConstructor
@@ -39,6 +41,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "groupStage")
+@ToString(exclude = "matches")
 public class GroupStage {
 
     @Id
@@ -46,7 +49,6 @@ public class GroupStage {
     private long id;
 
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
@@ -59,4 +61,8 @@ public class GroupStage {
     
     private boolean allMatchesCompleted;
 
+    // @Override
+    // public String toString() {
+    //     return "GroupStage(id=" + id + ", event=" + (event != null ? event.getId() : null) + ", matchesCount=" + (matches != null ? matches.size() : 0) + ")";
+    // }
 }

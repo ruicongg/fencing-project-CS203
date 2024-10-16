@@ -49,7 +49,7 @@ import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
 import org.fencing.demo.user.UserRepository;
-
+import org.fencing.demo.match.MatchRepository;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class NewGrpStageIntegrationTest {
 
@@ -88,6 +88,8 @@ class NewGrpStageIntegrationTest {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private MatchRepository matchRepository;
     @BeforeEach
     void setUp() {
         // Create an admin user
@@ -204,6 +206,7 @@ class NewGrpStageIntegrationTest {
 
 
         System.out.println("Before adding match:"+groupStage);
+        System.out.println("GroupStage ID:" + groupStage.getId());
         System.out.println("Matches:" + groupStage.getMatches());
         // Create the URI for the PUT request
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/" + id);
@@ -217,22 +220,25 @@ class NewGrpStageIntegrationTest {
                 .event(event) // Make sure event is associated with the match
                 .groupStage(groupStage)
                 .build();
-    
+        matchRepository.save(newMatch);
         groupStage.getMatches().add(newMatch);
         System.out.println(groupStage);
+        System.out.println();
         System.out.println(groupStage.getMatches());
+        System.out.println();
     
         // Create the HTTP request with the updated GroupStage
         HttpEntity<GroupStage> request = new HttpEntity<>(groupStage, createHeaders(adminToken));
     
-        // Execute the PUT request
-        ResponseEntity<GroupStage> result = restTemplate
-                .exchange(uri, HttpMethod.PUT, request, GroupStage.class);
-        System.out.println(result);
-        // Assert the results
+            // Execute the PUT request
+
+            ResponseEntity<GroupStage> result = restTemplate
+                    .exchange(uri, HttpMethod.PUT, request, GroupStage.class);
+            
+            assertEquals(200, result.getStatusCode().value());
+            assertEquals(groupStage.getId(), result.getBody().getId());
+            // Assert the results
         // assertEquals("smtth", result.getBody());
-        assertEquals(200, result.getStatusCode().value());
-        assertEquals(groupStage.getId(), result.getBody().getId());
     }
 
     @Test
