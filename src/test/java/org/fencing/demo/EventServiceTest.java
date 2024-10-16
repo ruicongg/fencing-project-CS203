@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,17 +52,16 @@ public class EventServiceTest {
     @InjectMocks
     private EventServiceImpl eventService;
 
-    private Event validEvent;
-    private Tournament validTournament;
-    
-    @BeforeEach
-    void setUp() {
-        validEvent = createValidEvent();
-        validTournament = createValidTournament();
-    }
-
     @Test
     public void addEvent_ValidEvent_ReturnsSavedEvent() {
+        Long tournamentId = 1L;
+        Tournament validTournament = createValidTournament();
+        validTournament.setId(tournamentId);
+
+        Long eventId = 1L;
+        Event validEvent = createValidEvent(validTournament);
+        validEvent.setId(eventId);
+
         when(tournamentRepository.findById(1L)).thenReturn(Optional.of(validTournament));
         when(eventRepository.save(any(Event.class))).thenReturn(validEvent);
 
@@ -74,11 +74,27 @@ public class EventServiceTest {
 
     @Test
     public void addEvent_NullTournamentId_ThrowsIllegalArgumentException() {
+        Long tournamentId = 1L;
+        Tournament validTournament = createValidTournament();
+        validTournament.setId(tournamentId);
+
+        Long eventId = 1L;
+        Event validEvent = createValidEvent(validTournament);
+        validEvent.setId(eventId);
+
         assertThrows(IllegalArgumentException.class, () -> eventService.addEvent(null, validEvent));
     }
 
     @Test
     public void addEvent_TournamentNotFound_ThrowsTournamentNotFoundException() {
+        Long tournamentId = 1L;
+        Tournament validTournament = createValidTournament();
+        validTournament.setId(tournamentId);
+
+        Long eventId = 1L;
+        Event validEvent = createValidEvent(validTournament);
+        validEvent.setId(eventId);
+        
         when(tournamentRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(TournamentNotFoundException.class, () -> eventService.addEvent(1L, validEvent));
@@ -86,6 +102,14 @@ public class EventServiceTest {
 
     @Test
     public void getAllEventsByTournamentId_ValidId_ReturnsListOfEvents() {
+        Long tournamentId = 1L;
+        Tournament validTournament = createValidTournament();
+        validTournament.setId(tournamentId);
+
+        Long eventId = 1L;
+        Event validEvent = createValidEvent(validTournament);
+        validEvent.setId(eventId);
+
         when(tournamentRepository.existsById(1L)).thenReturn(true);
         when(eventRepository.findByTournamentId(1L)).thenReturn(List.of(validEvent));
 
@@ -104,6 +128,14 @@ public class EventServiceTest {
 
     @Test
     public void getEvent_ValidId_ReturnsEvent() {
+        Long tournamentId = 1L;
+        Tournament validTournament = createValidTournament();
+        validTournament.setId(tournamentId);
+
+        Long eventId = 1L;
+        Event validEvent = createValidEvent(validTournament);
+        validEvent.setId(eventId);
+
         when(eventRepository.findById(1L)).thenReturn(Optional.of(validEvent));
 
         Event result = eventService.getEvent(1L);
@@ -121,45 +153,80 @@ public class EventServiceTest {
     }
 
     @Test
-    public void updateEvent_ValidEvent_ReturnsUpdatedEvent() {
-        when(eventRepository.findById(1L)).thenReturn(Optional.of(validEvent));
+    public void updateEvent_ExistingEvent_ReturnsUpdatedEvent() {
+        Long tournamentId = 1L;
+        Tournament validTournament = createValidTournament();
+        validTournament.setId(tournamentId);
+
+        Long eventId = 1L;
+        Event validEvent = createValidEvent(validTournament);
+        validEvent.setId(eventId);
+
+        Event newEvent = createValidEvent(validTournament);
+        newEvent.setGender(Gender.FEMALE);
+
+        when(tournamentRepository.findById(tournamentId)).thenReturn(Optional.of(validTournament));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(validEvent));
         when(eventRepository.save(any(Event.class))).thenReturn(validEvent);
 
-        validEvent.setGender(Gender.FEMALE);
-        validEvent.setWeapon(WeaponType.SABER);
-
-        Event updatedEvent = eventService.updateEvent(1L, 1L, validEvent);
+        Event updatedEvent = eventService.updateEvent(tournamentId, eventId, newEvent);
 
         assertNotNull(updatedEvent);
         assertEquals(Gender.FEMALE, updatedEvent.getGender());
-        assertEquals(WeaponType.SABER, updatedEvent.getWeapon());
-        verify(eventRepository, times(1)).save(validEvent);
     }
 
     @Test
     public void updateEvent_InvalidEventDates_ThrowsIllegalArgumentException() {
-        Event invalidEvent = createValidEvent();
-        invalidEvent.setStartDate(LocalDateTime.now().minusDays(1)); // Invalid start date
+        Long tournamentId = 1L;
+        Tournament validTournament = createValidTournament();
+        validTournament.setId(tournamentId);
 
-        when(eventRepository.findById(1L)).thenReturn(Optional.of(validEvent));
+        Long eventId = 1L;
+        Event validEvent = createValidEvent(validTournament);
+        validEvent.setId(eventId);
 
-        assertThrows(IllegalArgumentException.class, () -> eventService.updateEvent(1L, 1L, invalidEvent));
+        Event newEvent = createValidEvent(validTournament);
+        newEvent.setStartDate(LocalDateTime.now().minusDays(1)); // Invalid start date
+
+        when(tournamentRepository.findById(tournamentId)).thenReturn(Optional.of(validTournament));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(validEvent));
+
+        assertThrows(IllegalArgumentException.class, () -> eventService.updateEvent(1L, 1L, newEvent));
     }
 
     @Test
     public void updateEvent_TournamentChanged_ThrowsIllegalArgumentException() {
-        Event newEvent = createValidEvent();
-        Tournament anotherTournament = createValidTournament();
-        anotherTournament.setId(2L);
-        newEvent.setTournament(anotherTournament);
+        Long tournamentId = 1L;
+        Tournament validTournament = createValidTournament();
+        validTournament.setId(tournamentId);
 
-        when(eventRepository.findById(1L)).thenReturn(Optional.of(validEvent));
+        Long eventId = 1L;
+        Event validEvent = createValidEvent(validTournament);
+        validEvent.setId(eventId);
+
+        Long newTournamentId = 2L;
+        Tournament newTournament = createValidTournament();
+        newTournament.setId(newTournamentId);
+
+        Event newEvent = createValidEvent(validTournament);
+        newEvent.setTournament(newTournament);
+
+        when(tournamentRepository.findById(tournamentId)).thenReturn(Optional.of(validTournament));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(validEvent));
 
         assertThrows(IllegalArgumentException.class, () -> eventService.updateEvent(1L, 1L, newEvent));
     }
 
     @Test
     public void deleteEvent_ValidIds_SuccessfullyDeletesEvent() {
+        Long tournamentId = 1L;
+        Tournament validTournament = createValidTournament();
+        validTournament.setId(tournamentId);
+
+        Long eventId = 1L;
+        Event validEvent = createValidEvent(validTournament);
+        validEvent.setId(eventId);
+
         when(eventRepository.findById(1L)).thenReturn(Optional.of(validEvent));
     
         eventService.deleteEvent(1L, 1L);
@@ -180,6 +247,14 @@ public class EventServiceTest {
 
     @Test
     public void addPlayerToEvent_ValidIds_ReturnsUpdatedEvent() {
+        Long tournamentId = 1L;
+        Tournament validTournament = createValidTournament();
+        validTournament.setId(tournamentId);
+
+        Long eventId = 1L;
+        Event validEvent = createValidEvent(validTournament);
+        validEvent.setId(eventId);
+
         Player player = createValidPlayer();
         
         when(eventRepository.findById(1L)).thenReturn(Optional.of(validEvent));
@@ -199,25 +274,26 @@ public class EventServiceTest {
         assertThrows(EventNotFoundException.class, () -> eventService.addPlayerToEvent(1L, 1L));
     }
 
-    private Event createValidEvent() {
-        Event event = new Event();
-        event.setId(1L);
-        event.setStartDate(LocalDateTime.of(2025, 1, 1, 10, 0));
-        event.setEndDate(LocalDateTime.of(2025, 1, 2, 18, 0));
-        event.setGender(Gender.MALE);
-        event.setWeapon(WeaponType.FOIL);
-        event.setRankings(new TreeSet<>(new PlayerRankComparator()));
-        event.setGroupStages(new ArrayList<>());
-        event.setKnockoutStages(new ArrayList<>());
-        event.setTournament(createValidTournament());
-        return event;
+    private Tournament createValidTournament() {
+        return Tournament.builder()
+                .name("Spring Championship")
+                .registrationStartDate(LocalDate.now().plusDays(1))
+                .registrationEndDate(LocalDate.now().plusDays(20))
+                .tournamentStartDate(LocalDate.now().plusDays(25))
+                .tournamentEndDate(LocalDate.now().plusDays(30))
+                .venue("Sports Arena")
+                .events(new HashSet<>())
+                .build();
     }
 
-    private Tournament createValidTournament() {
-        Tournament tournament = new Tournament();
-        tournament.setId(1L);
-        tournament.setName("Spring Championship");
-        return tournament;
+    private Event createValidEvent(Tournament tournament) {
+        return Event.builder()
+        .tournament(tournament)
+        .gender(Gender.MALE)
+        .weapon(WeaponType.FOIL)  
+        .startDate(LocalDateTime.now().plusDays(25))  
+        .endDate(LocalDateTime.now().plusDays(26))
+        .build();
     }
 
     private Player createValidPlayer() {

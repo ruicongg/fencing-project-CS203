@@ -83,7 +83,7 @@ public class Event {
     
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore // To prevent circular references during serialization
+    @JsonIgnore 
     private List<GroupStage> groupStages = new ArrayList<>();
     
     @Builder.Default

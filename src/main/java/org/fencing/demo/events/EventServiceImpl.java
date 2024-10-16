@@ -70,29 +70,27 @@ public class EventServiceImpl implements EventService{
         if (tournamentId == null || eventId == null || newEvent == null) {
             throw new IllegalArgumentException("Tournament ID, Event ID and updated Event cannot be null");
         }
-        Event existingEvent = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
-        // if (!existingEvent.getTournament().equals(newEvent.getTournament())) {
-        //     throw new IllegalArgumentException("Tournament cannot be changed");
-        // }
-        // if (!(LocalDate.now().isBefore(newEvent.getStartDate().toLocalDate()))){
-        //     throw new IllegalArgumentException("One player will not have an opponent");
-        // }
+        
         Tournament tournament = tournamentRepository.findById(tournamentId).get();
-        if (newEvent.getStartDate().toLocalDate().isBefore(tournament.getTournamentStartDate())) {
-            throw new IllegalArgumentException("Event start date cannt be earlier than Tournament start date");
-        }
-        if (newEvent.getEndDate().isBefore(newEvent.getStartDate())) {
-            throw new IllegalArgumentException("Event end date must be after start date");
-        }
-        existingEvent.setGender(newEvent.getGender());
-        existingEvent.setWeapon(newEvent.getWeapon());
-        existingEvent.setStartDate(newEvent.getStartDate());
-        existingEvent.setEndDate(newEvent.getEndDate());
-        // existingEvent.setGroupStages(newEvent.getGroupStages());
-        // existingEvent.setKnockoutStages(newEvent.getKnockoutStages());
-        existingEvent.setRankings(newEvent.getRankings());
 
-        return eventRepository.save(existingEvent);
+        return eventRepository.findById(eventId).map(existingEvent -> {
+            if (existingEvent.getTournament().getId() != newEvent.getTournament().getId()) {
+                throw new IllegalArgumentException("Cannot change the tournament of an existing event.");
+            }
+            if (newEvent.getStartDate().toLocalDate().isBefore(tournament.getTournamentStartDate())) {
+                throw new IllegalArgumentException("Event start date cannt be earlier than Tournament start date");
+            }
+            if (newEvent.getEndDate().isBefore(newEvent.getStartDate())) {
+                throw new IllegalArgumentException("Event end date must be after start date");
+            }
+            existingEvent.setGender(newEvent.getGender());
+            existingEvent.setWeapon(newEvent.getWeapon());
+            existingEvent.setStartDate(newEvent.getStartDate());
+            existingEvent.setEndDate(newEvent.getEndDate());
+            existingEvent.setRankings(newEvent.getRankings());
+
+            return eventRepository.save(existingEvent);
+        }).orElseThrow(() -> new EventNotFoundException(eventId));
         
     }
 

@@ -261,16 +261,20 @@ public class EventIntegrationTest {
     public void updateEvent_Success() throws Exception {
         Event event = createValidEvent(tournament);
         long id = eventRepository.save(event).getId();
+        
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
 
         event.setGender(Gender.FEMALE);
         event.setWeapon(WeaponType.EPEE);
 
+        // ResponseEntity<Event> result = restTemplate.withBasicAuth("admin", "adminPass")
+        //                                     .getForEntity(uri, Event.class);
+
         ResponseEntity<Event> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), Event.class);
 
-        assertEquals(HttpStatus.OK, result.getStatusCode());
-        // assertEquals("smth", result.getBody());
+        // assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals("smth", result.getBody());
         assertEquals(Gender.FEMALE, result.getBody().getGender());
         assertEquals(WeaponType.EPEE, result.getBody().getWeapon());
     }
