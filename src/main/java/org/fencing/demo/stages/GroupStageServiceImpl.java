@@ -45,9 +45,9 @@ public class GroupStageServiceImpl implements GroupStageService{
         GroupStage existingGroupStage = groupStageRepository.findById(groupStageId)
                                                 .orElseThrow(() -> new GroupStageNotFoundException(groupStageId));
         if (existingGroupStage.getMatches().equals(newGroupStage.getMatches())) {
-            throw new IllegalArgumentException("No changes cam made to the group stage");
+            throw new IllegalArgumentException("No changes can made to the group stage");
         }
-        System.out.println("Existing GroupStage: " + existingGroupStage);
+        // System.out.println("Existing GroupStage: " + existingGroupStage);
         if (existingGroupStage.getEvent().getId() != (newGroupStage.getEvent().getId())) {
 
             throw new IllegalArgumentException("Event cannot be changed");

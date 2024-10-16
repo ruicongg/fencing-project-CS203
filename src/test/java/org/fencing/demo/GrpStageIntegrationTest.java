@@ -206,17 +206,13 @@ class GrpStageIntegrationTest {
         Long id = grpStageRepository.save(groupStage).getId();
 
 
-        System.out.println("Before adding match:"+groupStage);
-        System.out.println("GroupStage ID:" + groupStage.getId());
-        System.out.println("Matches:" + groupStage.getMatches());
+        // System.out.println("Before adding match:"+groupStage);
+        // System.out.println("GroupStage ID:" + groupStage.getId());
+        // System.out.println("Matches:" + groupStage.getMatches());
         // Create the URI for the PUT request
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/" + id);
     
         groupStage.setAllMatchesCompleted(true);
-        System.out.println(groupStage);
-        System.out.println();
-        System.out.println(groupStage.getMatches());
-        System.out.println();
     
         // Create the HTTP request with the updated GroupStage
         HttpEntity<GroupStage> request = new HttpEntity<>(groupStage, createHeaders(adminToken));
@@ -275,7 +271,7 @@ class GrpStageIntegrationTest {
         URI uri = URI.create(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/" + id);
     
         // Log the ID of the GroupStage to be deleted
-        System.out.println("Deleting GroupStage with ID: " + id);
+        //System.out.println("Deleting GroupStage with ID: " + id);
         
         // Create the HTTP request entity with headers
         HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
@@ -283,7 +279,7 @@ class GrpStageIntegrationTest {
         // Execute the DELETE request
         ResponseEntity<Void> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, Void.class);
         // Log the response status
-        System.out.println("Response Status: " + result.getStatusCode());
+        //System.out.println("Response Status: " + result.getStatusCode());
     
         // Assert the response status code and database state
         assertEquals(204, result.getStatusCode().value());
