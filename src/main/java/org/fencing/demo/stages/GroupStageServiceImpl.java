@@ -51,6 +51,12 @@ public class GroupStageServiceImpl implements GroupStageService{
         //     throw new IllegalArgumentException("No changes can be made to the group stage");
         // }
         System.out.println("Existing GroupStage: " + existingGroupStage);
+        if (existingGroupStage.getMatches().size() != newGroupStage.getMatches().size()
+            || !existingGroupStage.getMatches().containsAll(newGroupStage.getMatches())
+            || !newGroupStage.getMatches().containsAll(existingGroupStage.getMatches())) {
+            throw new IllegalArgumentException("No changes can made to the group stage");
+        }
+        // System.out.println("Existing GroupStage: " + existingGroupStage);
         if (existingGroupStage.getEvent().getId() != (newGroupStage.getEvent().getId())) {
 
             throw new IllegalArgumentException("Event cannot be changed");
