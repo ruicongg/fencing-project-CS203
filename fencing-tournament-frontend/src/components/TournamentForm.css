@@ -1,0 +1,63 @@
+.tournament-form {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tournament-form h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+}
+
+.tournament-form form {
+  display: flex;
+  flex-direction: column;
+}
+
+.tournament-form input {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.tournament-form input:focus {
+  border-color: #3498db;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+}
+
+.tournament-form button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #3498db;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.tournament-form button:hover {
+  background-color: #2980b9;
+}
+
+.tournament-form button:focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.5);
+}
+
+@media (max-width: 768px) {
+  .tournament-form {
+    padding: 1.5rem;
+  }
+
+  .tournament-form h2 {
+    font-size: 1.5rem;
+  }
+}

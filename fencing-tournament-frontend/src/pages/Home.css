@@ -1,0 +1,17 @@
+.home {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.home h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.home p {
+  font-size: 1.2rem;
+  color: #34495e;
+  max-width: 600px;
+  margin: 0 auto;
+}
