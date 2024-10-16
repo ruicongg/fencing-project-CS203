@@ -107,7 +107,6 @@ public class Event {
         TreeMap<Integer, List<Match>> groupMatches = WithinGroupSort.groupMatchMakingAlgorithm(groups, this);
         for(Integer i:groups.keySet()){
             GroupStage grpStage = new GroupStage();
-            grpStage.setPlayers(groups.get(i));
             grpStage.setMatches(groupMatches.get(i));
             // add all the matches to return
             allMatchesForGroup.addAll(groupMatches.get(i));
@@ -149,8 +148,8 @@ public class Event {
         for (int i = 0; i < n / 2; i++) {
             Player player1 = players.get(i);
             Player player2 = players.get(n - 1 - i);
-            System.out.println(player1);
-            System.out.println(player2);
+            // System.out.println(player1);
+            // System.out.println(player2);
 
             // Create a match between the two players
             Match match = new Match();

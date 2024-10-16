@@ -1,5 +1,6 @@
 package org.fencing.demo.stages;
 
+import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.springframework.stereotype.Service;
@@ -43,18 +44,31 @@ public class GroupStageServiceImpl implements GroupStageService{
         }
         GroupStage existingGroupStage = groupStageRepository.findById(groupStageId)
                                                 .orElseThrow(() -> new GroupStageNotFoundException(groupStageId));
-        if (!existingGroupStage.getEvent().equals(newGroupStage.getEvent())) {
+        if (existingGroupStage.getMatches().equals(newGroupStage.getMatches())) {
+            throw new IllegalArgumentException("No changes can made to the group stage");
+        }
+        // System.out.println("Existing GroupStage: " + existingGroupStage);
+        if (existingGroupStage.getEvent().getId() != (newGroupStage.getEvent().getId())) {
+
             throw new IllegalArgumentException("Event cannot be changed");
         }
-        existingGroupStage.setMatches(newGroupStage.getMatches());
+        existingGroupStage.getMatches().clear();
+        
+        existingGroupStage.setAllMatchesCompleted(newGroupStage.isAllMatchesCompleted());
         return groupStageRepository.save(existingGroupStage);
     }
 
     public void deleteGroupStage(Long eventId, Long groupStageId){
-        if (eventId == null || groupStageId == null) {
-            throw new IllegalArgumentException("Event ID and GroupStage ID cannot be null");
+       if (eventId == null || groupStageId == null) {
+            throw new IllegalArgumentException("Event ID and KnockoutStage ID cannot be null");
         }
-        groupStageRepository.deleteByEventIdAndId(eventId, groupStageId);
+        GroupStage groupStage = groupStageRepository.findById(groupStageId)
+            .orElseThrow(() -> new GroupStageNotFoundException(groupStageId));
+        Event event = eventRepository.findById(eventId)
+            .orElseThrow(() -> new EventNotFoundException(eventId));
+        event.getGroupStages().remove(groupStage);
+        
+        groupStageRepository.delete(groupStage);
     }
 
 

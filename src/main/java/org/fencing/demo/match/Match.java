@@ -18,7 +18,7 @@ import org.fencing.demo.stages.KnockoutStage;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +32,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "matches")
+
 public class Match {
     
     @Id
@@ -46,7 +47,7 @@ public class Match {
     // Optional ManyToOne relationship with GroupStage
     @ManyToOne
     @JoinColumn(name = "group_stage_id")
-    @JsonIgnore
+    @JsonBackReference
     private GroupStage groupStage;
 
     // Optional ManyToOne relationship with KnockoutStage
@@ -97,5 +98,15 @@ public class Match {
     public int hashCode() {
         return Objects.hash(id); // Hash based on ID
     }
+
+    // @Override
+    // public String toString() {
+    //     return "Match(id=" + id + ", event=" + (event != null ? event.getId() : null) + 
+    //            ", groupStage=" + (groupStage != null ? groupStage.getId() : null) + 
+    //            ", knockoutStage=" + (knockoutStage != null ? knockoutStage.getId() : null) + 
+    //            ", player1=" + (player1 != null ? player1.getId() : null) + 
+    //            ", player2=" + (player2 != null ? player2.getId() : null) + 
+    //            ", player1Score=" + player1Score + ", player2Score=" + player2Score + ")";
+    // }
 
 }

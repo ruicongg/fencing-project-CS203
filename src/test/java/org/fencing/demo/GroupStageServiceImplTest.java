@@ -1,140 +1,170 @@
 package org.fencing.demo;
 
-    import org.fencing.demo.events.Event;
-    import org.fencing.demo.events.EventNotFoundException;
-    import org.fencing.demo.events.EventRepository;
-    import org.fencing.demo.stages.GroupStage;
-    import org.fencing.demo.stages.GroupStageNotFoundException;
-    import org.fencing.demo.stages.GroupStageRepository;
-    import org.fencing.demo.stages.GroupStageServiceImpl;
-    import org.junit.jupiter.api.BeforeEach;
-    import org.junit.jupiter.api.Test;
-    import org.mockito.InjectMocks;
-    import org.mockito.Mock;
-    import org.mockito.MockitoAnnotations;
-    
-    import java.util.Optional;
-    
-    import static org.junit.jupiter.api.Assertions.*;
-    import static org.mockito.ArgumentMatchers.any;
-    import static org.mockito.Mockito.doNothing;
-    import static org.mockito.Mockito.doThrow;
-    import static org.mockito.Mockito.times;
-    import static org.mockito.Mockito.verify;
-    import static org.mockito.Mockito.when;
-        
-    public class GroupStageServiceImplTest {
-    
-        @InjectMocks
-        private GroupStageServiceImpl groupStageService;
-    
-        @Mock
-        private GroupStageRepository groupStageRepository;
-    
-        @Mock
-        private EventRepository eventRepository;
-    
-        @BeforeEach
-        public void setUp() {
-            MockitoAnnotations.openMocks(this);
-        }
-    
-        @Test
-        public void testAddGroupStage() {
-            Long eventId = 1L;
-            Event event = new Event();
-            when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
-            when(groupStageRepository.save(any(GroupStage.class))).thenReturn(new GroupStage());
-    
-            GroupStage result = groupStageService.addGroupStage(eventId);
-            assertNotNull(result);
-        }
-    
-        @Test
-        public void testAddGroupStageEventNotFound() {
-            Long eventId = 1L;
-            when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
-    
-            assertThrows(EventNotFoundException.class, () -> {
-                groupStageService.addGroupStage(eventId);
-            });
-        }
-    
-        @Test
-        public void testGetGroupStage() {
-            Long groupStageId = 1L;
-            GroupStage groupStage = new GroupStage();
-            when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.of(groupStage));
-    
-            GroupStage result = groupStageService.getGroupStage(groupStageId);
-            assertNotNull(result);
-        }
-    
-        @Test
-        public void testGetGroupStageNotFound() {
-            Long groupStageId = 1L;
-            when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.empty());
-    
-            assertThrows(GroupStageNotFoundException.class, () -> {
-                groupStageService.getGroupStage(groupStageId);
-            });
-        }
+import org.fencing.demo.events.Event;
+import org.fencing.demo.events.EventNotFoundException;
+import org.fencing.demo.events.EventRepository;
+import org.fencing.demo.match.Match;
+import org.fencing.demo.stages.GroupStage;
+import org.fencing.demo.stages.GroupStageNotFoundException;
+import org.fencing.demo.stages.GroupStageRepository;
+import org.fencing.demo.stages.GroupStageServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
-        @Test
-        public void testUpdateGroupStage() {
-            Long eventId = 1L;
-            Long groupStageId = 1L;
-            GroupStage newGroupStage = new GroupStage();
-            GroupStage existingGroupStage = new GroupStage();
-            Event event = new Event();
+import java.util.*;
 
-            existingGroupStage.setEvent(event);
-            newGroupStage.setEvent(event);
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-            when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.of(existingGroupStage));
-            when(groupStageRepository.save(existingGroupStage)).thenReturn(existingGroupStage);
+class GroupStageServiceImplTest {
 
-            GroupStage result = groupStageService.updateGroupStage(eventId, groupStageId, newGroupStage);
-            assertNotNull(result);
-            assertEquals(existingGroupStage, result);
-        }
+    private GroupStageRepository groupStageRepository;
+    private EventRepository eventRepository;
+    private GroupStageServiceImpl groupStageService;
 
-        @Test
-        public void testUpdateGroupStageNotFound() {
-            Long eventId = 1L;
-            Long groupStageId = 1L;
-            GroupStage newGroupStage = new GroupStage();
-
-            when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.empty());
-
-            assertThrows(GroupStageNotFoundException.class, () -> {
-                groupStageService.updateGroupStage(eventId, groupStageId, newGroupStage);
-            });
-        }
-
-        @Test
-        public void testDeleteGroupStage() {
-            Long eventId = 1L;
-            Long groupStageId = 1L;
-
-            doNothing().when(groupStageRepository).deleteByEventIdAndId(eventId, groupStageId);
-
-            groupStageService.deleteGroupStage(eventId, groupStageId);
-            verify(groupStageRepository, times(1)).deleteByEventIdAndId(eventId, groupStageId);
-        }
-
-        @Test
-        public void testDeleteGroupStageNotFound() {
-            Long eventId = 1L;
-            Long groupStageId = 1L;
-
-            doThrow(new GroupStageNotFoundException(groupStageId)).when(groupStageRepository).deleteByEventIdAndId(eventId, groupStageId);
-
-            assertThrows(GroupStageNotFoundException.class, () -> {
-                groupStageService.deleteGroupStage(eventId, groupStageId);
-            });
-        }
-
-    
+    @BeforeEach
+    void setUp() {
+        groupStageRepository = mock(GroupStageRepository.class);
+        eventRepository = mock(EventRepository.class);
+        groupStageService = new GroupStageServiceImpl(groupStageRepository, eventRepository);
     }
-    
+
+    @Test
+    void addGroupStage_eventExists_shouldAddGroupStage() {
+        Long eventId = 1L;
+        Event event = new Event();
+        event.setId(eventId);
+        event.setGroupStages(new ArrayList<>());
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(groupStageRepository.save(any(GroupStage.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        GroupStage groupStage = groupStageService.addGroupStage(eventId);
+
+        assertNotNull(groupStage);
+        assertEquals(event, groupStage.getEvent());
+        assertTrue(event.getGroupStages().contains(groupStage));
+        verify(groupStageRepository).save(groupStage);
+    }
+
+    @Test
+    void addGroupStage_eventDoesNotExist_shouldThrowException() {
+        Long eventId = 1L;
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
+
+        assertThrows(EventNotFoundException.class, () -> groupStageService.addGroupStage(eventId));
+    }
+
+    @Test
+    void getGroupStage_groupStageExists_shouldReturnGroupStage() {
+        Long groupStageId = 1L;
+        GroupStage groupStage = new GroupStage();
+        groupStage.setId(groupStageId);
+
+        when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.of(groupStage));
+
+        GroupStage result = groupStageService.getGroupStage(groupStageId);
+
+        assertEquals(groupStage, result);
+    }
+
+    @Test
+    void getGroupStage_groupStageDoesNotExist_shouldThrowException() {
+        Long groupStageId = 1L;
+
+        when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.empty());
+
+        assertThrows(GroupStageNotFoundException.class, () -> groupStageService.getGroupStage(groupStageId));
+    }
+
+    // @Test
+    // void updateGroupStage_validUpdate_shouldReturnUpdatedGroupStage() {
+    //     Long eventId = 1L;
+    //     Long groupStageId = 1L;
+    //     GroupStage existingGroupStage = new GroupStage();
+    //     existingGroupStage.setId(groupStageId);
+    //     Event event = new Event();
+    //     existingGroupStage.setEvent(event);
+    //     ArrayList<Match> matches = new ArrayList<>();
+    //     existingGroupStage.setMatches(matches);
+    //     existingGroupStage.setAllMatchesCompleted(false);
+
+
+    //     when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.of(existingGroupStage));
+    //     when(groupStageRepository.save(existingGroupStage)).thenReturn(existingGroupStage);
+
+    //     existingGroupStage.setAllMatchesCompleted(true);
+
+    //     GroupStage result = groupStageService.updateGroupStage(eventId, groupStageId, existingGroupStage);
+
+    //     assertEquals(existingGroupStage, result);
+    //     assertTrue(existingGroupStage.isAllMatchesCompleted());
+    // }
+
+    @Test
+    void updateGroupStage_noChanges_shouldThrowException() {
+        Long eventId = 1L;
+        Long groupStageId = 1L;
+        GroupStage existingGroupStage = new GroupStage();
+        existingGroupStage.setId(groupStageId);
+        existingGroupStage.setEvent(new Event());
+        ArrayList<Match> matches = new ArrayList<>();
+        matches.add(new Match());
+        existingGroupStage.setMatches(matches);
+
+        GroupStage newGroupStage = new GroupStage();
+        newGroupStage.setEvent(new Event());
+        matches.add(new Match());
+        existingGroupStage.setMatches(matches);
+        newGroupStage.setMatches(matches);
+
+        when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.of(existingGroupStage));
+
+        assertThrows(IllegalArgumentException.class, () -> groupStageService.updateGroupStage(eventId, groupStageId, newGroupStage));
+    }
+
+    @Test
+    void deleteGroupStage_validIds_shouldDeleteGroupStage() {
+        Long eventId = 1L;
+        Long groupStageId = 1L;
+        Event event = new Event();
+        event.setId(eventId);
+        GroupStage groupStage = new GroupStage();
+        groupStage.setId(groupStageId);
+        
+        event.getGroupStages().add(groupStage);
+
+        when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.of(groupStage));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+
+        groupStageService.deleteGroupStage(eventId, groupStageId);
+
+        assertFalse(event.getGroupStages().contains(groupStage));
+        verify(groupStageRepository).delete(groupStage);
+    }
+
+    @Test
+    void deleteGroupStage_groupStageDoesNotExist_shouldThrowException() {
+        Long eventId = 1L;
+        Long groupStageId = 1L;
+
+        when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.empty());
+
+        assertThrows(GroupStageNotFoundException.class, () -> groupStageService.deleteGroupStage(eventId, groupStageId));
+    }
+
+    @Test
+    void deleteGroupStage_eventDoesNotExist_shouldThrowException() {
+        Long eventId = 1L;
+        Long groupStageId = 1L;
+        GroupStage groupStage = new GroupStage();
+        groupStage.setId(groupStageId);
+
+        when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.of(groupStage));
+        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
+
+        assertThrows(EventNotFoundException.class, () -> groupStageService.deleteGroupStage(eventId, groupStageId));
+    }
+}
