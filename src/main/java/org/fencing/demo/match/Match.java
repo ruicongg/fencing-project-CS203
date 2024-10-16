@@ -50,7 +50,6 @@ public class Match {
     // Optional ManyToOne relationship with KnockoutStage
     @ManyToOne
     @JoinColumn(name = "knockout_stage_id")
-    @JsonIgnore
     private KnockoutStage knockoutStage;
     
     @ManyToOne

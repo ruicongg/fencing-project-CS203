@@ -4,7 +4,8 @@ import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.springframework.stereotype.Service;
-
+import org.fencing.demo.match.Match;
+import java.util.List;
 @Service
 public class KnockoutStageServiceImpl implements KnockoutStageService{
     private final KnockoutStageRepository knockoutStageRepository;
@@ -42,10 +43,14 @@ public class KnockoutStageServiceImpl implements KnockoutStageService{
         }
         KnockoutStage existingKnockoutStage = knockoutStageRepository.findById(knockoutStageId)
                                                 .orElseThrow(() -> new KnockoutStageNotFoundException(knockoutStageId));
-        if (!existingKnockoutStage.getEvent().equals(newKnockoutStage.getEvent())) {
-            throw new IllegalArgumentException("Event cannot be changed");
+        List<Match> existingMatches = existingKnockoutStage.getMatches();
+        List<Match> newMatches = newKnockoutStage.getMatches();
+        if (existingMatches.size() != newMatches.size() || 
+            !existingMatches.containsAll(newMatches) || 
+            !newMatches.containsAll(existingMatches)) {
+            throw new IllegalArgumentException("Matches cannot be changed");
         }
-        existingKnockoutStage.setMatches(newKnockoutStage.getMatches());
+        existingKnockoutStage.setEvent(newKnockoutStage.getEvent());
         return knockoutStageRepository.save(existingKnockoutStage);
     }
 
