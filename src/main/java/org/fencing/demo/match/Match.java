@@ -73,6 +73,10 @@ public class Match {
         return player1Score > player2Score ? player1 : player2;
     }
 
+    public Player getLoser(){
+        return player1Score < player2Score ? player1 : player2;
+    }
+
     //need the number of k value in player
     // add the number of matches played in player
     // public void updateEloRanking(){
