@@ -24,10 +24,15 @@ public class BeforeGroupStage {
 
         Set<PlayerRank> players = new TreeSet<>(new PlayerRankEloComparator());
 
+
         // Add players from rankings to the TreeSet (automatically sorted)
         for (PlayerRank pr : rankings) {
             players.add(pr);
         }
+
+        // //bebugging line
+        // System.out.println("1)in Before Group sort how many players: " + players.size());
+        // System.out.println();
 
         int playerNum = players.size();
         if (playerNum == 0) {
@@ -65,6 +70,14 @@ public class BeforeGroupStage {
         int numGroups = playerNum / grpSize;
         int remainder = playerNum % grpSize;
 
+        // //bebugging line
+        // System.out.println("2)in Before Group sort groups: " + numGroups);
+        // System.out.println();
+
+        // //bebugging line
+        // System.out.println("3)in Before Group sort remainder: " + remainder);
+        // System.out.println();
+
         // If there's a remainder, we need one more group
         if (remainder != 0) {
             numGroups++;
@@ -72,7 +85,7 @@ public class BeforeGroupStage {
 
         // Initialize the groups
         for (int i = 1; i <= numGroups; i++) {
-            resultMatches.put(i, new ArrayList<>());
+            resultMatches.put(i, new ArrayList<PlayerRank>());
         }
 
         // Distribute players across the groups in a round-robin fashion

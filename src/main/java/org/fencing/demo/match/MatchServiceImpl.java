@@ -58,8 +58,12 @@ public class MatchServiceImpl implements MatchService {
         if (groupStages.isEmpty()) {
             throw new IllegalStateException("No groupStage found for event " + eventId);
         }
+        List<Match> matches = event.createRoundsForGroupStages();
+        System.out.println();
+        System.out.println("the number of matches in match service: " + matches.size());
+        System.out.println();
         //event.createRoundsForGroupStages() return Set of all groupMatches under a single event
-        return matchRepository.saveAll(event.createRoundsForGroupStages());
+        return matchRepository.saveAll(matches);
     }
 
     @Override

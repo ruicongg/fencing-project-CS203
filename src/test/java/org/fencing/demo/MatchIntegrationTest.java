@@ -144,8 +144,6 @@ public class MatchIntegrationTest {
 
         playerRepository.deleteAll();
         addPlayersToEvent(event, groupStage);
-
-        groupStage.setPlayers(new ArrayList<>(event.getRankings()));
         groupStageRepository.save(groupStage);
 
         knockoutStageRepository.deleteAll();
@@ -164,10 +162,13 @@ public class MatchIntegrationTest {
         playerRepository.deleteAll();
     }
 
-    @Test //expected true, was false (@ assertTrue) 
+    @Test //passed!
      public void addInitialMatchForGroupStage_Success() throws Exception {
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/matches");
+
+        System.out.println("originally how many players: " + event.getRankings().size());
+        System.out.println();
 
         ResponseEntity<Match[]> result = restTemplate.withBasicAuth("admin", "adminPass")
                                                     .postForEntity(uri, null, Match[].class);
@@ -190,7 +191,7 @@ public class MatchIntegrationTest {
         assertTrue(result.getBody().length > 0);
     }
 
-    // @Test 
+    // @Test
     // public void addInitialMatchForGroupStage_NullGroupStageFound_Failure() throws Exception {
 
     //     URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/matches");
@@ -268,8 +269,7 @@ public class MatchIntegrationTest {
 
     public GroupStage createValidGroupStage(Event event) {
         return GroupStage.builder()
-            .event(event)                                 
-            .players(new ArrayList<PlayerRank>())                            
+            .event(event)                                                  
             .matches(new ArrayList<Match>())                   
             .allMatchesCompleted(false)                   
             .build();

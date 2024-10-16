@@ -91,16 +91,38 @@ public class Event {
     @JsonIgnore
     private List<KnockoutStage> knockoutStages = new ArrayList<>();
 
+    //added this
+    @Builder.Default
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Match> matches = new ArrayList<>();
+
     //includes creating matches
     public List<Match> createRoundsForGroupStages() {
+        //debugging line
+        System.out.println("number of players after in Event class" + rankings.size());
         List<Match> allMatchesForGroup = new ArrayList<>();
         //sort by elo ranks return grp num to playerRanks
         TreeMap<Integer, List<PlayerRank>> groups = BeforeGroupStage.sortByELO(rankings);
+        
+        // //debugging print statement
+        // System.out.println("is groups size:" + groups.size());
+        // System.out.println();
+        // System.out.println("number of Players:" + groups.get(1).size());
+        // System.out.println();
+        
         //within groups to sort
         TreeMap<Integer, List<Match>> groupMatches = WithinGroupSort.groupMatchMakingAlgorithm(groups, this);
+
+        // //debugging
+        // System.out.println("number of groups in class: " + groupMatches.size());
+        // System.out.println();
+        // for(int i : groupMatches.keySet()){
+        //     System.out.println("Group " + i + " has " + groupMatches.get(i).size() + " matches.");
+        // }
+        
         for(Integer i:groups.keySet()){
             GroupStage grpStage = new GroupStage();
-            grpStage.setPlayers(groups.get(i));
             grpStage.setMatches(groupMatches.get(i));
             // add all the matches to return
             allMatchesForGroup.addAll(groupMatches.get(i));
