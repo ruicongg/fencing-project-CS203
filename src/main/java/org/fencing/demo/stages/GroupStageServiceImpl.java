@@ -40,23 +40,29 @@ public class GroupStageServiceImpl implements GroupStageService{
 
     public GroupStage updateGroupStage(Long eventId, Long groupStageId, GroupStage newGroupStage){
         if (eventId == null || groupStageId == null || newGroupStage == null) {
+            System.out.println("Event ID: " + eventId);
+            System.out.println("GroupStage ID: " + groupStageId);
+            System.out.println("Updated GroupStage: " + newGroupStage);
             throw new IllegalArgumentException("Event ID, GroupStage ID and updated GroupStage cannot be null");
         }
         GroupStage existingGroupStage = groupStageRepository.findById(groupStageId)
                                                 .orElseThrow(() -> new GroupStageNotFoundException(groupStageId));
-        if (existingGroupStage.getMatches().equals(newGroupStage.getMatches())) {
-            throw new IllegalArgumentException("No changes can made to the group stage");
-        }
-        // System.out.println("Existing GroupStage: " + existingGroupStage);
+        // if (!existingGroupStage.getMatches().equals(newGroupStage.getMatches())) {
+        //     throw new IllegalArgumentException("No changes can be made to the group stage");
+        // }
+        System.out.println("Existing GroupStage: " + existingGroupStage);
         if (existingGroupStage.getEvent().getId() != (newGroupStage.getEvent().getId())) {
 
             throw new IllegalArgumentException("Event cannot be changed");
         }
         existingGroupStage.getMatches().clear();
+        System.out.println("New GroupStage: " + newGroupStage);
+        System.out.println("Matches: " + newGroupStage.getMatches());
         
         existingGroupStage.setAllMatchesCompleted(newGroupStage.isAllMatchesCompleted());
         return groupStageRepository.save(existingGroupStage);
     }
+    
 
     public void deleteGroupStage(Long eventId, Long groupStageId){
        if (eventId == null || groupStageId == null) {

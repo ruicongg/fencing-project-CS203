@@ -15,6 +15,7 @@ import org.mockito.ArgumentCaptor;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class GroupStageServiceImplTest {
@@ -79,50 +80,54 @@ class GroupStageServiceImplTest {
         assertThrows(GroupStageNotFoundException.class, () -> groupStageService.getGroupStage(groupStageId));
     }
 
-    // @Test
-    // void updateGroupStage_validUpdate_shouldReturnUpdatedGroupStage() {
-    //     Long eventId = 1L;
-    //     Long groupStageId = 1L;
-    //     GroupStage existingGroupStage = new GroupStage();
-    //     existingGroupStage.setId(groupStageId);
-    //     Event event = new Event();
-    //     existingGroupStage.setEvent(event);
-    //     ArrayList<Match> matches = new ArrayList<>();
-    //     existingGroupStage.setMatches(matches);
-    //     existingGroupStage.setAllMatchesCompleted(false);
-
-
-    //     when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.of(existingGroupStage));
-    //     when(groupStageRepository.save(existingGroupStage)).thenReturn(existingGroupStage);
-
-    //     existingGroupStage.setAllMatchesCompleted(true);
-
-    //     GroupStage result = groupStageService.updateGroupStage(eventId, groupStageId, existingGroupStage);
-
-    //     assertEquals(existingGroupStage, result);
-    //     assertTrue(existingGroupStage.isAllMatchesCompleted());
-    // }
-
     @Test
-    void updateGroupStage_noChanges_shouldThrowException() {
+    public void testUpdateGroupStage() {
         Long eventId = 1L;
         Long groupStageId = 1L;
-        GroupStage existingGroupStage = new GroupStage();
-        existingGroupStage.setId(groupStageId);
-        existingGroupStage.setEvent(new Event());
-        ArrayList<Match> matches = new ArrayList<>();
-        matches.add(new Match());
-        existingGroupStage.setMatches(matches);
-
         GroupStage newGroupStage = new GroupStage();
-        newGroupStage.setEvent(new Event());
-        matches.add(new Match());
+        GroupStage existingGroupStage = new GroupStage();
+        Event event = new Event();
+        event.setId(eventId);
+
+        existingGroupStage.setId(groupStageId);
+        newGroupStage.setId(groupStageId);
+        existingGroupStage.setEvent(event);
+        newGroupStage.setEvent(event);
+        existingGroupStage.setMatches(new ArrayList<Match>());
+        newGroupStage.setMatches(existingGroupStage.getMatches());
+        existingGroupStage.setAllMatchesCompleted(false);
+        newGroupStage.setAllMatchesCompleted(true);
+
+        when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.of(existingGroupStage));
+        when(groupStageRepository.save(existingGroupStage)).thenReturn(existingGroupStage);
+
+        GroupStage result = groupStageService.updateGroupStage(eventId, groupStageId, newGroupStage);
+        assertNotNull(result);
+        assertEquals(newGroupStage.isAllMatchesCompleted(), result.isAllMatchesCompleted());
+    }
+
+    @Test
+    void updateGroupStage_eventChanged_shouldThrowException() {
+        Long groupStageId = 1L;
+        GroupStage newGroupStage = new GroupStage();
+        GroupStage existingGroupStage = new GroupStage();
+        Event event = new Event();
+        event.setId(1L);
+        Event newEvent = new Event();
+        event.setId(2L);
+        List<Match> matches = new ArrayList<>();
+
+        existingGroupStage.setEvent(event);
+        newGroupStage.setEvent(newEvent);
         existingGroupStage.setMatches(matches);
         newGroupStage.setMatches(matches);
+        existingGroupStage.setAllMatchesCompleted(false);
+        newGroupStage.setAllMatchesCompleted(true);
 
         when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.of(existingGroupStage));
 
-        assertThrows(IllegalArgumentException.class, () -> groupStageService.updateGroupStage(eventId, groupStageId, newGroupStage));
+        assertThrows(IllegalArgumentException.class, () -> 
+            groupStageService.updateGroupStage(1L, groupStageId, newGroupStage));
     }
 
     @Test
