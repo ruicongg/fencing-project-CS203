@@ -185,6 +185,7 @@ public class EventIntegrationTest {
     @Test
     public void getAllEventsByTournamentId_Success() throws Exception {
         Event event = createValidEvent(tournament);
+        eventRepository.save(event);
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
 
@@ -200,6 +201,7 @@ public class EventIntegrationTest {
     @Test
     public void getEventById_Success() throws Exception {
         Event event = createValidEvent(tournament);
+        eventRepository.save(event);
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId());
 
@@ -214,12 +216,13 @@ public class EventIntegrationTest {
     @Test
     public void getAllEventsByTournamentId_RegularUser_Success() throws Exception {
         Event event = createValidEvent(tournament);
+        eventRepository.save(event);
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
 
         ResponseEntity<Event[]> result = restTemplate.withBasicAuth("user", "userPass")
                                                 .getForEntity(uri, Event[].class);
-
+            // assertEquals("smth", result.getBody());
         assertEquals(HttpStatus.OK, result.getStatusCode());  
         assertNotNull(result.getBody());
         assertEquals(1, result.getBody().length);
@@ -229,11 +232,8 @@ public class EventIntegrationTest {
     public void addEvent_StartDateBeforeTournamentStartDate_Failure() throws Exception {
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
 
-        Event event = new Event();
-        event.setGender(Gender.MALE);
-        event.setWeapon(WeaponType.FOIL);
-        event.setStartDate(LocalDateTime.of(2025, 1, 5, 10, 0)); // Earlier than tournament start date
-        event.setEndDate(LocalDateTime.of(2025, 1, 11, 18, 0));
+        Event event = createValidEvent(tournament);
+        event.setStartDate(LocalDateTime.now().plusDays(24));
 
         ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .postForEntity(uri, event, String.class);
@@ -246,11 +246,8 @@ public class EventIntegrationTest {
     public void addEvent_EndDateBeforeStartDate_Failure() throws Exception {
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
 
-        Event event = new Event();
-        event.setGender(Gender.MALE);
-        event.setWeapon(WeaponType.FOIL);
-        event.setStartDate(LocalDateTime.of(2025, 1, 12, 10, 0));
-        event.setEndDate(LocalDateTime.of(2025, 1, 11, 18, 0)); // End date is earlier than start date
+        Event event = createValidEvent(tournament);
+        event.setEndDate(LocalDateTime.now().plusDays(24));
 
         ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .postForEntity(uri, event, String.class);
@@ -271,9 +268,9 @@ public class EventIntegrationTest {
 
         ResponseEntity<Event> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), Event.class);
-        System.out.println("Event being sent: " + event);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
+        // assertEquals("smth", result.getBody());
         assertEquals(Gender.FEMALE, result.getBody().getGender());
         assertEquals(WeaponType.EPEE, result.getBody().getWeapon());
     }
@@ -309,7 +306,7 @@ public class EventIntegrationTest {
         long id = eventRepository.save(event).getId();
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
 
-        event.setStartDate(LocalDateTime.of(2025, 1, 5, 10, 0));
+        event.setStartDate(LocalDateTime.now().plusDays(24));
 
         ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), String.class);
@@ -324,7 +321,7 @@ public class EventIntegrationTest {
         long id = eventRepository.save(event).getId();
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
 
-        event.setEndDate(LocalDateTime.of(2025, 1, 9, 18, 0));  // End date before start date
+        event.setEndDate(LocalDateTime.now().plusDays(24));  // End date before start date
 
         ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), String.class);
