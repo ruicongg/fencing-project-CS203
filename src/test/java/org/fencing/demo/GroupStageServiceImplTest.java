@@ -79,29 +79,29 @@ class GroupStageServiceImplTest {
         assertThrows(GroupStageNotFoundException.class, () -> groupStageService.getGroupStage(groupStageId));
     }
 
-    // @Test
-    // void updateGroupStage_validUpdate_shouldReturnUpdatedGroupStage() {
-    //     Long eventId = 1L;
-    //     Long groupStageId = 1L;
-    //     GroupStage existingGroupStage = new GroupStage();
-    //     existingGroupStage.setId(groupStageId);
-    //     Event event = new Event();
-    //     existingGroupStage.setEvent(event);
-    //     ArrayList<Match> matches = new ArrayList<>();
-    //     existingGroupStage.setMatches(matches);
-    //     existingGroupStage.setAllMatchesCompleted(false);
+    @Test
+    void updateGroupStage_validUpdate_shouldReturnUpdatedGroupStage() {
+        Long eventId = 1L;
+        Long groupStageId = 1L;
+        GroupStage existingGroupStage = new GroupStage();
+        existingGroupStage.setId(groupStageId);
+        Event event = new Event();
+        existingGroupStage.setEvent(event);
+        ArrayList<Match> matches = new ArrayList<>();
+        existingGroupStage.setMatches(matches);
+        existingGroupStage.setAllMatchesCompleted(false);
 
 
-    //     when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.of(existingGroupStage));
-    //     when(groupStageRepository.save(existingGroupStage)).thenReturn(existingGroupStage);
+        when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.of(existingGroupStage));
+        when(groupStageRepository.save(existingGroupStage)).thenReturn(existingGroupStage);
 
-    //     existingGroupStage.setAllMatchesCompleted(true);
+        existingGroupStage.setAllMatchesCompleted(true);
 
-    //     GroupStage result = groupStageService.updateGroupStage(eventId, groupStageId, existingGroupStage);
+        GroupStage result = groupStageService.updateGroupStage(eventId, groupStageId, existingGroupStage);
 
-    //     assertEquals(existingGroupStage, result);
-    //     assertTrue(existingGroupStage.isAllMatchesCompleted());
-    // }
+        assertEquals(existingGroupStage, result);
+        assertTrue(existingGroupStage.isAllMatchesCompleted());
+    }
 
     @Test
     void updateGroupStage_noChanges_shouldThrowException() {
