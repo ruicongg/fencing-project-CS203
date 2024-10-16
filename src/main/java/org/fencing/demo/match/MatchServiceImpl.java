@@ -133,6 +133,7 @@ public class MatchServiceImpl implements MatchService {
             throw new IllegalArgumentException("Event ID, Match ID and updated Match cannot be null");
         }
         Match existingMatch = matchRepository.findById(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
+
         if (!existingMatch.getEvent().equals(newMatch.getEvent())) {
             throw new IllegalArgumentException("Event cannot be changed");
         }

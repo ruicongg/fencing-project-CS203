@@ -203,6 +203,7 @@ public class BeforeGroupStageTest {
         // Create 9 mock players with different ELOs
         Player p1 = new Player();
         p1.setElo(1200);
+        p1.setEmail("player1@gmail.com");
         PlayerRank pr1 = new PlayerRank();
         pr1.setPlayer(p1);
         pr1.setId(1);

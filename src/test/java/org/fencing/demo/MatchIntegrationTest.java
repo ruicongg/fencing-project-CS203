@@ -145,7 +145,7 @@ public class MatchIntegrationTest {
         playerRepository.deleteAll();
         addPlayersToEvent(event, groupStage);
 
-        groupStage.setPlayers(new ArrayList<>(event.getRankings()));
+        // groupStage.setPlayers(new ArrayList<>(event.getRankings()));
         groupStageRepository.save(groupStage);
 
         knockoutStageRepository.deleteAll();
@@ -269,7 +269,7 @@ public class MatchIntegrationTest {
     public GroupStage createValidGroupStage(Event event) {
         return GroupStage.builder()
             .event(event)                                 
-            .players(new ArrayList<PlayerRank>())                            
+            // .players(new ArrayList<PlayerRank>())                            
             .matches(new ArrayList<Match>())                   
             .allMatchesCompleted(false)                   
             .build();
