@@ -30,6 +30,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "matches")
+
 public class Match {
     
     @Id
@@ -44,7 +45,7 @@ public class Match {
     // Optional ManyToOne relationship with GroupStage
     @ManyToOne
     @JoinColumn(name = "group_stage_id")
-    @JsonIgnore
+    @JsonIgnore //added
     private GroupStage groupStage;
 
     // Optional ManyToOne relationship with KnockoutStage

@@ -2,6 +2,9 @@ package org.fencing.demo.stages;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.match.Match;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 // import org.fencing.demo.player.Player;
 import org.fencing.demo.events.PlayerRank;
 
@@ -43,14 +46,15 @@ public class GroupStage {
     private long id;
 
     @ManyToOne
-    @MapsId
+    @JsonIgnore
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @OneToMany
-    private List<PlayerRank> players;
+    // @OneToMany
+    // private List<PlayerRank> players;
 
-    @OneToMany(mappedBy = "groupStage", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "groupStage", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Match> matches;
     
     private boolean allMatchesCompleted;

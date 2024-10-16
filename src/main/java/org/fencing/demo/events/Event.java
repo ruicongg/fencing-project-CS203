@@ -88,7 +88,6 @@ public class Event {
         TreeMap<Integer, List<Match>> groupMatches = WithinGroupSort.groupMatchMakingAlgorithm(groups, this);
         for(Integer i:groups.keySet()){
             GroupStage grpStage = new GroupStage();
-            grpStage.setPlayers(groups.get(i));
             grpStage.setMatches(groupMatches.get(i));
             // add all the matches to return
             allMatchesForGroup.addAll(groupMatches.get(i));
