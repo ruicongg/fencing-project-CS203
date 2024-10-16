@@ -70,14 +70,12 @@ public class EventServiceImpl implements EventService{
         if (tournamentId == null || eventId == null || newEvent == null) {
             throw new IllegalArgumentException("Tournament ID, Event ID and updated Event cannot be null");
         }
-        
-        Tournament tournament = tournamentRepository.findById(tournamentId).get();
 
         return eventRepository.findById(eventId).map(existingEvent -> {
             if (existingEvent.getTournament().getId() != newEvent.getTournament().getId()) {
                 throw new IllegalArgumentException("Cannot change the tournament of an existing event.");
             }
-            if (newEvent.getStartDate().toLocalDate().isBefore(tournament.getTournamentStartDate())) {
+            if (newEvent.getStartDate().toLocalDate().isBefore(existingEvent.getTournament().getTournamentStartDate())) {
                 throw new IllegalArgumentException("Event start date cannt be earlier than Tournament start date");
             }
             if (newEvent.getEndDate().isBefore(newEvent.getStartDate())) {
@@ -88,8 +86,11 @@ public class EventServiceImpl implements EventService{
             existingEvent.setStartDate(newEvent.getStartDate());
             existingEvent.setEndDate(newEvent.getEndDate());
             existingEvent.setRankings(newEvent.getRankings());
+            existingEvent.setGroupStages(newEvent.getGroupStages());
+            existingEvent.setKnockoutStages(newEvent.getKnockoutStages());
 
             return eventRepository.save(existingEvent);
+            
         }).orElseThrow(() -> new EventNotFoundException(eventId));
         
     }

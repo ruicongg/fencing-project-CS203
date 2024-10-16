@@ -257,7 +257,7 @@ public class EventIntegrationTest {
     }
 
     // Update Event - Success
-    @Test
+    @Test // event successfully created and persisted, but when updating, everything becomes null? eg. id=0, startDate=null
     public void updateEvent_Success() throws Exception {
         Event event = createValidEvent(tournament);
         long id = eventRepository.save(event).getId();
@@ -304,22 +304,25 @@ public class EventIntegrationTest {
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
 
-    @Test
+    @Test // internal server error 500
     public void updateEvent_StartDateBeforeTournamentStartDate_Failure() throws Exception {
         Event event = createValidEvent(tournament);
         long id = eventRepository.save(event).getId();
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
 
-        event.setStartDate(LocalDateTime.now().plusDays(24));
-
+        LocalDate tournamentStartDate = tournament.getTournamentStartDate();
+        tournamentStartDate = tournamentStartDate.minusDays(2);
+        event.setStartDate(tournamentStartDate.atStartOfDay());
+        
         ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), String.class);
 
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        // assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertEquals("smth", result.getBody());
         assertTrue(result.getBody().contains("Event start date cannt be earlier than Tournament start date"));
     }
 
-    @Test
+    @Test // internal server error 500
     public void updateEvent_EndDateBeforeStartDate_Failure() throws Exception {
         Event event = createValidEvent(tournament);
         long id = eventRepository.save(event).getId();

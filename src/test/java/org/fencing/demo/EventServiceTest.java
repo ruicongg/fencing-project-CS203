@@ -165,7 +165,6 @@ public class EventServiceTest {
         Event newEvent = createValidEvent(validTournament);
         newEvent.setGender(Gender.FEMALE);
 
-        when(tournamentRepository.findById(tournamentId)).thenReturn(Optional.of(validTournament));
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(validEvent));
         when(eventRepository.save(any(Event.class))).thenReturn(validEvent);
 
@@ -188,7 +187,6 @@ public class EventServiceTest {
         Event newEvent = createValidEvent(validTournament);
         newEvent.setStartDate(LocalDateTime.now().minusDays(1)); // Invalid start date
 
-        when(tournamentRepository.findById(tournamentId)).thenReturn(Optional.of(validTournament));
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(validEvent));
 
         assertThrows(IllegalArgumentException.class, () -> eventService.updateEvent(1L, 1L, newEvent));
@@ -210,8 +208,6 @@ public class EventServiceTest {
 
         Event newEvent = createValidEvent(validTournament);
         newEvent.setTournament(newTournament);
-
-        when(tournamentRepository.findById(tournamentId)).thenReturn(Optional.of(validTournament));
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(validEvent));
 
         assertThrows(IllegalArgumentException.class, () -> eventService.updateEvent(1L, 1L, newEvent));
@@ -240,7 +236,6 @@ public class EventServiceTest {
 
         assertThrows(EventNotFoundException.class, () -> eventService.deleteEvent(1L, 1L));
 
-        // No interaction with delete method should occur
         verify(eventRepository, never()).deleteByTournamentIdAndId(anyLong(), anyLong());
     }
 
