@@ -38,7 +38,6 @@ public class Match {
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
-    @JsonIgnore
     private Event event;
 
     // Optional ManyToOne relationship with GroupStage

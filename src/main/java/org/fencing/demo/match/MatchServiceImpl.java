@@ -57,7 +57,7 @@ public class MatchServiceImpl implements MatchService {
         if (groupStages.isEmpty()) {
             throw new IllegalStateException("No groupStage found for event " + eventId);
         }
-        //event.createRoundsForGroupStages() return Set of all groupMatches under a single event
+
         return matchRepository.saveAll(event.createRoundsForGroupStages());
     }
 
@@ -133,6 +133,12 @@ public class MatchServiceImpl implements MatchService {
             throw new IllegalArgumentException("Event ID, Match ID and updated Match cannot be null");
         }
         Match existingMatch = matchRepository.findById(matchId).orElseThrow(() -> new MatchNotFoundException(matchId));
+        System.out.println("WORKING");
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println("EXISTING MATCH EVENT"+existingMatch.getEvent());
+        System.out.println("UPDATED MATCH EVENT"+newMatch.getEvent());
         if (!existingMatch.getEvent().equals(newMatch.getEvent())) {
             throw new IllegalArgumentException("Event cannot be changed");
         }
