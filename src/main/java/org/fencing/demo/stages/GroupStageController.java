@@ -27,9 +27,6 @@ public class GroupStageController {
     @GetMapping("/tournaments/{tournamentId}/events/{eventId}/groupStage/{groupStageId}")
     @ResponseStatus(HttpStatus.OK)
     public GroupStage getGroupStage(@PathVariable Long groupStageId) {
-        System.out.println("GroupstageID:"+groupStageId);
-        System.out.println();
-        System.out.println();
         return groupStageService.getGroupStage(groupStageId);
     }
 

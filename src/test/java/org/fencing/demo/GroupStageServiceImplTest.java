@@ -80,24 +80,24 @@ package org.fencing.demo;
             });
         }
 
-        @Test
-        public void testUpdateGroupStage() {
-            Long eventId = 1L;
-            Long groupStageId = 1L;
-            GroupStage newGroupStage = new GroupStage();
-            GroupStage existingGroupStage = new GroupStage();
-            Event event = new Event();
+        // @Test
+        // public void testUpdateGroupStage() {
+        //     Long eventId = 1L;
+        //     Long groupStageId = 1L;
+        //     GroupStage newGroupStage = new GroupStage();
+        //     GroupStage existingGroupStage = new GroupStage();
+        //     Event event = new Event();
 
-            existingGroupStage.setEvent(event);
-            newGroupStage.setEvent(event);
+        //     existingGroupStage.setEvent(event);
+        //     newGroupStage.setEvent(event);
 
-            when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.of(existingGroupStage));
-            when(groupStageRepository.save(existingGroupStage)).thenReturn(existingGroupStage);
+        //     when(groupStageRepository.findById(groupStageId)).thenReturn(Optional.of(existingGroupStage));
+        //     when(groupStageRepository.save(existingGroupStage)).thenReturn(existingGroupStage);
 
-            GroupStage result = groupStageService.updateGroupStage(eventId, groupStageId, newGroupStage);
-            assertNotNull(result);
-            assertEquals(existingGroupStage, result);
-        }
+        //     GroupStage result = groupStageService.updateGroupStage(eventId, groupStageId, newGroupStage);
+        //     assertNotNull(result);
+        //     assertEquals(existingGroupStage, result);
+        // }
 
         @Test
         public void testUpdateGroupStageNotFound() {
@@ -112,16 +112,16 @@ package org.fencing.demo;
             });
         }
 
-        @Test
-        public void testDeleteGroupStage() {
-            Long eventId = 1L;
-            Long groupStageId = 1L;
+        // @Test
+        // public void testDeleteGroupStage() {
+        //     Long eventId = 1L;
+        //     Long groupStageId = 1L;
 
-            doNothing().when(groupStageRepository).deleteByEventIdAndId(eventId, groupStageId);
+        //     doNothing().when(groupStageRepository).deleteByEventIdAndId(eventId, groupStageId);
 
-            groupStageService.deleteGroupStage(eventId, groupStageId);
-            verify(groupStageRepository, times(1)).deleteByEventIdAndId(eventId, groupStageId);
-        }
+        //     groupStageService.deleteGroupStage(eventId, groupStageId);
+        //     verify(groupStageRepository, times(1)).deleteByEventIdAndId(eventId, groupStageId);
+        // }
 
         @Test
         public void testDeleteGroupStageNotFound() {

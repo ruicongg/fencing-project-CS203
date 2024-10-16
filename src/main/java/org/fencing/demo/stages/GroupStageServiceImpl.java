@@ -40,9 +40,6 @@ public class GroupStageServiceImpl implements GroupStageService{
 
     public GroupStage updateGroupStage(Long eventId, Long groupStageId, GroupStage newGroupStage){
         if (eventId == null || groupStageId == null || newGroupStage == null) {
-            System.out.println("Event ID: " + eventId);
-            System.out.println("GroupStage ID: " + groupStageId);
-            System.out.println("Updated GroupStage: " + newGroupStage);
             throw new IllegalArgumentException("Event ID, GroupStage ID and updated GroupStage cannot be null");
         }
         GroupStage existingGroupStage = groupStageRepository.findById(groupStageId)
@@ -56,8 +53,6 @@ public class GroupStageServiceImpl implements GroupStageService{
             throw new IllegalArgumentException("Event cannot be changed");
         }
         existingGroupStage.getMatches().clear();
-        System.out.println("New GroupStage: " + newGroupStage);
-        System.out.println("Matches: " + newGroupStage.getMatches());
         
         existingGroupStage.setAllMatchesCompleted(newGroupStage.isAllMatchesCompleted());
         return groupStageRepository.save(existingGroupStage);
