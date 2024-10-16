@@ -1,4 +1,5 @@
 package org.fencing.demo.player;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,7 +18,7 @@ public class PlayerServiceImpl implements PlayerService{
     private EventRepository eventRepository;
     private MatchRepository matchRepository;
 
-    public PlayerServiceImpl(PlayerRepository playerRepository, EventRepository eventRepository, MatchRepository matchRepository, PasswordEncoder passwordEncoder){
+    public PlayerServiceImpl(PlayerRepository playerRepository, EventRepository eventRepository, MatchRepository matchRepository){
         this.playerRepository = playerRepository;
         this.eventRepository = eventRepository;
         this.matchRepository = matchRepository;
@@ -32,10 +33,16 @@ public class PlayerServiceImpl implements PlayerService{
     public Player getPlayer(Long id){
         return playerRepository.findById(id).orElse(null);
     }
+
     @Override
     public Player addPlayer(Player player){
-        return playerRepository.save(player);
+        List<Player> sameUser = playerRepository.findByUsername(player.getUsername());
+        if(sameUser.isEmpty())
+            return playerRepository.save(player);
+        else
+            return null;
     }
+
     @Override
     public Player updatePlayer(Long id, Player player) {
         // Find the existing player by id
@@ -45,6 +52,9 @@ public class PlayerServiceImpl implements PlayerService{
             Player updatedPlayer = existingPlayer.get();
 
             // Update the fields of the existing player with the new player data 
+            updatedPlayer.setUsername(player.getUsername());
+            updatedPlayer.setEmail(player.getEmail());
+            updatedPlayer.setPassword(player.getPassword());
             updatedPlayer.setElo(player.getElo());
             
             // Save the updated player
@@ -54,15 +64,10 @@ public class PlayerServiceImpl implements PlayerService{
             throw new PlayerNotFoundException(id);
         }
     }
+
     @Override
     public void deletePlayer(Long id){
-        Optional<Player> player = playerRepository.findById(id);
-        if (player.isPresent()) {
-            playerRepository.delete(player.get());
-        } else {
-            // Handle the case where the player does not exist
-            throw new PlayerNotFoundException(id);
-        }
+        playerRepository.deleteById(id);
     }
 
     // Get all tournaments a player participated in

@@ -33,13 +33,14 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll() // Allow all requests to /api/v1/auth
                         .requestMatchers("/error").permitAll() // Allow all requests to /error
                         .requestMatchers(HttpMethod.GET, "/tournaments", "/tournaments/**").permitAll() // Allow all GET requests to tournaments
-                        .requestMatchers(HttpMethod.POST, "/tournaments").hasRole("ADMIN") // Only admins can POST
+                        .requestMatchers(HttpMethod.POST, "/tournaments", "/tournaments/**").hasRole("ADMIN") // Only admins can POST
                         .requestMatchers(HttpMethod.PUT, "/tournaments", "/tournaments/**").hasRole("ADMIN") // Only admins can PUT
                         .requestMatchers(HttpMethod.DELETE, "/tournaments", "/tournaments/**").hasRole("ADMIN") // Only admins can
-                        .requestMatchers(HttpMethod.GET, "/users, /users/**").hasRole("ADMIN") // Only admins can GET users
+                        .requestMatchers(HttpMethod.GET, "/users", "/users/**").hasRole("ADMIN") // Only admins can GET users
                         .requestMatchers(HttpMethod.PUT, "/users/*").hasRole("ADMIN") // Only admins can PUT users (next time users should be able to update their own stuff)
                         .requestMatchers(HttpMethod.DELETE, "/users/*").hasRole("ADMIN") // Only admins can DELETE users
-                        .requestMatchers(HttpMethod.GET, "/players, /players/**").permitAll() // Allow all GET requests to players
+                        .requestMatchers(HttpMethod.GET, "/players", "/players/**").permitAll() // Allow all GET requests to players
+                        .requestMatchers(HttpMethod.POST, "/players", "/players/**").hasRole("ADMIN") // Only admins can POST players
                         .requestMatchers(HttpMethod.PUT, "/players/*").hasRole("ADMIN") // Only admins can PUT players
                         .requestMatchers(HttpMethod.DELETE, "/players/*").hasRole("ADMIN") // Only admins can DELETE players
                         .anyRequest().authenticated() // All other requests require authentication

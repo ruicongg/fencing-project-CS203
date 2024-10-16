@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 
+
 @RestController
 public class PlayerController {
     private PlayerService playerService;
@@ -25,7 +26,7 @@ public class PlayerController {
 
     // List players (all? or in a tournament? or works for both)
     @GetMapping("/players")
-    public List<Player> listPlayers() {
+    public List<Player> getPlayers() {
         return playerService.listPlayers();
     }
 
@@ -36,7 +37,19 @@ public class PlayerController {
 
         if (player == null)
             throw new PlayerNotFoundException(id);
-        return player;
+        else {
+            return player;
+        }
+    }
+
+    // Add a player
+    @PostMapping("/players")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Player addPlayer(@Valid @RequestBody Player player) {
+        Player savedPlayer = playerService.addPlayer(player);
+        if (savedPlayer == null)
+            throw new PlayerExistException(player.getUsername());
+        return savedPlayer;
     }
 
     // updates player info
@@ -52,11 +65,9 @@ public class PlayerController {
     // Deletes player (from tournament or sys?)
     @DeleteMapping("/players/{id}")
     public void deletePlayer(@PathVariable Long id) {
-        try {
-            playerService.deletePlayer(id);
-        } catch (EmptyResultDataAccessException e) {
+        if (playerService.getPlayer(id) == null)
             throw new PlayerNotFoundException(id);
-        }
+        playerService.deletePlayer(id);
     }
 
 }
