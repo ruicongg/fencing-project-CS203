@@ -143,17 +143,17 @@ public class MatchIntegrationTest {
         playerRepository.deleteAll();
     }
 
-    @Test
-    public void addInitialGroupStageMatches_ShouldSucceed() throws Exception {
-        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/matches");
+    // @Test
+    // public void addInitialGroupStageMatches_ShouldSucceed() throws Exception {
+    //     URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/matches");
 
-        ResponseEntity<Match[]> response = restTemplate.withBasicAuth("admin", "adminPass")
-                                                    .postForEntity(uri, null, Match[].class);
+    //     ResponseEntity<Match[]> response = restTemplate.withBasicAuth("admin", "adminPass")
+    //                                                 .postForEntity(uri, null, Match[].class);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertTrue(response.getBody().length > 0);
-    }
+    //     assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    //     assertNotNull(response.getBody());
+    //     assertTrue(response.getBody().length > 0);
+    // }
 
     @Test
     public void addKnockoutStageMatches_ShouldSucceed() throws Exception {

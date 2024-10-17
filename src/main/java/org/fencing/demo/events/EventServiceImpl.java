@@ -67,7 +67,6 @@ public class EventServiceImpl implements EventService{
     @Override
     @Transactional
     public Event updateEvent(Long tournamentId, Long eventId, Event newEvent) {
-        System.out.println();
         if (tournamentId == null || eventId == null || newEvent == null) {
             throw new IllegalArgumentException("Tournament ID, Event ID and updated Event cannot be null");
         }
