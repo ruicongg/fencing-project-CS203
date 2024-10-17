@@ -30,6 +30,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests((authz) -> authz
+                        .requestMatchers(HttpMethod.POST, "/tournaments/{tournamentId}/events/{eventId}/addPlayer/{playerId}").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/api/v1/auth/**").permitAll() // Allow all requests to /api/v1/auth
                         .requestMatchers("/error").permitAll() // Allow all requests to /error
                         .requestMatchers(HttpMethod.GET, "/tournaments").permitAll() // Allow all GET requests to tournaments
