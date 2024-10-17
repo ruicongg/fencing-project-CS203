@@ -38,17 +38,17 @@ public class Match {
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
-    @JsonIgnore
+
     private Event event;
 
     // Optional ManyToOne relationship with GroupStage
-    @ManyToOne
+    @ManyToOne(optional = true)
     @JoinColumn(name = "group_stage_id")
     @JsonIgnore
     private GroupStage groupStage;
 
     // Optional ManyToOne relationship with KnockoutStage
-    @ManyToOne
+    @ManyToOne(optional = true)
     @JoinColumn(name = "knockout_stage_id")
     @JsonIgnore
     private KnockoutStage knockoutStage;

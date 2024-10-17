@@ -67,12 +67,13 @@ public class EventServiceImpl implements EventService{
     @Override
     @Transactional
     public Event updateEvent(Long tournamentId, Long eventId, Event newEvent) {
+        //System.out.println("tournament id:" + newEvent.getTournament());
         if (tournamentId == null || eventId == null || newEvent == null) {
             throw new IllegalArgumentException("Tournament ID, Event ID and updated Event cannot be null");
         }
-
+        
         return eventRepository.findById(eventId).map(existingEvent -> {
-            if (existingEvent.getTournament().getId() != newEvent.getTournament().getId()) {
+            if (!existingEvent.getTournament().equals(newEvent.getTournament())) {
                 throw new IllegalArgumentException("Cannot change the tournament of an existing event.");
             }
             if (newEvent.getStartDate().toLocalDate().isBefore(existingEvent.getTournament().getTournamentStartDate())) {
@@ -85,9 +86,9 @@ public class EventServiceImpl implements EventService{
             existingEvent.setWeapon(newEvent.getWeapon());
             existingEvent.setStartDate(newEvent.getStartDate());
             existingEvent.setEndDate(newEvent.getEndDate());
-            existingEvent.setRankings(newEvent.getRankings());
-            existingEvent.setGroupStages(newEvent.getGroupStages());
-            existingEvent.setKnockoutStages(newEvent.getKnockoutStages());
+            // existingEvent.setRankings(newEvent.getRankings());
+            // existingEvent.setGroupStages(newEvent.getGroupStages());
+            // existingEvent.setKnockoutStages(newEvent.getKnockoutStages());
 
             return eventRepository.save(existingEvent);
             

@@ -30,7 +30,7 @@ public class MatchController {
     @PostMapping("/tournaments/{tournamentId}/events/{eventId}/groupStage/matches")
     @ResponseStatus(HttpStatus.CREATED)
     public List<Match> addInitialMatchforGroupStage(@PathVariable Long eventId) {
-        return matchService.addMatchesforAllGroupStages(eventId);
+        return matchService.addMatchesforGroupStages(eventId);
     }
 
 

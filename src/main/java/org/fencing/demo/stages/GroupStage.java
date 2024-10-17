@@ -51,7 +51,7 @@ public class GroupStage {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    // @OneToMany(mappedBy = "groupStage")`
+    // @OneToMany(mappedBy = "groupStage")
     // private List<PlayerRank> players;
 
     @OneToMany(mappedBy = "groupStage", cascade = CascadeType.ALL, orphanRemoval = true)

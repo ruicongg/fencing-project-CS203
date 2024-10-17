@@ -20,6 +20,7 @@ import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.events.PlayerRankComparator;
 import org.fencing.demo.events.WeaponType;
 import org.fencing.demo.match.Match;
+import org.fencing.demo.match.MatchRepository;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.stages.GroupStage;
@@ -50,6 +51,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class MatchIntegrationTest {
     @LocalServerPort
     private int port;
+
+    @Autowired
+    private MatchRepository matchRepository;
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -149,6 +153,7 @@ public class MatchIntegrationTest {
         knockoutStageRepository.deleteAll();
         knockoutStage = createValidKnockoutStage(event);
         knockoutStageRepository.save(knockoutStage);
+       
     }
 
 
@@ -160,6 +165,7 @@ public class MatchIntegrationTest {
         knockoutStageRepository.deleteAll();
         userRepository.deleteAll();
         playerRepository.deleteAll();
+        matchRepository.deleteAll();
     }
 
     @Test //passed!
@@ -167,12 +173,10 @@ public class MatchIntegrationTest {
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/matches");
 
-        System.out.println("originally how many players: " + event.getRankings().size());
-        System.out.println();
 
         ResponseEntity<Match[]> result = restTemplate.withBasicAuth("admin", "adminPass")
                                                     .postForEntity(uri, null, Match[].class);
-
+        //System.out.println(result.getBody());
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertNotNull(result.getBody());
         assertTrue(result.getBody().length > 0);

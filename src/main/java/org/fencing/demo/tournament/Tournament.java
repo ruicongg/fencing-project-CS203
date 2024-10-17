@@ -22,7 +22,9 @@ import java.util.Set;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
-import org.springframework.format.annotation.DateTimeFormat;    
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;    
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -62,28 +64,23 @@ public class Tournament {
     private String venue;
 
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<Event> events;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
+        
         Tournament that = (Tournament) o;
 
         // Compare all relevant fields for equality
-        return id == that.id &&
-               Objects.equals(name, that.name) &&
-               Objects.equals(registrationStartDate, that.registrationStartDate) &&
-               Objects.equals(registrationEndDate, that.registrationEndDate) &&
-               Objects.equals(tournamentStartDate, that.tournamentStartDate) &&
-               Objects.equals(tournamentEndDate, that.tournamentEndDate) &&
-               Objects.equals(venue, that.venue);
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
         // Include all relevant fields in hashCode calculation
-        return Objects.hash(id, name, registrationStartDate, registrationEndDate, tournamentStartDate, tournamentEndDate, venue);
+        return Objects.hash(id);
     }
 }

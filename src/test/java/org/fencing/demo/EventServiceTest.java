@@ -208,6 +208,7 @@ public class EventServiceTest {
 
         Event newEvent = createValidEvent(validTournament);
         newEvent.setTournament(newTournament);
+        //System.out.println(validEvent);
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(validEvent));
 
         assertThrows(IllegalArgumentException.class, () -> eventService.updateEvent(1L, 1L, newEvent));

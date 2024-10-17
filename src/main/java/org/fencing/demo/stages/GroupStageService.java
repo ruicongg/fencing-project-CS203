@@ -1,6 +1,10 @@
 package org.fencing.demo.stages;
 
+import java.util.List;
+
 public interface GroupStageService {
+
+    List<GroupStage> addInitialGroupStages(Long eventId);
 
     GroupStage addGroupStage(Long eventId);
 
