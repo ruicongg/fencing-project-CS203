@@ -1,4 +1,5 @@
 package org.fencing.demo.events;
+
 import java.util.Objects;
 
 import org.fencing.demo.player.Player;
@@ -21,7 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "player_rank", uniqueConstraints = @UniqueConstraint(columnNames = {"player_id", "event_id"}))
+@Table(name = "player_rank", uniqueConstraints = @UniqueConstraint(columnNames = { "player_id", "event_id" }))
 public class PlayerRank {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +30,7 @@ public class PlayerRank {
 
     @ManyToOne
     @JoinColumn(name = "player_id")
-    private Player player; 
+    private Player player;
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
@@ -47,15 +48,17 @@ public class PlayerRank {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);  // Use the unique `id` field
+        return Objects.hash(id); // Use the unique `id` field
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         PlayerRank that = (PlayerRank) o;
-        return id == that.id;  // Use only `id` for equality comparison
+        return id == that.id; // Use only `id` for equality comparison
     }
 
     public void updateAfterMatch(int pointsWon, int pointsOpponent) {

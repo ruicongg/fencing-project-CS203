@@ -77,17 +77,17 @@ public class Event {
     @JsonIgnore
     private Set<PlayerRank> rankings = new TreeSet<>(new PlayerRankComparator());
 
-    //public TreeSet<Player> EloRank;
-    //for sorting first when go to group stage
+    // public TreeSet<Player> EloRank;
+    // for sorting first when go to group stage
     @ManyToOne
     @JoinColumn(name = "tournament_id", nullable = false)
     private Tournament tournament;
-    
+
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore 
+    @JsonIgnore
     private List<GroupStage> groupStages = new ArrayList<>();
-    
+
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -98,14 +98,14 @@ public class Event {
     @JsonIgnore
     private List<Match> matches = new ArrayList<>();
 
-    //includes creating matches
+    // includes creating matches
     public List<Match> createRoundsForGroupStages() {
         List<Match> allMatchesForGroup = new ArrayList<>();
-        //sort by elo ranks return grp num to playerRanks
+        // sort by elo ranks return grp num to playerRanks
         TreeMap<Integer, List<PlayerRank>> groups = BeforeGroupStage.sortByELO(rankings);
-        //within groups to sort
+        // within groups to sort
         TreeMap<Integer, List<Match>> groupMatches = WithinGroupSort.groupMatchMakingAlgorithm(groups, this);
-        for(Integer i:groups.keySet()){
+        for (Integer i : groups.keySet()) {
             GroupStage grpStage = new GroupStage();
             grpStage.setMatches(groupMatches.get(i));
             // add all the matches to return
@@ -119,10 +119,9 @@ public class Event {
     }
 
     public List<Match> getMatchesForKnockoutStage(KnockoutStage knockoutStage) {
-        
+
         List<Player> players = new ArrayList<>();
         int roundNum = knockoutStages.indexOf(knockoutStage);
-        
 
         if (roundNum == 0) {
             // For the first round, convert PlayerRank set to a list of Players
@@ -145,7 +144,7 @@ public class Event {
     private List<Match> createMatches(List<Player> players, KnockoutStage knockoutStage) {
         List<Match> matches = new ArrayList<>();
         int n = players.size();
-        
+
         for (int i = 0; i < n / 2; i++) {
             Player player1 = players.get(i);
             Player player2 = players.get(n - 1 - i);
@@ -177,10 +176,10 @@ public class Event {
     @Override
     public String toString() {
         return "Event{" +
-            "id=" + id +
-            ", startDate=" + startDate +
-            ", rankingsCount=" + rankings.size() + // Just print the count or IDs
-            '}';
+                "id=" + id +
+                ", startDate=" + startDate +
+                ", rankingsCount=" + rankings.size() + // Just print the count or IDs
+                '}';
     }
 
 }
