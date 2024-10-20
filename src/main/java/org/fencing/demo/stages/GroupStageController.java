@@ -23,6 +23,7 @@ public class GroupStageController {
     @PostMapping("/tournaments/{tournamentId}/events/{eventId}/groupStage")
     @ResponseStatus(HttpStatus.CREATED)
     public List<GroupStage> addGroupStage(@PathVariable Long eventId) {
+        System.out.println("Controller is running");
         return groupStageService.addInitialGroupStages(eventId);
     }
 

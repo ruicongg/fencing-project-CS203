@@ -29,8 +29,11 @@ public class GroupStageServiceImpl implements GroupStageService{
             throw new IllegalArgumentException("Event ID and Group Stage cannot be null");
         }
         return eventRepository.findById(eventId).map(event -> {
+            System.out.println("Event found");
+            System.out.println("Event: " + event);
             List<GroupStage> grpStages = new ArrayList<>();
             Map<Integer, List<PlayerRank>> groups = BeforeGroupStage.sortByELO(event.getRankings());
+            System.out.println("Print groups map: " + groups);
             for(Integer i : groups.keySet()){
                 GroupStage grpStage = new GroupStage();
                 grpStage.setEvent(event);

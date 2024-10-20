@@ -289,14 +289,14 @@ public class MatchIntegrationTest {
     private Event addPlayersToEvent(Event event, GroupStage groupStage) {
         for (int i = 1; i <= 8; i++) {
             Player player = createValidPlayer(i); 
-            PlayerRank playerRank = createPlayerRank(player, event, groupStage);
+            PlayerRank playerRank = createPlayerRank(player, event);
             event.getRankings().add(playerRank);
         }
 
         return eventRepository.save(event);
     }
 
-    private PlayerRank createPlayerRank(Player player, Event event, GroupStage groupStage) {
+    private PlayerRank createPlayerRank(Player player, Event event) {
         PlayerRank playerRank = new PlayerRank();
         playerRank.setEvent(event);
         playerRank.setPlayer(player);
