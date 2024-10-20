@@ -3,6 +3,7 @@ package org.fencing.demo.match;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.fencing.demo.events.Event;
@@ -45,7 +46,8 @@ public class MatchServiceImpl implements MatchService {
     
     @Override
     @Transactional
-    public List<Match> addMatchesforAllGroupStages(Long eventId) {
+    public List<Match> addMatchesforGroupStages(Long eventId) {
+        List<Match> allMatches = new ArrayList<>();
         if(eventId == null){
             throw new IllegalArgumentException("Event ID cannot be null");
         }
@@ -57,8 +59,16 @@ public class MatchServiceImpl implements MatchService {
         if (groupStages.isEmpty()) {
             throw new IllegalStateException("No groupStage found for event " + eventId);
         }
+        for(int i = 0; i < groupStages.size(); i++){
+            List<Match> matches = event.createRoundsForGroupStages(groupStages.get(i));
+            allMatches.addAll(matches);
+        }
+        // for (int i = 0; i < allMatches.size(); i++) {
+        //     System.out.println(allMatches.get(i));
+        // }
 
-        return matchRepository.saveAll(event.createRoundsForGroupStages());
+        return matchRepository.saveAll(allMatches);
+        
     }
 
     @Override

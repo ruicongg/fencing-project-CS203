@@ -36,10 +36,6 @@ public class PlayerRank {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @ManyToOne
-    @JoinColumn(name = "group_stage_id")
-    private GroupStage groupStage;
-
     private int score;
 
     private int winCount;

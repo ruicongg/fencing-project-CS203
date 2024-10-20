@@ -1,5 +1,7 @@
 package org.fencing.demo.stages;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +22,8 @@ public class GroupStageController {
 
     @PostMapping("/tournaments/{tournamentId}/events/{eventId}/groupStage")
     @ResponseStatus(HttpStatus.CREATED)
-    public GroupStage addGroupStage(@PathVariable Long eventId) {
-        return groupStageService.addGroupStage(eventId);
+    public List<GroupStage> addGroupStage(@PathVariable Long eventId) {
+        return groupStageService.addInitialGroupStages(eventId);
     }
 
     @GetMapping("/tournaments/{tournamentId}/events/{eventId}/groupStage/{groupStageId}")

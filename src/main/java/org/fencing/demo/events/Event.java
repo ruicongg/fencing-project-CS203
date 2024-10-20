@@ -93,29 +93,24 @@ public class Event {
     @JsonIgnore
     private List<KnockoutStage> knockoutStages = new ArrayList<>();
 
+    // //added this
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Match> matches = new ArrayList<>();
 
-    // includes creating matches
-    public List<Match> createRoundsForGroupStages() {
-        List<Match> allMatchesForGroup = new ArrayList<>();
-        // sort by elo ranks return grp num to playerRanks
+    //includes creating matches
+    public List<Match> createRoundsForGroupStages(GroupStage currGrpStage) {
+        //debugging line
+        //System.out.println("number of players after in Event class" + rankings.size());
+        //List<Match> allMatchesForGroup = new ArrayList<>();
+        //sort by elo ranks return grp num to playerRanks
         TreeMap<Integer, List<PlayerRank>> groups = BeforeGroupStage.sortByELO(rankings);
-        // within groups to sort
+        
+        //within groups to sort
         TreeMap<Integer, List<Match>> groupMatches = WithinGroupSort.groupMatchMakingAlgorithm(groups, this);
-        for (Integer i : groups.keySet()) {
-            GroupStage grpStage = new GroupStage();
-            grpStage.setMatches(groupMatches.get(i));
-            // add all the matches to return
-            allMatchesForGroup.addAll(groupMatches.get(i));
-            grpStage.setEvent(this);
-            groupStages.add(grpStage);
-        }
-        System.out.println(allMatchesForGroup);
 
-        return allMatchesForGroup;
+        return groupMatches.get((int)currGrpStage.getId());
     }
 
     public List<Match> getMatchesForKnockoutStage(KnockoutStage knockoutStage) {

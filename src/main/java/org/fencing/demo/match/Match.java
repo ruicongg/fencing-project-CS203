@@ -39,12 +39,12 @@ public class Match {
     private Event event;
 
     // Optional ManyToOne relationship with GroupStage
-    @ManyToOne
+    @ManyToOne(optional = true)
     @JoinColumn(name = "group_stage_id")
     private GroupStage groupStage;
 
     // Optional ManyToOne relationship with KnockoutStage
-    @ManyToOne
+    @ManyToOne(optional = true)
     @JoinColumn(name = "knockout_stage_id")
     private KnockoutStage knockoutStage;
 
@@ -55,7 +55,6 @@ public class Match {
     @ManyToOne
     @JoinColumn(name = "player2_id", nullable = false)
     private Player player2;
-
     private int player1Score;
     private int player2Score;
 
