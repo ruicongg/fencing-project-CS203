@@ -1,4 +1,5 @@
 package org.fencing.demo.player;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -12,32 +13,33 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PlayerServiceImpl implements PlayerService{
+public class PlayerServiceImpl implements PlayerService {
     private PlayerRepository playerRepository;
     private EventRepository eventRepository;
     private MatchRepository matchRepository;
 
-    public PlayerServiceImpl(PlayerRepository playerRepository, EventRepository eventRepository, MatchRepository matchRepository){
+    public PlayerServiceImpl(PlayerRepository playerRepository, EventRepository eventRepository,
+            MatchRepository matchRepository) {
         this.playerRepository = playerRepository;
         this.eventRepository = eventRepository;
         this.matchRepository = matchRepository;
     }
 
     @Override
-    public List<Player> listPlayers(){
+    public List<Player> listPlayers() {
         return playerRepository.findAll();
     }
 
     @Override
-    public Player getPlayer(Long id){
+    public Player getPlayer(Long id) {
         return playerRepository.findById(id).orElse(null);
     }
 
     @Override
     @Transactional
-    public Player addPlayer(Player player){
+    public Player addPlayer(Player player) {
         List<Player> sameUser = playerRepository.findByUsername(player.getUsername());
-        if(sameUser.isEmpty())
+        if (sameUser.isEmpty())
             return playerRepository.save(player);
         else
             return null;
@@ -52,12 +54,12 @@ public class PlayerServiceImpl implements PlayerService{
         if (existingPlayer.isPresent()) {
             Player updatedPlayer = existingPlayer.get();
 
-            // Update the fields of the existing player with the new player data 
+            // Update the fields of the existing player with the new player data
             updatedPlayer.setUsername(player.getUsername());
             updatedPlayer.setEmail(player.getEmail());
             updatedPlayer.setPassword(player.getPassword());
             updatedPlayer.setElo(player.getElo());
-            
+
             // Save the updated player
             return playerRepository.save(updatedPlayer);
         } else {
@@ -70,19 +72,19 @@ public class PlayerServiceImpl implements PlayerService{
     @Transactional
     public void deletePlayer(Long id) {
         Player player = playerRepository.findById(id)
-            .orElseThrow(() -> new PlayerNotFoundException(id));
+                .orElseThrow(() -> new PlayerNotFoundException(id));
         playerRepository.delete(player);
     }
 
     // Get all tournaments a player participated in
     public List<Tournament> findTournamentsByPlayer(Long playerId) {
         List<Event> events = eventRepository.findEventsByPlayerId(playerId);
-        
+
         // Extract unique tournaments from the events
         return events.stream()
-                     .map(Event::getTournament) // Get the tournament associated with each event
-                     .distinct() // Ensure unique tournaments
-                     .collect(Collectors.toList());
+                .map(Event::getTournament) // Get the tournament associated with each event
+                .distinct() // Ensure unique tournaments
+                .collect(Collectors.toList());
     }
 
     // Get all events a player participated in
@@ -95,8 +97,8 @@ public class PlayerServiceImpl implements PlayerService{
         List<Match> matches = matchRepository.findMatchesByPlayerId(playerId);
 
         return matches.stream()
-            .filter(match -> match.getWinner().getId().equals(playerId)) // Check if the player is the winner
-            .collect(Collectors.toList());
+                .filter(match -> match.getWinner().getId().equals(playerId)) // Check if the player is the winner
+                .collect(Collectors.toList());
     }
 
     // Get all losses for the player
@@ -104,8 +106,8 @@ public class PlayerServiceImpl implements PlayerService{
         List<Match> matches = matchRepository.findMatchesByPlayerId(playerId);
 
         return matches.stream()
-            .filter(match -> !match.getWinner().getId().equals(playerId)) // Check if the player is not the winner
-            .collect(Collectors.toList());
+                .filter(match -> !match.getWinner().getId().equals(playerId)) // Check if the player is not the winner
+                .collect(Collectors.toList());
     }
 
 }
