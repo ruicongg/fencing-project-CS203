@@ -358,7 +358,7 @@ class GroupStageIntegrationTest {
         return playerRank;
     }
 
-    private static final String SECRET_KEY = "okLzUXUdbiclWJtW5hXRabO10nXGqWdCFQodkuPpnKI=";
+    private static final String SECRET_KEY = System.getenv("JWT_SECRET_KEY");
 
     private String generateToken(User user) {
         return Jwts
