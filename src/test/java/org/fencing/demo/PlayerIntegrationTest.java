@@ -181,8 +181,9 @@ public class PlayerIntegrationTest {
 		assertEquals(404, result.getStatusCode().value());
     }
 
-    private static final String SECRET_KEY = System.getenv("JWT_SECRET_KEY");
-
+    private static final String SECRET_KEY = System.getenv("JWT_SECRET_KEY") != null 
+        ? System.getenv("JWT_SECRET_KEY") 
+        : "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
     private String generateToken(User user) {
         return Jwts
             .builder()
