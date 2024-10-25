@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.TreeMap;
 
+import org.fencing.demo.AfterEvent.AfterEvent;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.matchMaking.BeforeGroupStage;
 import org.fencing.demo.matchMaking.WithinGroupSort;
@@ -33,6 +34,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
@@ -92,6 +94,9 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<KnockoutStage> knockoutStages = new ArrayList<>();
+
+    @OneToOne
+    AfterEvent aftevent;
 
     //includes creating matches
     public List<Match> createRoundsForGroupStages() {

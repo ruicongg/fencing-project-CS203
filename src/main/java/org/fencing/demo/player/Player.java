@@ -27,6 +27,7 @@ public class Player extends User implements Comparable<Player>{
 
     private static int STARTING_ELO = 1700;  
 
+    private boolean Reached2400;
 
     @OneToMany(mappedBy = "player1")
     @JsonIgnore

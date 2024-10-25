@@ -101,4 +101,12 @@ public class Match {
         return Objects.hash(id); // Hash based on ID
     }
 
+    public boolean isFinished(){
+        if((player1Score > 0 || player2Score > 0) 
+        && player1 != null && player2 != null){
+            return true;
+        }
+        return false;
+    }
+
 }

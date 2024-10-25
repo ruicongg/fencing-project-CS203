@@ -157,10 +157,17 @@ public class MatchServiceImpl implements MatchService {
         if (player1Rank == null || player2Rank == null){
             throw new IllegalArgumentException("Player is not registered in this event");
         }
+
+        System.out.println("the tempELO of player1 b4 match" + player1Rank.getTempElo());
+        System.out.println("the tempELO of player2 b4 match" + player2Rank.getTempElo());
+        System.out.println("\n\n");
         
-        player1Rank.updateAfterMatch(newMatch.getPlayer1Score(), newMatch.getPlayer2Score());
-        player2Rank.updateAfterMatch(newMatch.getPlayer2Score(), newMatch.getPlayer1Score());
+        player1Rank.updateAfterMatch(newMatch.getPlayer1Score(), newMatch.getPlayer2Score(), player2Rank);
+        player2Rank.updateAfterMatch(newMatch.getPlayer2Score(), newMatch.getPlayer1Score(), player1Rank);
         
+        System.out.println("the tempELO of player1 aft match" + player1Rank.getTempElo());
+        System.out.println("the tempELO of player2 aft match" + player2Rank.getTempElo());
+
         return matchRepository.save(existingMatch);
         
     }

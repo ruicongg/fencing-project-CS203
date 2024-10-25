@@ -421,6 +421,8 @@ public class MatchServiceTest {
         player.setId((long) id);
         player.setUsername("Player" + id);
         player.setElo(1700);
+        player.setMatchesAsPlayer1(new HashSet<Match>());
+        player.setMatchesAsPlayer2(new HashSet<Match>());
         return player;
     }
 
@@ -429,6 +431,8 @@ public class MatchServiceTest {
         playerRank.setId((long) id);
         playerRank.setEvent(event);
         playerRank.setPlayer(player);
+        playerRank.initializeTempElo();
+        System.out.println(playerRank);
         return playerRank;
     }
 
