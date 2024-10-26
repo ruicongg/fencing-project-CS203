@@ -1,5 +1,5 @@
 # Build stage
-FROM openjdk:17-jdk-slim AS build
+FROM eclipse-temurin:17-jdk-jammy AS build
 WORKDIR /app
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
@@ -8,7 +8,7 @@ COPY src ./src
 RUN ./mvnw package -DskipTests
 
 # Run stage
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 COPY --from=build /app/target/demo-0.0.1-SNAPSHOT.jar ./app.jar
 
@@ -18,13 +18,6 @@ USER javauser
 
 # Expose the port the app runs on
 EXPOSE 8080
-
-# Set any environment variables if needed
-# ENV SPRING_PROFILES_ACTIVE=production
-
-# # Health check
-# HEALTHCHECK --interval=30s --timeout=3s \
-#   CMD curl -f http://localhost:8080/actuator/health || exit 1
 
 # Run the application
 CMD ["java", "-jar", "app.jar"]
