@@ -34,4 +34,4 @@ phases:
       - echo printing imagedefinitions file
       - cat imagedefinitions.json
 artifacts:
-  files: imagedefinitions.json
+  files: backend/imagedefinitions.json
