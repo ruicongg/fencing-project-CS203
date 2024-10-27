@@ -1,0 +1,85 @@
+/* Container for the events page */
+.events-page {
+    padding: 20px;
+    background-color: #141414;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Heading for events section */
+  .events-page h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #00BFFF;
+  }
+  
+  /* Filter section for events */
+  .events-filter {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .events-filter select {
+    padding: 10px;
+    background-color: #2e2e2e;
+    color: #ffffff;
+    border: 1px solid #00BFFF;
+    border-radius: 4px;
+  }
+  
+  /* Event card container */
+  .event-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  
+  /* Event card */
+  .event-card {
+    background-color: #1f1f1f;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #00BFFF;
+    transition: background-color 0.3s;
+  }
+  
+  .event-card:hover {
+    background-color: #2e2e2e;
+  }
+  
+  /* Event details in the card */
+  .event-details {
+    margin-bottom: 10px;
+  }
+  
+  .event-details p {
+    margin: 5px 0;
+    font-size: 16px;
+  }
+  
+  /* Join button */
+  .join-button {
+    padding: 10px 20px;
+    background-color: #00BFFF;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .join-button:hover {
+    background-color: #007acc;
+  }
+  
+  .joined-button {
+    padding: 10px 20px;
+    background-color: #808080;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: not-allowed;
+  }
+  
