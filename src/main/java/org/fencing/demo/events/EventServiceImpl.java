@@ -138,6 +138,7 @@ public class EventServiceImpl implements EventService{
         eventRepository.deleteByTournamentIdAndId(tournamentId, eventId);
     }
 
+    @Override
     public List<Player> updatePlayerEloAfterEvent(Long eventId) {
         if (eventId == null) {
             throw new IllegalArgumentException("Event ID cannot be null");

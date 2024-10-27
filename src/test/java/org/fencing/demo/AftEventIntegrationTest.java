@@ -174,9 +174,7 @@
 
 //     @Test
 //     public void endEvent_Success() throws Exception {
-//         AfterEvent afterEvent = new AfterEvent();
-//         afterEvent.setEvent(event);
-//         //afterEventRepository.save(afterEvent);
+       
         
 //         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/end");
 
