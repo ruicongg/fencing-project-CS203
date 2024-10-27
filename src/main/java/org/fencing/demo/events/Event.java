@@ -95,7 +95,7 @@ public class Event {
     @JsonIgnore
     private List<KnockoutStage> knockoutStages = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(mappedBy = "event")
     AfterEvent aftevent;
 
     //includes creating matches

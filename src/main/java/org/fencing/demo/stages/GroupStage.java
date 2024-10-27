@@ -10,6 +10,7 @@ import org.fencing.demo.events.PlayerRank;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 // import jakarta.persistence.GeneratedValue;
@@ -52,7 +53,7 @@ public class GroupStage {
     @OneToMany(mappedBy = "groupStage")
     private List<PlayerRank> players;
 
-    @OneToMany(mappedBy = "groupStage", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "groupStage", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Match> matches;
     
     private boolean allMatchesCompleted;

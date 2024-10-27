@@ -14,7 +14,7 @@ public class AfterEventsController {
     private AfterEventsService afterEventsService;
 
     @PostMapping("/{tournamentId}/events/{eventId}/end")
-    public ResponseEntity<String> endTournament(@PathVariable Long tournamentId, @PathVariable Long eventId) {
+    public ResponseEntity<String> endEvent(@PathVariable Long tournamentId, @PathVariable Long eventId) {
         // Retrieve the tournament (optional, based on your implementation)
         Tournament tournament = afterEventsService.getTournamentById(tournamentId);
 

@@ -31,7 +31,13 @@ public class AfterEventsService {
         if(!allMatchesComplete(event)){
             throw new RuntimeException("not all matches completed");
         }
+
+        System.out.println("\n\n");
+        System.out.println("this is the event: " + event);
+        System.out.println("\n\n");
+
         for (PlayerRank pr : event.getRankings()) {
+            
             Player p = pr.getPlayer();
             p.setElo(pr.getTempElo());
             if(pr.getTempElo() >= 2400){

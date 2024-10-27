@@ -51,7 +51,7 @@ public class AfterEventsTest {
     @InjectMocks
     private AfterEvent afterEvents;
 
-   @Mock
+    @Mock
     private PlayerRepository playerRepository;
 
     @Mock
