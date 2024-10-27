@@ -1,11 +1,15 @@
 package org.fencing.demo.events;
 
 import java.util.List;
+import java.util.Optional;
 import java.time.LocalDate;
 
+import org.fencing.demo.match.Match;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerNotFoundException;
 import org.fencing.demo.player.PlayerRepository;
+import org.fencing.demo.stages.GroupStage;
+import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.tournament.Tournament;
 import org.fencing.demo.tournament.TournamentNotFoundException;
 import org.fencing.demo.tournament.TournamentRepository;
@@ -130,8 +134,72 @@ public class EventServiceImpl implements EventService{
             throw new IllegalArgumentException("Tournament ID and Event ID cannot be null");
         }
         eventRepository.findById(eventId)
-.orElseThrow(() -> new EventNotFoundException(eventId));
+        .orElseThrow(() -> new EventNotFoundException(eventId));
         eventRepository.deleteByTournamentIdAndId(tournamentId, eventId);
     }
 
+    public List<Player> updatePlayerEloAfterEvent(Long eventId) {
+        if (eventId == null) {
+            throw new IllegalArgumentException("Event ID cannot be null");
+        }
+    
+        Event event = eventRepository.findById(eventId)
+                        .orElseThrow(() -> new EventNotFoundException(eventId));
+
+        if(!allMatchesComplete(eventId)){
+            throw new RuntimeException("not all matches completed");
+        }
+
+        System.out.println("\n\n");
+        System.out.println("this is the event: " + event);
+        System.out.println("\n\n");
+
+        for (PlayerRank pr : event.getRankings()) {
+            
+            Player p = pr.getPlayer();
+            p.setElo(pr.getTempElo());
+            if(pr.getTempElo() >= 2400){
+                pr.getPlayer().setReached2400(true);
+            }
+            playerRepository.save(p);
+        }
+
+        return playerRepository.findAll();
+        
+    }
+
+    private boolean allMatchesComplete(Long eventId) {
+        if (eventId == null) {
+            throw new IllegalArgumentException("Event ID cannot be null");
+        }
+    
+        Event event = eventRepository.findById(eventId)
+                        .orElseThrow(() -> new EventNotFoundException(eventId));
+    
+        List<GroupStage> grpStages = event.getGroupStages();
+        List<KnockoutStage> knockoutStages = event.getKnockoutStages();
+    
+        if (grpStages.isEmpty() || knockoutStages.isEmpty()) {
+            throw new RuntimeException("There are no group or knockout stages");
+        }
+    
+        for (GroupStage grpStage : grpStages) {
+            for (Match match : grpStage.getMatches()) {
+                if (!match.isFinished()) {
+                    return false;
+                }
+            }
+        }
+    
+        for (KnockoutStage knockoutStage : knockoutStages) {
+            for (Match match : knockoutStage.getMatches()) {
+                if (!match.isFinished()) {
+                    return false;
+                }
+            }
+        }
+    
+        return true;
+    }
+    
 }

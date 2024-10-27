@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.TreeMap;
 
-import org.fencing.demo.AfterEvent.AfterEvent;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.matchMaking.BeforeGroupStage;
 import org.fencing.demo.matchMaking.WithinGroupSort;
@@ -95,8 +94,8 @@ public class Event {
     @JsonIgnore
     private List<KnockoutStage> knockoutStages = new ArrayList<>();
 
-    @OneToOne(mappedBy = "event")
-    AfterEvent aftevent;
+    // @OneToOne(mappedBy = "event")
+    // AfterEvent aftevent;
 
     //includes creating matches
     public List<Match> createRoundsForGroupStages() {
