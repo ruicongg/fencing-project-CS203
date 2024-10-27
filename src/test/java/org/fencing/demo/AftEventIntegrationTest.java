@@ -174,17 +174,22 @@
 
 //     @Test
 //     public void endEvent_Success() throws Exception {
-       
-        
-//         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/end");
+//         Event event = createValidEvent(tournament);
+//         long id = eventRepository.save(event).getId();
 
-//         ResponseEntity<AfterEvent> result = restTemplate.withBasicAuth("admin", "adminPass")
-//                                         .postForEntity(uri, event, AfterEvent.class);
+//         tournament.getEvents().add(event);
+//         tournamentRepository.save(tournament);
 
-//         assertEquals(HttpStatus.CREATED, result.getStatusCode());
-//         assertNotNull(result.getBody());
-//         assertEquals(event.getGender(), result.getBody().getEvent().getGender());
-//         assertEquals(event.getWeapon(), result.getBody().getEvent().getWeapon());
+//         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id + "/end");
+
+//         event.setEndDate(LocalDateTime.now().plusDays(24));  // End date before start date
+
+//         ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
+//                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), String.class);
+
+//         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+//         assertTrue(result.getBody().contains("Event end date must be after start date"));
+    
 //     }
 
 //     // @Test

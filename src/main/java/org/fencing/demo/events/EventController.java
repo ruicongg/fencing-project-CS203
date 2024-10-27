@@ -54,7 +54,7 @@ public class EventController {
         return eventService.addPlayerToEvent(eventId, playerId);
     }
 
-    @PostMapping("/{tournamentId}/events/{eventId}/end")
+    @PostMapping("/{tournamentId}/events/{eventId}/elo")
     public ResponseEntity<String> endEvent(@PathVariable Long tournamentId, @PathVariable Long eventId) {
 
         // Retrieve AfterEvent by event ID and access the event field
