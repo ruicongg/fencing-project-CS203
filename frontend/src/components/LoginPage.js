@@ -13,7 +13,6 @@ const LoginPage = () => {
   const handleLogin = async () => {
     // Validate input
     if (!username || !password) {
-      console.log("HIIII")
       setError('Please enter both username and password.');
       return;
     }
@@ -21,8 +20,9 @@ const LoginPage = () => {
     setLoading(true);  // Start loading state
 
     try {
-      const response = await axios.post('/api/v1/auth/authenticate', { username, password });
 
+      const response = await axios.post('/api/v1/auth/authenticate', { username, password });
+      console.log(response);
       // Store the JWT token and user information in localStorage
       localStorage.setItem('token', response.data.token); // JWT token
       localStorage.setItem('user', JSON.stringify(response.data.user)); // User data
@@ -30,6 +30,7 @@ const LoginPage = () => {
       // Redirect based on user role
       const userRole = response.data.user.role.toLowerCase(); // Ensure case-insensitive
       if (userRole === 'admin') {
+
         navigate('/admin'); // Admin dashboard
       } else {
         navigate('/dashboard'); // User dashboard
