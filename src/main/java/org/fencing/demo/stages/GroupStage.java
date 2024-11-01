@@ -58,4 +58,14 @@ public class GroupStage {
     
     private boolean allMatchesCompleted;
 
+    @Override
+    public String toString() {
+        return "GroupStage{" +
+            "id=" + id +
+            // Don't attempt to print matches directly
+            ", matchesCount=" + (matches != null ? matches.size() : 0) +
+            '}';
+    }
+
+
 }

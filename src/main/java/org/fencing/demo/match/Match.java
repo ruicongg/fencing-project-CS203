@@ -109,4 +109,17 @@ public class Match {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "Match{" +
+            "id=" + id +
+            ", player1=" + player1.getId() + // Assuming Player has a getId() method
+            ", player2=" + player2.getId() + // Assuming Player has a getId() method
+            ", player1Score=" + player1Score +
+            ", player2Score=" + player2Score +
+            '}';
+    }
+
+
+
 }

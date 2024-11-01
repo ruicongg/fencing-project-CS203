@@ -2,6 +2,7 @@ package org.fencing.demo.events;
 
 import java.util.List;
 
+import org.fencing.demo.player.Player;
 import org.fencing.demo.tournament.Tournament;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,16 +55,9 @@ public class EventController {
         return eventService.addPlayerToEvent(eventId, playerId);
     }
 
-    @PostMapping("/{tournamentId}/events/{eventId}/elo")
-    public ResponseEntity<String> endEvent(@PathVariable Long tournamentId, @PathVariable Long eventId) {
-
-        // Retrieve AfterEvent by event ID and access the event field
-        Event Event = eventService.getEvent(eventId);
-
-        // Call the after-tournament service to update player stats
+    @PutMapping("/{tournamentId}/events/{eventId}/elo")
+    public void endEvent(@PathVariable Long tournamentId, @PathVariable Long eventId) {
         eventService.updatePlayerEloAfterEvent(eventId);
-
-        return ResponseEntity.ok("Event ended, and player stats updated.");
     }
 
     @DeleteMapping("/tournaments/{tournamentId}/events/{eventId}")
@@ -71,6 +65,5 @@ public class EventController {
     public void deleteEvent(@PathVariable Long tournamentId, @PathVariable Long eventId) {
         eventService.deleteEvent(tournamentId, eventId);
     }
-
 
 }

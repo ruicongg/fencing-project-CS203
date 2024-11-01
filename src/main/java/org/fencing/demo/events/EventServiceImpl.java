@@ -139,13 +139,14 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public List<Player> updatePlayerEloAfterEvent(Long eventId) {
+    public void updatePlayerEloAfterEvent(Long eventId) {
         if (eventId == null) {
             throw new IllegalArgumentException("Event ID cannot be null");
         }
     
         Event event = eventRepository.findById(eventId)
                         .orElseThrow(() -> new EventNotFoundException(eventId));
+
 
         if(!allMatchesComplete(eventId)){
             throw new RuntimeException("not all matches completed");
@@ -165,7 +166,7 @@ public class EventServiceImpl implements EventService{
             playerRepository.save(p);
         }
 
-        return playerRepository.findAll();
+        //return playerRepository.findAll();
         
     }
 
