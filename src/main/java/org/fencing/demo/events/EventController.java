@@ -55,7 +55,8 @@ public class EventController {
         return eventService.addPlayerToEvent(eventId, playerId);
     }
 
-    @PutMapping("/{tournamentId}/events/{eventId}/elo")
+    @PutMapping("/tournaments/{tournamentId}/events/{eventId}/elo")
+    @ResponseStatus(HttpStatus.OK)
     public void endEvent(@PathVariable Long tournamentId, @PathVariable Long eventId) {
         eventService.updatePlayerEloAfterEvent(eventId);
     }

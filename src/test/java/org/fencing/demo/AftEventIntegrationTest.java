@@ -161,10 +161,6 @@ public class AftEventIntegrationTest {
         knockoutStage.getMatches().add(knockoutMatch);
         matchRepository.save(knockoutMatch);
         knockoutStageRepository.save(knockoutStage);
-
-
-        
-
     }
 
     @Test
@@ -175,9 +171,7 @@ public class AftEventIntegrationTest {
 
         for (Player player : playerRepository.findAll()) {
             System.out.println("Players at the start: " + player);
-        }
-
-        
+        }        
 
         // Act
         ResponseEntity<Void> response = restTemplate.withBasicAuth("admin", "adminPass")

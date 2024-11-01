@@ -153,7 +153,7 @@ public class EventServiceImpl implements EventService{
         }
 
         System.out.println("\n\n");
-        System.out.println("this is the event: " + event);
+        System.out.println("this is the event: " + eventId);
         System.out.println("\n\n");
 
         for (PlayerRank pr : event.getRankings()) {
