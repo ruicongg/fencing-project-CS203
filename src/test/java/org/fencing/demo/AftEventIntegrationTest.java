@@ -180,11 +180,50 @@ public class AftEventIntegrationTest {
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Expected OK status");
 
-        // Here you can add more assertions based on your business logic
-        // For example, if you expect specific Elo changes, you would validate them
         for (Player player : playerRepository.findAll()) {
             System.out.println("Players at the end: " + player);
         }
+    }
+
+    @Test
+    public void endEvent_NullEventId_Failure()  throws Exception {
+        Long illegalId = null; // Use a non-null ID
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + illegalId + "/elo");
+
+        ResponseEntity<Void> result = restTemplate.withBasicAuth("admin", "adminPass")
+        .exchange(uri, HttpMethod.PUT, null, Void.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    @Test
+    public void endEvent_InvalidEventId_Failure()  throws Exception {
+        Long invalidId = -1L; // Use an invalid ID
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + invalidId + "/elo");
+
+        ResponseEntity<Void> result = restTemplate.withBasicAuth("admin", "adminPass")
+        .exchange(uri, HttpMethod.PUT, null, Void.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+    }
+
+    //Need check
+    @Test
+    public void endEvent_NotAllMatchesCompleted_Failure()  throws Exception {
+        // Arrange
+        // Create a URI for the endEvent endpoint
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/elo");
+
+        // Set allMatchesCompleted to false
+        groupStage.setAllMatchesCompleted(false);
+        groupStageRepository.save(groupStage);
+
+        // Act
+        ResponseEntity<Void> response = restTemplate.withBasicAuth("admin", "adminPass")
+                .exchange(uri, HttpMethod.PUT, null, Void.class);
+
+        // Assert
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode(), "Expected INTERNAL_SERVER_ERROR status");
     }
 
 
