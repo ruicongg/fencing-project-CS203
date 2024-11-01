@@ -5,34 +5,34 @@ import LoginPage from './components/LoginPage';
 import CreateAccountPage from './components/CreateAccountPage';
 import AdminDashboard from './components/AdminDashboard';
 import UserDashboard from './components/UserDashboard';
-import MyTournaments from './components/UserTournamentsPage';
-import UpcomingMatches from './components/UserUpcomingMatchesPage';
-import EventDetailsPage from './components/AdminEventDetailsPage';
-import StageDetailsPage from './components/AdminStageDetailsPage'; // StageDetailsPage replaces GroupStage and KnockoutStage pages
-import MatchDetailsPage from './components/AdminMatchDetailsPage';
+import TournamentsPage from './components/UserTournamentsPage';
+import UpcomingMatchesPage from './components/UserUpcomingMatchesPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import Sidebar from './components/Sidebar';
 // import NotFound from './components/NotFound';
 import UnauthorizedPage from './components/UnauthorizedPage';
+import AdminEventDetailsPage from './components/AdminEventDetailsPage';
+import AdminStageDetailsPage from './components/AdminStageDetailsPage';
+import AdminMatchDetailsPage from './components/AdminMatchDetailsPage';
 
 const App = () => {
   return (
     <Router>
       <Routes>
+        {/* Add a redirect to login for the root */}
+        <Route path="/" element={<Navigate to="/login" />} />
+
         {/* Login route */}
         <Route path="/login" element={<LoginPage />} />
 
         {/* Create account route */}
         <Route path="/create-account" element={<CreateAccountPage />} />
 
-        {/* Add a redirect to login for the root */}
-        <Route path="/" element={<Navigate to="/login" />} />
-
         {/* Admin routes (Protected by role 'ADMIN') */}
         <Route
           path="/admin/*"
           element={
-            <ProtectedRoute requiredRole="ADMIN">
+            <ProtectedRoute requiredRole="ROLE_ADMIN">
               <AdminLayout />
             </ProtectedRoute>
           }
@@ -42,7 +42,7 @@ const App = () => {
         <Route
           path="/dashboard/*"
           element={
-            <ProtectedRoute requiredRole="USER">
+            <ProtectedRoute requiredRole="ROLE_USER">
               <UserLayout />
             </ProtectedRoute>
           }
@@ -66,18 +66,18 @@ const AdminLayout = () => {
         <Route path="dashboard" element={<AdminDashboard />} />
         
         {/* Event Details */}
-        <Route path="tournaments/:tournamentId/events/:eventId" element={<EventDetailsPage />} />
+        <Route path="tournaments/:tournamentId/events/:eventId" element={<AdminEventDetailsPage />} />
         
         {/* Stage Details */}
         <Route
           path="tournaments/:tournamentId/events/:eventId/:stageType/:stageId"
-          element={<StageDetailsPage />}
+          element={<AdminStageDetailsPage />}
         />
 
         {/* Match Details */}
         <Route
           path="tournaments/:tournamentId/events/:eventId/:stageType/:stageId/match/:matchId"
-          element={<MatchDetailsPage />}
+          element={<AdminMatchDetailsPage />}
         />
       </Routes>
     </>
@@ -92,10 +92,10 @@ const UserLayout = () => {
         <Route path="" element={<UserDashboard />} /> {/* UserDashboard as the default */}
         
         {/* My Tournaments */}
-        <Route path="my-tournaments" element={<MyTournaments />} />
+        <Route path="my-tournaments" element={<TournamentsPage />} />
         
         {/* Upcoming Matches */}
-        <Route path="upcoming" element={<UpcomingMatches />} />
+        <Route path="upcoming" element={<UpcomingMatchesPage />} />
       </Routes>
     </>
   );

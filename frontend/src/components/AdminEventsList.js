@@ -5,6 +5,8 @@ import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import '../styles/AdminEventsList.css';
 
+axios.defaults.baseURL = 'http://localhost:8080';
+
 const AdminEventsList = ({ tournamentId, onEditEvent, onDeleteEvent }) => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);

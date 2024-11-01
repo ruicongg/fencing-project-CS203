@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/AdminMatchDetailsPage.css'; // Import the relevant CSS
 
+axios.defaults.baseURL = 'http://localhost:8080';
+
 const AdminMatchDetailsPage = () => {
   const { tournamentId, eventId, stageType, stageId, matchId } = useParams(); // Using stageType from URL
   const navigate = useNavigate();

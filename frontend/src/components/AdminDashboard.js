@@ -8,6 +8,8 @@ import AdminEditEvent from './AdminEditEvent';
 import AdminCreateEvent from './AdminCreateEvent';
 import '../styles/AdminDashboard.css';
 
+axios.defaults.baseURL = 'http://localhost:8080';
+
 const AdminDashboard = () => {
   const [activeTournaments, setActiveTournaments] = useState([]);
   const [completedTournaments, setCompletedTournaments] = useState([]);
@@ -90,6 +92,8 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard">
+    <h1>Admin Dashboard</h1>
+    <p>This is a test message to confirm rendering.</p>
       <nav className="breadcrumb">
         <span>Tournaments</span>
       </nav>

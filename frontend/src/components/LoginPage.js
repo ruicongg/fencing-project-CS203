@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import '../styles/LoginPage.css';
+
+axios.defaults.baseURL = 'http://localhost:8080';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -23,15 +26,21 @@ const LoginPage = () => {
 
       const response = await axios.post('/api/v1/auth/authenticate', { username, password });
       console.log(response);
-      // Store the JWT token and user information in localStorage
-      localStorage.setItem('token', response.data.token); // JWT token
-      localStorage.setItem('user', JSON.stringify(response.data.user)); // User data
+      const token = response.data.token;
+      console.log("Received Token:", token);
 
-      // Redirect based on user role
-      const userRole = response.data.user.role.toLowerCase(); // Ensure case-insensitive
+      // Decode the token to get the role information
+      const decodedToken = jwtDecode(token);
+      console.log("Decoded Token:", decodedToken);
+
+      // Store the JWT token in localStorage
+      localStorage.setItem('token', token);
+
+      const userRoles = decodedToken.roles;  // This should match the structure of your decoded token
+      const userRole = userRoles.includes("ROLE_ADMIN") ? "admin" : "user";  // Check if "ROLE_ADMIN" is in the roles array
+
       if (userRole === 'admin') {
-
-        navigate('/admin'); // Admin dashboard
+        navigate('/admin/dashboard'); // Admin dashboard
       } else {
         navigate('/dashboard'); // User dashboard
       }

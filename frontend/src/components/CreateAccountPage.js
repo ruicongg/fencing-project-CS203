@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/CreateAccountPage.css';
 
+axios.defaults.baseURL = 'http://localhost:8080';
+
 const CreateAccountPage = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
