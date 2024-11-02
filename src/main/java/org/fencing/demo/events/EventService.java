@@ -12,7 +12,7 @@ public interface EventService {
 
     Event updateEvent(Long tournamentId, Long eventId, Event event);
 
-    void updatePlayerEloAfterEvent(Long eventId);
+    List<Player> updatePlayerEloAfterEvent(Long eventId);
 
     Event addPlayerToEvent(Long eventId, Long playerId);
 

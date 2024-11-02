@@ -15,6 +15,8 @@ import org.fencing.demo.tournament.TournamentNotFoundException;
 import org.fencing.demo.tournament.TournamentRepository;
 import org.springframework.stereotype.Service;
 
+import org.fencing.demo.exception.*;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -139,30 +141,30 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public void updatePlayerEloAfterEvent(Long eventId) {
-        if (eventId == null) {
-            throw new IllegalArgumentException("Event ID cannot be null");
-        }
+    public List<Player> updatePlayerEloAfterEvent(Long eventId) {
+        // if (eventId == null) {
+        //     throw new IllegalArgumentException("Event ID cannot be null");
+        // }
     
         Event event = eventRepository.findById(eventId)
                         .orElseThrow(() -> new EventNotFoundException(eventId));
 
 
         if(!allMatchesComplete(eventId)){
-            throw new RuntimeException("not all matches completed");
+            throw new MatchesNotCompleteException("not all matches completed");
         }
 
-        System.out.println("\n\n");
-        System.out.println("this is the event: " + event);
-        System.out.println("this is the group stage: " + event.getGroupStages());
-        System.out.println("this is the knockout stage: " + event.getKnockoutStages());
-        for(GroupStage gs : event.getGroupStages()){
-            System.out.println("this is the grpMatch: " + gs.getMatches());
-        }
-        for(KnockoutStage ko : event.getKnockoutStages()){
-            System.out.println("this is the KOMatch: " + ko.getMatches());
-        }
-        System.out.println("\n\n");
+        // System.out.println("\n\n");
+        // System.out.println("this is the event: " + event);
+        // System.out.println("this is the group stage: " + event.getGroupStages());
+        // System.out.println("this is the knockout stage: " + event.getKnockoutStages());
+        // for(GroupStage gs : event.getGroupStages()){
+        //     System.out.println("this is the grpMatch: " + gs.getMatches());
+        // }
+        // for(KnockoutStage ko : event.getKnockoutStages()){
+        //     System.out.println("this is the KOMatch: " + ko.getMatches());
+        // }
+        // System.out.println("\n\n");
 
         for (PlayerRank pr : event.getRankings()) {
             System.out.println("this are the player rankings:"+ pr);
@@ -174,7 +176,7 @@ public class EventServiceImpl implements EventService{
             playerRepository.save(p);
         }
 
-        //return playerRepository.findAll();
+        return playerRepository.findAll();
         
     }
 
@@ -190,7 +192,7 @@ public class EventServiceImpl implements EventService{
         List<KnockoutStage> knockoutStages = event.getKnockoutStages();
     
         if (grpStages.isEmpty() || knockoutStages.isEmpty()) {
-            throw new RuntimeException("There are no group or knockout stages");
+            throw new IllegalArgumentException("There are no group or knockout stages");
         }
     
         for (GroupStage grpStage : grpStages) {

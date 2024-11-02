@@ -57,8 +57,8 @@ public class EventController {
 
     @PutMapping("/tournaments/{tournamentId}/events/{eventId}/elo")
     @ResponseStatus(HttpStatus.OK)
-    public void endEvent(@PathVariable Long tournamentId, @PathVariable Long eventId) {
-        eventService.updatePlayerEloAfterEvent(eventId);
+    public List<Player> endEvent(@PathVariable Long tournamentId, @PathVariable Long eventId) {
+        return eventService.updatePlayerEloAfterEvent(eventId);
     }
 
     @DeleteMapping("/tournaments/{tournamentId}/events/{eventId}")
