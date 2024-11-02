@@ -153,11 +153,19 @@ public class EventServiceImpl implements EventService{
         }
 
         System.out.println("\n\n");
-        System.out.println("this is the event: " + eventId);
+        System.out.println("this is the event: " + event);
+        System.out.println("this is the group stage: " + event.getGroupStages());
+        System.out.println("this is the knockout stage: " + event.getKnockoutStages());
+        for(GroupStage gs : event.getGroupStages()){
+            System.out.println("this is the grpMatch: " + gs.getMatches());
+        }
+        for(KnockoutStage ko : event.getKnockoutStages()){
+            System.out.println("this is the KOMatch: " + ko.getMatches());
+        }
         System.out.println("\n\n");
 
         for (PlayerRank pr : event.getRankings()) {
-            
+            System.out.println("this are the player rankings:"+ pr);
             Player p = pr.getPlayer();
             p.setElo(pr.getTempElo());
             if(pr.getTempElo() >= 2400){

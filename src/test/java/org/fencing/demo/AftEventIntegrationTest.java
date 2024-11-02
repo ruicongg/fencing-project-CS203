@@ -147,9 +147,7 @@ public class AftEventIntegrationTest {
         // Save PlayerRanks (only after groupStage is created)
         PlayerRank playerRank1 = createPlayerRank(player1, event, groupStage);
         PlayerRank playerRank2 = createPlayerRank(player2, event, groupStage);
-        event.getRankings().add(playerRank1);
-        event.getRankings().add(playerRank2);
-        eventRepository.save(event);
+        
 
         // Create and save matches
         Match grpMatch = createValidGroupMatch();
@@ -161,6 +159,29 @@ public class AftEventIntegrationTest {
         knockoutStage.getMatches().add(knockoutMatch);
         matchRepository.save(knockoutMatch);
         knockoutStageRepository.save(knockoutStage);
+
+        playerRepository.save(player1);
+        playerRepository.save(player2);
+
+        playerRank1.updateAfterMatch(grpMatch.getPlayer1Score(), grpMatch.getPlayer2Score(), playerRank2);
+        playerRank2.updateAfterMatch(grpMatch.getPlayer2Score(), grpMatch.getPlayer1Score(), playerRank1);
+
+        playerRank1.updateAfterMatch(knockoutMatch.getPlayer1Score(), knockoutMatch.getPlayer2Score(), playerRank2);
+        playerRank2.updateAfterMatch(knockoutMatch.getPlayer2Score(), knockoutMatch.getPlayer1Score(), playerRank1);
+
+        event.getRankings().add(playerRank1);
+        event.getRankings().add(playerRank2);
+        eventRepository.save(event);
+
+        player1.getPlayerRanks().add(playerRank1);
+        player2.getPlayerRanks().add(playerRank2);
+        playerRepository.save(player1);
+        playerRepository.save(player2);
+
+        System.out.println();
+        System.out.println("player1ranks: " + player1.getPlayerRanks());
+        System.out.println("player2ranks: " + player2.getPlayerRanks());
+        System.out.println();
     }
 
     @Test
@@ -169,8 +190,9 @@ public class AftEventIntegrationTest {
         // Create a URI for the endEvent endpoint
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/elo");
 
+        System.out.println();
         for (Player player : playerRepository.findAll()) {
-            System.out.println("Players at the start: " + player);
+            System.out.println("Players at the start: " + player.getElo());
         }        
 
         // Act
@@ -181,7 +203,7 @@ public class AftEventIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Expected OK status");
 
         for (Player player : playerRepository.findAll()) {
-            System.out.println("Players at the end: " + player);
+            System.out.println("Players at the end: " + player.getElo());
         }
     }
 
@@ -227,17 +249,17 @@ public class AftEventIntegrationTest {
     }
 
 
-    // @Test
-    // public void addEvent_ForbiddenForRegularUser_Failure() throws Exception {
-    //     Event event = createValidEvent(tournament);
+    @Test
+    public void addEvent_ForbiddenForRegularUser_Failure() throws Exception {
+        Event event = createValidEvent(tournament);
 
-    //     URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
 
-    //     ResponseEntity<Event> result = restTemplate.withBasicAuth("user", "userPass")
-    //                                         .postForEntity(uri, event, Event.class);
+        ResponseEntity<Event> result = restTemplate.withBasicAuth("user", "userPass")
+                                            .postForEntity(uri, event, Event.class);
 
-    //     assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());  
-    // }
+        assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());  
+    }
 
 
     // Helper methods for creating valid entities
@@ -285,6 +307,7 @@ public class AftEventIntegrationTest {
         playerRank.setEvent(event);
         playerRank.setPlayer(player);
         playerRank.setGroupStage(groupStage);
+        playerRank.initializeTempElo();
         return playerRank;
     }
 
@@ -293,7 +316,12 @@ public class AftEventIntegrationTest {
         player.setEmail("player" + id + "@email.com");
         player.setUsername("player" + id + "_" + System.currentTimeMillis());  // Ensures unique username per player
         player.setPassword(passwordEncoder.encode("playerPass"));
+        player.setElo(1500);
+        player.setReached2400(false);
         player.setRole(Role.USER);
+        player.setMatchesAsPlayer1(new HashSet<Match>());
+        player.setMatchesAsPlayer2(new HashSet<Match>());
+        player.setPlayerRanks(new HashSet<PlayerRank>());
         return player;
     }
 
@@ -305,6 +333,9 @@ public class AftEventIntegrationTest {
         match.setPlayer2(player2);
         match.setPlayer1Score(4);
         match.setPlayer2Score(7);
+
+        player1.getMatchesAsPlayer1().add(match);
+        player2.getMatchesAsPlayer2().add(match);
 
         return match;
 
@@ -318,6 +349,9 @@ public class AftEventIntegrationTest {
         match.setPlayer2(player2);
         match.setPlayer1Score(4);
         match.setPlayer2Score(7);
+
+        player1.getMatchesAsPlayer1().add(match);
+        player2.getMatchesAsPlayer2().add(match);
 
         return match;
 
