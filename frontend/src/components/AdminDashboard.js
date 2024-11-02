@@ -11,6 +11,7 @@ import '../styles/AdminDashboard.css';
 axios.defaults.baseURL = 'http://localhost:8080';
 
 const AdminDashboard = () => {
+  console.log("AdminDashboard component is rendering");
   const [activeTournaments, setActiveTournaments] = useState([]);
   const [completedTournaments, setCompletedTournaments] = useState([]);
   const [selectedTournament, setSelectedTournament] = useState(null);

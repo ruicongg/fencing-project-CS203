@@ -1,23 +1,28 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Navigate } from 'react-router-dom';
-import LoginPage from './components/LoginPage';
-import CreateAccountPage from './components/CreateAccountPage';
-import AdminDashboard from './components/AdminDashboard';
-import UserDashboard from './components/UserDashboard';
-import TournamentsPage from './components/UserTournamentsPage';
-import UpcomingMatchesPage from './components/UserUpcomingMatchesPage';
-import ProtectedRoute from './components/ProtectedRoute';
-import Sidebar from './components/Sidebar';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  BrowserRouter,
+} from "react-router-dom";
+import { Navigate } from "react-router-dom";
+import LoginPage from "./components/LoginPage";
+import CreateAccountPage from "./components/CreateAccountPage";
+import AdminDashboard from "./components/AdminDashboard";
+import UserDashboard from "./components/UserDashboard";
+import TournamentsPage from "./components/UserTournamentsPage";
+import UpcomingMatchesPage from "./components/UserUpcomingMatchesPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Sidebar from "./components/Sidebar";
 // import NotFound from './components/NotFound';
-import UnauthorizedPage from './components/UnauthorizedPage';
-import AdminEventDetailsPage from './components/AdminEventDetailsPage';
-import AdminStageDetailsPage from './components/AdminStageDetailsPage';
-import AdminMatchDetailsPage from './components/AdminMatchDetailsPage';
+import UnauthorizedPage from "./components/UnauthorizedPage";
+import AdminEventDetailsPage from "./components/AdminEventDetailsPage";
+import AdminStageDetailsPage from "./components/AdminStageDetailsPage";
+import AdminMatchDetailsPage from "./components/AdminMatchDetailsPage";
 
 const App = () => {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
         {/* Add a redirect to login for the root */}
         <Route path="/" element={<Navigate to="/login" />} />
@@ -30,23 +35,42 @@ const App = () => {
 
         {/* Admin routes (Protected by role 'ADMIN') */}
         <Route
+          element={<ProtectedRoute requiredRole="ROLE_ADMIN" />}
           path="/admin/*"
-          element={
-            <ProtectedRoute requiredRole="ROLE_ADMIN">
-              <AdminLayout />
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route path="dashboard" element={<AdminDashboard />} />
+
+          {/* Event Details */}
+          <Route
+            path="tournaments/:tournamentId/events/:eventId"
+            element={<AdminEventDetailsPage />}
+          />
+
+          {/* Stage Details */}
+          <Route
+            path="tournaments/:tournamentId/events/:eventId/:stageType/:stageId"
+            element={<AdminStageDetailsPage />}
+          />
+
+          {/* Match Details */}
+          <Route
+            path="tournaments/:tournamentId/events/:eventId/:stageType/:stageId/match/:matchId"
+            element={<AdminMatchDetailsPage />}
+          />
+        </Route>
 
         {/* User routes (Protected by role 'USER') */}
         <Route
+          element={<ProtectedRoute requiredRole="ROLE_USER" />}
           path="/dashboard/*"
-          element={
-            <ProtectedRoute requiredRole="ROLE_USER">
-              <UserLayout />
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route path="" element={<UserDashboard />} />{" "}
+          {/* UserDashboard as the default */}
+          {/* My Tournaments */}
+          <Route path="my-tournaments" element={<TournamentsPage />} />
+          {/* Upcoming Matches */}
+          <Route path="upcoming" element={<UpcomingMatchesPage />} />
+        </Route>
 
         {/* Catch-all route for unauthorized access */}
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
@@ -54,7 +78,7 @@ const App = () => {
         {/* Catch-all route for 404
         <Route path="*" element={<NotFound />} /> */}
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 };
 
@@ -64,10 +88,13 @@ const AdminLayout = () => {
       <Sidebar /> {/* Sidebar for admin */}
       <Routes>
         <Route path="dashboard" element={<AdminDashboard />} />
-        
+
         {/* Event Details */}
-        <Route path="tournaments/:tournamentId/events/:eventId" element={<AdminEventDetailsPage />} />
-        
+        <Route
+          path="tournaments/:tournamentId/events/:eventId"
+          element={<AdminEventDetailsPage />}
+        />
+
         {/* Stage Details */}
         <Route
           path="tournaments/:tournamentId/events/:eventId/:stageType/:stageId"
@@ -89,11 +116,10 @@ const UserLayout = () => {
     <>
       <Sidebar /> {/* Sidebar for users */}
       <Routes>
-        <Route path="" element={<UserDashboard />} /> {/* UserDashboard as the default */}
-        
+        <Route path="" element={<UserDashboard />} />{" "}
+        {/* UserDashboard as the default */}
         {/* My Tournaments */}
         <Route path="my-tournaments" element={<TournamentsPage />} />
-        
         {/* Upcoming Matches */}
         <Route path="upcoming" element={<UpcomingMatchesPage />} />
       </Routes>
@@ -102,7 +128,6 @@ const UserLayout = () => {
 };
 
 export default App;
-
 
 // import React from 'react';
 // import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
@@ -181,8 +206,6 @@ export default App;
 
 // export default App;
 
-
-
 // import React from 'react';
 // import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 // import LoginPage from './components/LoginPage';
@@ -223,7 +246,6 @@ export default App;
 
 // export default App;
 
-
 // import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 // import AdminDashboard from './components/AdminDashboard';
 // import EventDetailsPage from './components/EventDetailsPage';
@@ -247,5 +269,3 @@ export default App;
 //     element={<MatchDetailsPage />}
 //   />
 // </Router>
-
-

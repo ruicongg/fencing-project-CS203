@@ -49,7 +49,6 @@ const ProtectedRoute = ({ requiredRole }) => {
 
 export default ProtectedRoute;
 
-
 // import React from 'react';
 // import { Navigate, Outlet } from 'react-router-dom';
 // import { jwtDecode } from 'jwt-decode';  // Library to decode JWT token
@@ -146,3 +145,4 @@ export default ProtectedRoute;
 // };
 
 // export default ProtectedRoute;
+
