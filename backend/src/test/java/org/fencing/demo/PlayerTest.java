@@ -3,6 +3,7 @@ package org.fencing.demo;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.player.PlayerServiceImpl;
+import org.fencing.demo.events.Gender;
 import org.fencing.demo.user.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ public class PlayerTest {
 
     @Test
     public void testCreatePlayer() {
-        Player player = new Player("testUser", "password123", "test@example.com", Role.USER);
+        Player player = new Player("testUser", "password123", "test@example.com", Role.USER, Gender.MALE);
         when(playerRepository.save(any(Player.class))).thenReturn(player);
 
         Player createdPlayer = playerService.addPlayer(player);
@@ -46,7 +47,7 @@ public class PlayerTest {
 
     @Test
     public void testGetPlayer_Success() {
-        Player player = new Player("testUser", "password123", "test@example.com", Role.USER);
+        Player player = new Player("testUser", "password123", "test@example.com", Role.USER, Gender.MALE);
         player.setId(1L);
         when(playerRepository.findById(1L)).thenReturn(Optional.of(player));
 
@@ -69,7 +70,7 @@ public class PlayerTest {
 
     @Test
     public void testUpdatePlayer() {
-        Player player = new Player("testUser", "password123", "test@example.com", Role.USER);
+        Player player = new Player("testUser", "password123", "test@example.com", Role.USER, Gender.MALE);
         player.setId(1L);
         when(playerRepository.findById(1L)).thenReturn(Optional.of(player));
         when(playerRepository.save(any(Player.class))).thenReturn(player);
@@ -86,7 +87,7 @@ public class PlayerTest {
     @Test
     public void testDeletePlayer_Success() {
         // Arrange
-        Player player = new Player("testUser", "password123", "test@example.com", Role.USER);
+        Player player = new Player("testUser", "password123", "test@example.com", Role.USER, Gender.MALE);
         player.setId(1L);
         when(playerRepository.findById(1L)).thenReturn(Optional.of(player));
         doNothing().when(playerRepository).delete(player);

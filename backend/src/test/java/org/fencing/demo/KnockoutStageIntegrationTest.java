@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,9 +21,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -82,7 +79,7 @@ class KnockoutStageIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
@@ -99,11 +96,11 @@ class KnockoutStageIntegrationTest {
         userToken = "Bearer " + generateToken(regularUser);
 
         // Initialize players for the matches
-        player1 = new Player("player1", passwordEncoder.encode("password1"), "player1@example.com", Role.USER);
+        player1 = new Player("player1", passwordEncoder.encode("password1"), "player1@example.com", Role.USER, Gender.MALE);
         player1.setElo(1700);
         playerRepository.save(player1);
 
-        player2 = new Player("player2", passwordEncoder.encode("password2"), "player2@example.com", Role.USER);
+        player2 = new Player("player2", passwordEncoder.encode("password2"), "player2@example.com", Role.USER, Gender.MALE);
         player2.setElo(1700);
         playerRepository.save(player2);
 

@@ -22,7 +22,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -42,6 +42,7 @@ import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
+import org.fencing.demo.events.Gender;
 import org.fencing.demo.user.UserRepository;
 import org.fencing.demo.match.MatchRepository;
 import java.util.*;
@@ -83,7 +84,7 @@ class GroupStageIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private MatchRepository matchRepository;
@@ -104,11 +105,11 @@ class GroupStageIntegrationTest {
 
         // Initialize players for the matches
         playerRepository.deleteAll();
-        player1 = new Player("player1", passwordEncoder.encode("password1"), "player1@example.com", Role.USER);
+        player1 = new Player("player1", passwordEncoder.encode("password1"), "player1@example.com", Role.USER, Gender.MALE);
         player1.setElo(1700);
         playerRepository.save(player1);
 
-        player2 = new Player("player2", passwordEncoder.encode("password2"), "player2@example.com", Role.USER);
+        player2 = new Player("player2", passwordEncoder.encode("password2"), "player2@example.com", Role.USER, Gender.MALE);
         player2.setElo(1700);
         playerRepository.save(player2);
 

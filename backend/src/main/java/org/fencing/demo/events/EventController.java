@@ -3,6 +3,9 @@ package org.fencing.demo.events;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +14,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import jakarta.validation.Valid;
 
@@ -35,7 +40,7 @@ public class EventController {
         return eventService.getAllEventsByTournamentId(tournamentId);
     }
 
-    @GetMapping("/tournaments/{tournamentId}/events/{eventId}")
+    @GetMapping("events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public Event getEvent(@PathVariable Long eventId) {
         return eventService.getEvent(eventId);
@@ -47,14 +52,28 @@ public class EventController {
         return eventService.updateEvent(tournamentId, eventId, event);
     }
 
-    @PostMapping("/tournaments/{tournamentId}/events/{eventId}/addPlayer/{playerId}")
-    public Event addPlayerToEvent(@PathVariable Long eventId, @PathVariable Long playerId) {
-        return eventService.addPlayerToEvent(eventId, playerId);
+    @PostMapping("events/{eventId}/players/{username}")
+    public Event addPlayerToEvent(@PathVariable Long eventId, @PathVariable String username) {
+        return eventService.addPlayerToEvent(eventId, username);
     }
 
     @DeleteMapping("/tournaments/{tournamentId}/events/{eventId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteEvent(@PathVariable Long tournamentId, @PathVariable Long eventId) {
         eventService.deleteEvent(tournamentId, eventId);
+    }
+
+    @DeleteMapping("events/{eventId}/players")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removePlayerFromEvent(@PathVariable Long eventId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        eventService.removePlayerFromEvent(eventId, username);
+    }
+
+    @DeleteMapping("events/{eventId}/players/{username}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void adminRemovesPlayerFromEvent(@PathVariable Long eventId, @PathVariable String username) {
+        eventService.adminRemovesPlayerFromEvent(eventId, username);
     }
 }

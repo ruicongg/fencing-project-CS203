@@ -1,8 +1,5 @@
 package org.fencing.demo.player;
 
-
-// import org.fencing.demo.tournaments.Tournament;
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,6 +8,7 @@ import java.util.Set;
 
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.match.Match;
+import org.fencing.demo.events.Gender;
 import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
 
@@ -24,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NoArgsConstructor
 public class Player extends User implements Comparable<Player>{
     private int elo;
+    private org.fencing.demo.events.Gender gender;
 
     private static int STARTING_ELO = 1700;  
 
@@ -41,9 +40,18 @@ public class Player extends User implements Comparable<Player>{
     Set<PlayerRank> playerRanks;
 
 
-    public Player(String username, String password, String email, Role role) {
+    public Player(String username, String password, String email, Role role, Gender gender) {
         super(username, password, email, role);
         this.elo = STARTING_ELO;
+        this.gender = gender;
+    }
+
+    public Gender getGender() {
+        return this.gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 
     @Override
