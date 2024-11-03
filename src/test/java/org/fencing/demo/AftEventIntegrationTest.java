@@ -244,8 +244,6 @@ public class AftEventIntegrationTest {
                 .exchange(uri, HttpMethod.PUT, null, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-        System.out.println("\n\n");
-        System.out.println("Hello1234" + result.getBody());
         assertTrue(result.getBody().contains("not all matches completed"));
     }
 
