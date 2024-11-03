@@ -40,7 +40,7 @@ public class EventController {
         return eventService.getAllEventsByTournamentId(tournamentId);
     }
 
-    @GetMapping("events/{eventId}")
+    @GetMapping("/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public Event getEvent(@PathVariable Long eventId) {
         return eventService.getEvent(eventId);
@@ -52,7 +52,7 @@ public class EventController {
         return eventService.updateEvent(tournamentId, eventId, event);
     }
 
-    @PostMapping("events/{eventId}/players/{username}")
+    @PostMapping("/events/{eventId}/players/{username}")
     public Event addPlayerToEvent(@PathVariable Long eventId, @PathVariable String username) {
         return eventService.addPlayerToEvent(eventId, username);
     }
@@ -63,7 +63,7 @@ public class EventController {
         eventService.deleteEvent(tournamentId, eventId);
     }
 
-    @DeleteMapping("events/{eventId}/players")
+    @DeleteMapping("/events/{eventId}/players")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removePlayerFromEvent(@PathVariable Long eventId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -71,7 +71,7 @@ public class EventController {
         eventService.removePlayerFromEvent(eventId, username);
     }
 
-    @DeleteMapping("events/{eventId}/players/{username}")
+    @DeleteMapping("/events/{eventId}/players/{username}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void adminRemovesPlayerFromEvent(@PathVariable Long eventId, @PathVariable String username) {
         eventService.adminRemovesPlayerFromEvent(eventId, username);

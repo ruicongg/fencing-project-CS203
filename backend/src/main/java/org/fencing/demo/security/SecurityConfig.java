@@ -32,17 +32,19 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests((authz) -> authz
-                        .requestMatchers(HttpMethod.POST, "/tournaments/{tournamentId}/events/{eventId}/addPlayer/{playerId}").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/api/v1/auth/**").permitAll() // Allow all requests to /api/v1/auth
                         .requestMatchers("/error").permitAll() // Allow all requests to /error
                         .requestMatchers(HttpMethod.GET, "/tournaments").permitAll() // Allow all GET requests to tournaments
                         .requestMatchers(HttpMethod.GET, "/tournaments/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/tournaments", "/tournaments/**").permitAll() // Allow all GET requests to tournaments
+                        .requestMatchers(HttpMethod.GET, "/events", "/events/**").permitAll() // Allow all GET requests to events
+                        .requestMatchers(HttpMethod.POST, "/events/{eventId}/players/{username}").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/events/{eventId}/players").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers(HttpMethod.DELETE, "/events/{eventId}/players/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/tournaments").hasRole("ADMIN") // Only admins can POST
                         .requestMatchers(HttpMethod.POST, "/tournaments/**").hasRole("ADMIN") // Only admins can POST
                         .requestMatchers(HttpMethod.PUT, "/tournaments", "/tournaments/**").hasRole("ADMIN") // Only admins can PUT
                         .requestMatchers(HttpMethod.DELETE, "/tournaments", "/tournaments/**").hasRole("ADMIN") // Only admins can
-                        .requestMatchers(HttpMethod.DELETE, "/tournaments/{tournamentId}/events/{eventId}/removePlayers/{playerId}").authenticated()
                         .requestMatchers(HttpMethod.GET, "/users", "/users/**").hasRole("ADMIN") // Only admins can GET users
                         .requestMatchers(HttpMethod.PUT, "/users/*").hasRole("ADMIN") // Only admins can PUT users (next time users should be able to update their own stuff)
                         .requestMatchers(HttpMethod.DELETE, "/users/*").hasRole("ADMIN") // Only admins can DELETE users

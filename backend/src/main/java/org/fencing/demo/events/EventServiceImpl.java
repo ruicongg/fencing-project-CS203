@@ -107,6 +107,7 @@ public class EventServiceImpl implements EventService {
     public Event addPlayerToEvent(Long eventId, String username) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException(eventId));
+
         List<Player> players = playerRepository.findByUsername(username);
         if (players.isEmpty()) {
             throw new PlayerNotFoundException(username);
@@ -133,7 +134,6 @@ public class EventServiceImpl implements EventService {
         PlayerRank playerRank = new PlayerRank();
         playerRank.setPlayer(player);
         playerRank.setEvent(event);
-        playerRank.setScore(0); // Initialize score
 
         event.getRankings().add(playerRank); // Add PlayerRank to event rankings
 
@@ -183,7 +183,7 @@ public class EventServiceImpl implements EventService {
         PlayerRank playerRankToRemove = event.getRankings().stream()
                 .filter(rank -> rank.getPlayer().getUsername().equals(username))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Player is not registered for this event"));
+                .orElseThrow(() -> new PlayerNotFoundException(username));
 
         event.getRankings().remove(playerRankToRemove);
 
@@ -207,7 +207,7 @@ public class EventServiceImpl implements EventService {
         PlayerRank playerRankToRemove = event.getRankings().stream()
                 .filter(rank -> rank.getPlayer().getUsername().equals(username))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("Player is not registered for this event"));
+                .orElseThrow(() -> new PlayerNotFoundException(username));
 
         event.getRankings().remove(playerRankToRemove);
 

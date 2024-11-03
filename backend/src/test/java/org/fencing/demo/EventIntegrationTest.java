@@ -17,10 +17,14 @@ import java.util.TreeSet;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventRepository;
+import org.fencing.demo.events.EventServiceImpl;
 import org.fencing.demo.events.Gender;
+import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.events.PlayerRankComparator;
 import org.fencing.demo.events.WeaponType;
+import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
+import org.fencing.demo.player.PlayerNotFoundException;                         
 import org.fencing.demo.tournament.Tournament;
 import org.fencing.demo.tournament.TournamentRepository;
 import org.fencing.demo.user.UserRepository;
@@ -40,11 +44,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.persistence.EntityManager;
+import org.hibernate.Hibernate;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class EventIntegrationTest {
@@ -55,6 +57,9 @@ public class EventIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Autowired
+    private EventServiceImpl eventService;
+    
     @Autowired
     private TournamentRepository tournamentRepository;
 
@@ -71,11 +76,10 @@ public class EventIntegrationTest {
     private PasswordEncoder passwordEncoder;
 
     private Tournament tournament;
-
+    private Event event;
     private User adminUser;
-
     private User regularUser;
-
+    private Player player;
     private final String baseUrl = "http://localhost:";
 
     @BeforeEach
@@ -88,8 +92,11 @@ public class EventIntegrationTest {
         // Create a regular user
         regularUser = new User("user", passwordEncoder.encode("userPass"), "user@example.com", Role.USER);
         userRepository.save(regularUser);
+
+        // Create and save player
+        player = new Player("player", passwordEncoder.encode("playerPass"), "player@example.com", Role.USER, Gender.MALE);
+        playerRepository.save(player);
         
-        tournamentRepository.deleteAll();
         tournament = createValidTournament();
         tournamentRepository.save(tournament);
     }
@@ -97,8 +104,8 @@ public class EventIntegrationTest {
     @AfterEach
     void tearDown() {
         eventRepository.deleteAll();
-        tournamentRepository.deleteAll();
         playerRepository.deleteAll();
+        tournamentRepository.deleteAll();
         userRepository.deleteAll();
     }
 
@@ -197,13 +204,14 @@ public class EventIntegrationTest {
     @Test
     public void getEventById_Success() throws Exception {
         Event event = createValidEvent(tournament);
-        eventRepository.save(event);
-
-        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId());
-
-        ResponseEntity<Event> result = restTemplate.withBasicAuth("admin", "adminPass")
-                                            .getForEntity(uri, Event.class);
-
+        event = eventRepository.save(event);
+        
+        URI uri = new URI(baseUrl + port + "/events/" + event.getId());
+        
+        ResponseEntity<Event> result = restTemplate
+            .withBasicAuth("admin", "adminPass")
+            .getForEntity(uri, Event.class);
+        
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertNotNull(result.getBody());
         assertEquals(event.getId(), result.getBody().getId());
@@ -372,11 +380,134 @@ public class EventIntegrationTest {
         assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());  // Expecting 403 Forbidden
     }
 
+    @Test
+    @Transactional
+    public void addPlayerToEvent_Success() throws Exception {
+        Event event = createValidEvent(tournament);
+        eventRepository.save(event);
+
+        URI uri = new URI(baseUrl + port + "/events/" + event.getId() + "/players/" + player.getUsername());
+        
+        ResponseEntity<Event> result = restTemplate
+                .withBasicAuth(player.getUsername(), "playerPass")
+                .postForEntity(uri, null, Event.class);
+
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        Event updatedEvent = eventRepository.findById(event.getId()).orElse(null);
+        assertNotNull(updatedEvent);
+        Hibernate.initialize(updatedEvent.getRankings());
+        assertTrue(updatedEvent.getRankings().stream()
+                .anyMatch(rank -> rank.getPlayer().getUsername().equals(player.getUsername())));
+    }
+
+    @Test
+    @Transactional
+    public void addPlayerToEvent_OutsideRegistrationPeriod_Failure() throws Exception {
+        tournament.setRegistrationEndDate(LocalDate.now().minusDays(1));
+        tournamentRepository.save(tournament);
+        
+        Event event = createValidEvent(tournament);
+        eventRepository.save(event);
+
+        URI uri = new URI(baseUrl + port + "/events/" + event.getId() + "/players/" + player.getUsername());
+
+        ResponseEntity<String> result = restTemplate
+            .withBasicAuth(player.getUsername(), "playerPass")
+            .postForEntity(uri, null, String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertTrue(result.getBody().contains("Registration is not open for this event"));
+    }
+
+    @Test
+    @Transactional
+    public void removePlayerFromEvent_Success() throws Exception {
+        Event event = createValidEvent(tournament);
+        eventRepository.save(event);
+        addPlayerToEvent(player, event);
+
+        URI uri = new URI(baseUrl + port + "/events/" + event.getId() + "/players");
+
+        ResponseEntity<Void> result = restTemplate
+            .withBasicAuth(player.getUsername(), "playerPass")
+            .exchange(uri, HttpMethod.DELETE, null, Void.class);
+
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+
+        Event updatedEvent = eventRepository.findById(event.getId()).orElse(null);
+        assertNotNull(updatedEvent);
+        Hibernate.initialize(updatedEvent.getRankings());
+        assertTrue(updatedEvent.getRankings().isEmpty());
+    }
+
+    @Test
+    @Transactional
+    public void removePlayerFromEvent_OutsideRegistrationPeriod_Failure() throws Exception {
+        Event event = createValidEvent(tournament);
+        eventRepository.save(event);
+        addPlayerToEvent(player, event);
+        
+        // Set registration period to have ended
+        tournament.setRegistrationEndDate(LocalDate.now().minusDays(1));
+        tournamentRepository.save(tournament);
+
+        URI uri = new URI(baseUrl + port + "/events/" + event.getId() + "/players");
+
+        ResponseEntity<String> result = restTemplate
+            .withBasicAuth(player.getUsername(), "playerPass")
+            .exchange(uri, HttpMethod.DELETE, null, String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        assertTrue(result.getBody().contains("Player removal is not allowed outside the registration period"));
+        
+        // Verify player is still in event
+        Event updatedEvent = eventRepository.findById(event.getId()).get();
+        assertTrue(updatedEvent.getRankings().stream()
+            .anyMatch(rank -> rank.getPlayer().getUsername().equals(player.getUsername())));
+    }
+
+    @Test
+    @Transactional
+    public void adminRemovesPlayerFromEvent_Success() throws Exception {
+        Event event = createValidEvent(tournament);
+        eventRepository.save(event);
+        addPlayerToEvent(player, event);
+
+        URI uri = new URI(baseUrl + port + "/events/" + event.getId() + "/players/" + player.getUsername());
+
+        ResponseEntity<Void> result = restTemplate
+            .withBasicAuth("admin", "adminPass")
+            .exchange(uri, HttpMethod.DELETE, null, Void.class);
+
+        assertEquals(HttpStatus.NO_CONTENT, result.getStatusCode());
+
+        Event updatedEvent = eventRepository.findById(event.getId()).orElse(null);
+        assertNotNull(updatedEvent);
+        Hibernate.initialize(updatedEvent.getRankings());
+        assertTrue(updatedEvent.getRankings().isEmpty());
+    }
+
+    @Test
+    public void adminRemovesPlayerFromEvent_PlayerNotFound_Failure() throws Exception {
+        Event event = createValidEvent(tournament);
+        eventRepository.save(event);
+
+        URI uri = new URI(baseUrl + port + "/events/" + event.getId() + 
+                        "/players/nonExistentPlayer");
+
+        ResponseEntity<String> result = restTemplate
+            .withBasicAuth("admin", "adminPass")
+            .exchange(uri, HttpMethod.DELETE, null, String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertTrue(result.getBody().contains("Player not found with username: nonExistentPlayer"));
+    }
+
     // Helper methods for creating valid entities
     private Tournament createValidTournament() {
         return Tournament.builder()
                 .name("Spring Championship")
-                .registrationStartDate(LocalDate.now().plusDays(1))
+                .registrationStartDate(LocalDate.now())
                 .registrationEndDate(LocalDate.now().plusDays(20))
                 .tournamentStartDate(LocalDate.now().plusDays(25))
                 .tournamentEndDate(LocalDate.now().plusDays(30))
@@ -393,6 +524,22 @@ public class EventIntegrationTest {
         .startDate(LocalDateTime.now().plusDays(25))  
         .endDate(LocalDateTime.now().plusDays(26))
         .build();
+    }
+
+    private void addPlayerToEvent(Player player, Event event) {
+        if (player == null || event == null) {
+            throw new RuntimeException("Player or Event cannot be null");
+        }
+        
+        try {
+            PlayerRank playerRank = new PlayerRank();
+            playerRank.setPlayer(player);
+            playerRank.setEvent(event);
+            event.getRankings().add(playerRank);
+            eventRepository.save(event);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to add player to event: " + e.getMessage());
+        }
     }
 
 }

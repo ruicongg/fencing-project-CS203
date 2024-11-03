@@ -326,7 +326,7 @@ public class EventServiceTest {
 
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
 
-        assertThrows(IllegalStateException.class,
+        assertThrows(PlayerNotFoundException.class,
                 () -> eventService.removePlayerFromEvent(eventId, player.getUsername()));
 
         verify(eventRepository, never()).save(any(Event.class));
@@ -353,7 +353,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void adminRemovesPlayerFromEvent_PlayerNotInEvent_ThrowsIllegalStateException() {
+    public void adminRemovesPlayerFromEvent_PlayerNotInEvent_ThrowsPlayerNotFoundException() {
         Long eventId = 1L;
         Tournament tournament = createValidTournament();
         Event event = createValidEvent(tournament);
@@ -361,7 +361,7 @@ public class EventServiceTest {
 
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
 
-        assertThrows(IllegalStateException.class,
+        assertThrows(PlayerNotFoundException.class,
                 () -> eventService.adminRemovesPlayerFromEvent(eventId, player.getUsername()));
 
         verify(eventRepository, never()).save(any(Event.class));
