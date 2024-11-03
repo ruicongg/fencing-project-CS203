@@ -1,4 +1,4 @@
-package org.fencing.demo.player;
+package org.fencing.demo.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -8,6 +8,6 @@ public class PlayerNotFoundException extends RuntimeException{
     private static final long serialVersionUID = 1L;
 
     public PlayerNotFoundException(Long id){
-        super ("Could not find Player" +id);
+        super ("Could not find Player " +id);
     }
 }

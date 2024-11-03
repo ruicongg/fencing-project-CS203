@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Long> {
+    // This will find players by their username and return a list
     List<Player> findByUsername(String username);
+
 }
+
 

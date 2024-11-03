@@ -13,5 +13,19 @@ public class CustomExceptionHandler {
         // Directly returning the message defined in MatchesNotCompleteException
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+
+    @ExceptionHandler(PlayerExistException.class)
+    public ResponseEntity<String> handlePlayerExistException(PlayerExistException ex) {
+        // Directly returning the message defined in MatchesNotCompleteException
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(PlayerNotFoundException.class)
+    public ResponseEntity<String> handlePlayerNotFoundException(PlayerNotFoundException ex) {
+        // Directly returning the message defined in MatchesNotCompleteException
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+
 }
 

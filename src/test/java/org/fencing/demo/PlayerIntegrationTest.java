@@ -153,9 +153,12 @@ public class PlayerIntegrationTest {
     public void updatePlayer_Failure_InvalidId() throws Exception {
         URI uri = new URI(baseUrl + port + "/players/1");
         Player newPlayer = new Player("user2", "password", "user@example.com", Role.USER);
-        ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass")
-        .exchange(uri, HttpMethod.PUT, new HttpEntity<>(newPlayer), Player.class);
+
+        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
+        .exchange(uri, HttpMethod.PUT, new HttpEntity<>(newPlayer), String.class);
+
         assertEquals(404, result.getStatusCode().value());
+        assertEquals("Could not find Player 1", result.getBody());
     }
 
     @Test
@@ -176,9 +179,12 @@ public class PlayerIntegrationTest {
     @Test
 	public void deletePlayer_InvalidId_Failure() throws Exception {
 		URI uri = new URI(baseUrl + port + "/players/1");
-		ResponseEntity<Void> result = restTemplate.withBasicAuth("admin", "adminPass")
-		.exchange(uri, HttpMethod.DELETE, null, Void.class);
+
+		ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
+		.exchange(uri, HttpMethod.DELETE, null, String.class);
+
 		assertEquals(404, result.getStatusCode().value());
+        assertEquals("Could not find Player 1", result.getBody());
     }
 
     private static final String SECRET_KEY = "okLzUXUdbiclWJtW5hXRabO10nXGqWdCFQodkuPpnKI=";

@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 import org.fencing.demo.match.Match;
 import org.fencing.demo.player.Player;
-import org.fencing.demo.player.PlayerNotFoundException;
+import org.fencing.demo.exception.*;
 import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.KnockoutStage;
