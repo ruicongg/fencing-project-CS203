@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -78,6 +79,8 @@ public class AftEventIntegrationTest {
     private KnockoutStage knockoutStage;
     private String adminToken;
     private String userToken;
+    private Match grpMatch;
+    private Match knockoutMatch;
 
     @Autowired
     private KnockoutStageRepository knockoutStageRepository;
@@ -150,12 +153,12 @@ public class AftEventIntegrationTest {
         
 
         // Create and save matches
-        Match grpMatch = createValidGroupMatch();
+        grpMatch = createValidGroupMatch();
         groupStage.getMatches().add(grpMatch);
         matchRepository.save(grpMatch);
         groupStageRepository.save(groupStage);
 
-        Match knockoutMatch = createValidKnockoutMatch();
+        knockoutMatch = createValidKnockoutMatch();
         knockoutStage.getMatches().add(knockoutMatch);
         matchRepository.save(knockoutMatch);
         knockoutStageRepository.save(knockoutStage);
@@ -183,6 +186,8 @@ public class AftEventIntegrationTest {
         System.out.println("player2ranks: " + player2.getPlayerRanks());
         System.out.println();
     }
+
+
 
     @Test
     public void endEvent_Success() throws Exception {
@@ -228,17 +233,21 @@ public class AftEventIntegrationTest {
 
     // //Need check
     //need seperate set up
-    // @Test
-    // public void endEvent_IncompleteMatches_Failure() throws Exception {
+    @Test
+    public void endEvent_IncompleteMatches_Failure() throws Exception {
+        grpMatch.setPlayer1Score(0);
+        grpMatch.setPlayer2Score(0);
+        matchRepository.save(grpMatch);
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/elo");
 
-    //     URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/elo");
+        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
+                .exchange(uri, HttpMethod.PUT, null, String.class);
 
-    //     ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
-    //             .exchange(uri, HttpMethod.PUT, null, String.class);
-
-    //     assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-    //     assertTrue(result.getBody().contains("Not all matches completed"));
-    // }
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        System.out.println("\n\n");
+        System.out.println("Hello1234" + result.getBody());
+        assertTrue(result.getBody().contains("not all matches completed"));
+    }
 
 
 

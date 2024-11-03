@@ -151,20 +151,8 @@ public class EventServiceImpl implements EventService{
 
 
         if(!allMatchesComplete(eventId)){
-            throw new MatchesNotCompleteException("not all matches completed");
+            throw new MatchesNotCompleteException();
         }
-
-        // System.out.println("\n\n");
-        // System.out.println("this is the event: " + event);
-        // System.out.println("this is the group stage: " + event.getGroupStages());
-        // System.out.println("this is the knockout stage: " + event.getKnockoutStages());
-        // for(GroupStage gs : event.getGroupStages()){
-        //     System.out.println("this is the grpMatch: " + gs.getMatches());
-        // }
-        // for(KnockoutStage ko : event.getKnockoutStages()){
-        //     System.out.println("this is the KOMatch: " + ko.getMatches());
-        // }
-        // System.out.println("\n\n");
 
         for (PlayerRank pr : event.getRankings()) {
             System.out.println("this are the player rankings:"+ pr);
@@ -180,7 +168,7 @@ public class EventServiceImpl implements EventService{
         
     }
 
-    private boolean allMatchesComplete(Long eventId) {
+    public boolean allMatchesComplete(Long eventId) {
         if (eventId == null) {
             throw new IllegalArgumentException("Event ID cannot be null");
         }

@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class MatchesNotCompleteException extends RuntimeException {
-    public MatchesNotCompleteException(String message) {
-        super(message);
+    public MatchesNotCompleteException() {
+        super("not all matches completed");
     }
 }
