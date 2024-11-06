@@ -68,5 +68,4 @@ public class PlayerController {
             throw new PlayerNotFoundException(id);
         playerService.deletePlayer(id);
     }
-
 }

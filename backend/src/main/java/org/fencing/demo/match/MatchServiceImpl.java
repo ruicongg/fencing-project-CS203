@@ -5,6 +5,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
@@ -134,6 +137,24 @@ public class MatchServiceImpl implements MatchService {
         }
         return matchRepository.findById(matchId)
                 .orElseThrow(() -> new MatchNotFoundException(matchId));
+    }
+
+    @Override
+    public List<Match> getMatchesScheduledForToday(String username) {
+        // Retrieve the player by username
+        Player player = playerRepository.findByUsername(username)
+                .orElseThrow(() -> new PlayerNotFoundException());
+
+        LocalDate today = LocalDate.now();
+
+        // Retrieve all matches involving the player by their ID
+        List<Match> matches = matchRepository.findMatchesByPlayerId(player.getId());
+
+        // Filter matches based on the date of the associated event
+        return matches.stream()
+                .filter(match -> match.getEvent() != null && match.getEvent().getStartDate() != null)
+                .filter(match -> match.getEvent().getStartDate().toLocalDate().isEqual(today)) // Only matches for today
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -16,6 +16,8 @@ public interface MatchService {
 
     Match getMatch(Long id);
 
+    List<Match> getMatchesScheduledForToday(String username);
+
     Match updateMatch(Long eventId, Long matchId, Match newMatch);
 
     void deleteMatch(Long eventId, Long matchId);

@@ -52,6 +52,13 @@ public class MatchController {
         return matchService.getMatch(matchId);
     }
 
+    @GetMapping("/upcoming-matches")
+    public List<Match> getUpcomingMatches() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return matchService.getMatchesScheduledForToday(username);
+    }
+
     @PutMapping("/tournaments/{tournamentId}/events/{eventId}/match/{matchId}")
     @ResponseStatus(HttpStatus.OK)
     public Match updateMatch(@PathVariable Long eventId, @PathVariable Long matchId, @RequestBody Match match) {
@@ -63,4 +70,6 @@ public class MatchController {
     public void deleteMatch(@PathVariable Long eventId, @PathVariable Long matchId) {
         matchService.deleteMatch(eventId, matchId);
     }
+
+    
 }

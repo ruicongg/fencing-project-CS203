@@ -33,7 +33,16 @@ public class AuthenticationService {
             .role(userRole)
             .build();
         userRepository.save(user);
-        // Player playerUser = playerRepository.save(user);
+        
+        Player player = Player.builder()
+        .username(user.getUsername())  // Same username
+        .email(user.getEmail())        // Same email
+        .password(user.getPassword())  // Already encoded password
+        .role(user.getRole())          // Same role
+        .elo(Player.STARTING_ELO)      // Set starting ELO for Player
+        .build();
+        playerRepository.save(player);
+
         String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
