@@ -27,7 +27,6 @@ public class Player extends User implements Comparable<Player>{
 
     private static int STARTING_ELO = 1700;  
 
-
     @OneToMany(mappedBy = "player1")
     @JsonIgnore
     private Set<Match> matchesAsPlayer1;

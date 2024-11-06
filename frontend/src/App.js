@@ -21,12 +21,19 @@ import AdminEventDetailsPage from "./components/AdminEventDetailsPage";
 import AdminStageDetailsPage from "./components/AdminStageDetailsPage";
 import AdminMatchDetailsPage from "./components/AdminMatchDetailsPage";
 
+axios.defaults.baseURL = 'http://localhost:8080';
+
 axios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token'); // Retrieve token from localStorage
-    if (token) {
+
+    // Skip Authorization header for specific public endpoints
+    const publicEndpoints = ['/api/v1/auth/authenticate', '/api/v1/auth/register'];
+    
+    if (token && !publicEndpoints.includes(config.url)) {
       config.headers.Authorization = `Bearer ${token}`; // Attach token to Authorization header
     }
+
     return config;
   },
   (error) => {

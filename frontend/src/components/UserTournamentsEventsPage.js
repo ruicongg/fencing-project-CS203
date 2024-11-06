@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import jwtDecode from 'jwt-decode';  // Optional: if you want to check token expiration
+import { jwtDecode } from 'jwt-decode';  // Optional: if you want to check token expiration
 import { useNavigate } from 'react-router-dom'; // Optional: use for navigation
-import '../styles/TournamentEventsPage.css';
+import '../styles/UserTournamentsEventsPage.css';
 
 axios.defaults.baseURL = 'http://localhost:8080';
 

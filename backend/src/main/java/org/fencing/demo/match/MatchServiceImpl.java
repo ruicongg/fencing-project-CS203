@@ -8,6 +8,7 @@ import java.util.List;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
@@ -19,6 +20,9 @@ import org.fencing.demo.stages.GroupStageRepository;
 import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.stages.KnockoutStageNotFoundException;
 import org.fencing.demo.stages.KnockoutStageRepository;
+import org.fencing.demo.player.Player;
+import org.fencing.demo.player.PlayerNotFoundException;
+import org.fencing.demo.player.PlayerRepository;
 
 @Service
 public class MatchServiceImpl implements MatchService {
@@ -27,13 +31,16 @@ public class MatchServiceImpl implements MatchService {
     private final EventRepository eventRepository;
     private final KnockoutStageRepository knockoutStageRepository;
     private final GroupStageRepository groupStageRepository;
+    private final PlayerRepository playerRepository;
 
     public MatchServiceImpl(MatchRepository matchRepository, EventRepository eventRepository, 
-    KnockoutStageRepository knockoutStageRepository, GroupStageRepository groupStageRepository) {
+    KnockoutStageRepository knockoutStageRepository, GroupStageRepository groupStageRepository,
+    PlayerRepository playerRepository) {
         this.matchRepository = matchRepository;
         this.eventRepository = eventRepository;
         this.knockoutStageRepository = knockoutStageRepository;
         this.groupStageRepository = groupStageRepository;
+        this.playerRepository = playerRepository;
     }
 
     // public Match addMatch(Long eventId, Match match){
@@ -142,8 +149,10 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public List<Match> getMatchesScheduledForToday(String username) {
         // Retrieve the player by username
-        Player player = playerRepository.findByUsername(username)
-                .orElseThrow(() -> new PlayerNotFoundException());
+        // Player player = playerRepository.findByUsername(username)
+        //         .orElseThrow(() -> new PlayerNotFoundException(username));
+        Optional<Player> playerOpt = playerRepository.findByUsername(username);
+        Player player = playerOpt.orElseThrow(() -> new PlayerNotFoundException(username));
 
         LocalDate today = LocalDate.now();
 

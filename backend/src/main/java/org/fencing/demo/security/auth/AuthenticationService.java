@@ -26,24 +26,23 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
         Role userRole = Role.valueOf(request.getRole().toUpperCase());
-        User user = User.builder()
-            .username(request.getUsername())
-            .email(request.getEmail())
-            .password(passwordEncoder.encode(request.getPassword()))
-            .role(userRole)
-            .build();
-        userRepository.save(user);
+        // User user = User.builder()
+        //     .username(request.getUsername())
+        //     .email(request.getEmail())
+        //     .password(passwordEncoder.encode(request.getPassword()))
+        //     .role(userRole)
+        //     .build();
+        // userRepository.save(user);
         
-        Player player = Player.builder()
-        .username(user.getUsername())  // Same username
-        .email(user.getEmail())        // Same email
-        .password(user.getPassword())  // Already encoded password
-        .role(user.getRole())          // Same role
-        .elo(Player.STARTING_ELO)      // Set starting ELO for Player
-        .build();
+        Player player = new Player(
+            request.getUsername(),
+            passwordEncoder.encode(request.getPassword()),
+            request.getEmail().trim(),
+            userRole
+        );
         playerRepository.save(player);
 
-        String jwtToken = jwtService.generateToken(user);
+        String jwtToken = jwtService.generateToken(player);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();

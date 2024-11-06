@@ -33,7 +33,7 @@ const UpcomingMatchesPage = () => {
     } else {
       const fetchMatches = async () => {
         try {
-          const response = await axios.get(`/user/upcoming-matches`, {
+          const response = await axios.get(`/upcoming-matches`, {
             headers: {
               Authorization: `Bearer ${token}`, // Send the token in the request headers
             },
