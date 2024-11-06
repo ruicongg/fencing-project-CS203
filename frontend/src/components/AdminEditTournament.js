@@ -3,10 +3,10 @@ import '../styles/AdminEditTournament.css';
 
 const AdminEditTournament = ({ tournament, onClose, onSave }) => {
   const [name, setName] = useState('');
-  const [registrationStart, setRegistrationStart] = useState('');
-  const [registrationEnd, setRegistrationEnd] = useState('');
-  const [tournamentStart, setTournamentStart] = useState('');
-  const [tournamentEnd, setTournamentEnd] = useState('');
+  const [registrationStartDate, setRegistrationStart] = useState('');
+  const [registrationEndDate, setRegistrationEnd] = useState('');
+  const [tournamentStartDate, setTournamentStart] = useState('');
+  const [tournamentEndDate, setTournamentEnd] = useState('');
   const [venue, setVenue] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false); // New loading state
@@ -15,22 +15,22 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
     // Pre-fill values when tournament data changes
     if (tournament) {
       setName(tournament.name);
-      setRegistrationStart(tournament.registrationStart);
-      setRegistrationEnd(tournament.registrationEnd);
-      setTournamentStart(tournament.startDate);
-      setTournamentEnd(tournament.endDate);
+      setRegistrationStart(tournament.registrationStartDate);
+      setRegistrationEnd(tournament.registrationEndDate);
+      setTournamentStart(tournament.tournamentStartDate);
+      setTournamentEnd(tournament.tournamentEndDate);
       setVenue(tournament.venue);
     }
   }, [tournament]);
 
   const handleSave = async () => {
     // Validation: Check if registration dates and tournament dates are valid
-    if (new Date(registrationStart) >= new Date(registrationEnd)) {
+    if (new Date(registrationStartDate) >= new Date(registrationEndDate)) {
       setErrorMessage('Registration start date must be before the registration end date.');
       return;
     }
 
-    if (new Date(tournamentStart) >= new Date(tournamentEnd)) {
+    if (new Date(tournamentStartDate) >= new Date(tournamentEndDate)) {
       setErrorMessage('Tournament start date must be before the tournament end date.');
       return;
     }
@@ -47,10 +47,10 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
       await onSave({
         ...tournament,
         name,
-        registrationStart,
-        registrationEnd,
-        startDate: tournamentStart,
-        endDate: tournamentEnd,
+        registrationStartDate,
+        registrationEndDate,
+        tournamentStartDate,
+        tournamentEndDate,
         venue,
       });
 
@@ -84,7 +84,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
           <label>Registration Start Date</label>
           <input
             type="date"
-            value={registrationStart}
+            value={registrationStartDate}
             onChange={(e) => {
               setRegistrationStart(e.target.value);
               setErrorMessage(''); // Clear error message when editing
@@ -95,7 +95,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
           <label>Registration End Date</label>
           <input
             type="date"
-            value={registrationEnd}
+            value={registrationEndDate}
             onChange={(e) => {
               setRegistrationEnd(e.target.value);
               setErrorMessage(''); // Clear error message when editing
@@ -106,7 +106,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
           <label>Tournament Start Date</label>
           <input
             type="date"
-            value={tournamentStart}
+            value={tournamentStartDate}
             onChange={(e) => {
               setTournamentStart(e.target.value);
               setErrorMessage(''); // Clear error message when editing
@@ -117,7 +117,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
           <label>Tournament End Date</label>
           <input
             type="date"
-            value={tournamentEnd}
+            value={tournamentEndDate}
             onChange={(e) => {
               setTournamentEnd(e.target.value);
               setErrorMessage(''); // Clear error message when editing
@@ -140,7 +140,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
           <button onClick={onClose} disabled={isSaving}>
             Cancel
           </button>
-          <button onClick={handleSave} disabled={isSaving || !name || !venue || !registrationStart || !registrationEnd || !tournamentStart || !tournamentEnd}>
+          <button onClick={handleSave} disabled={isSaving || !name || !venue || !registrationStartDate || !registrationEndDate || !tournamentStartDate || !tournamentEndDate}>
             {isSaving ? 'Saving...' : 'Save'}
           </button>
         </div>

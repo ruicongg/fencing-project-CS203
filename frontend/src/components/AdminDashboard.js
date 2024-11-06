@@ -34,8 +34,8 @@ const AdminDashboard = () => {
       setLoading(true);
       const response = await axios.get('/tournaments');
       const now = new Date();
-      const active = response.data.filter(t => new Date(t.endDate) > now);
-      const completed = response.data.filter(t => new Date(t.endDate) <= now);
+      const active = response.data.filter(t => new Date(t.tournamentEndDate) > now);
+      const completed = response.data.filter(t => new Date(t.tournamentEndDate) <= now);
       setActiveTournaments(active);
       setCompletedTournaments(completed);
     } catch (error) {

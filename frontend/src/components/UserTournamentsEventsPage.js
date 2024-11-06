@@ -4,6 +4,8 @@ import jwtDecode from 'jwt-decode';  // Optional: if you want to check token exp
 import { useNavigate } from 'react-router-dom'; // Optional: use for navigation
 import '../styles/TournamentEventsPage.css';
 
+axios.defaults.baseURL = 'http://localhost:8080';
+
 const TournamentEventsPage = ({ match }) => {
   const [events, setEvents] = useState([]);
   const [filters, setFilters] = useState({

@@ -2,21 +2,21 @@ import React, { useState } from 'react';
 import '../styles/AdminCreateEvent.css';
 
 const AdminCreateEvent = ({ onClose, onAdd }) => {
-  const [startDateTime, setStartDateTime] = useState('');
-  const [endDateTime, setEndDateTime] = useState('');
-  const [gender, setGender] = useState('Male');
-  const [weapon, setWeapon] = useState('Foil');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [gender, setGender] = useState('MALE');
+  const [weapon, setWeapon] = useState('FOIL');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false); // Add loading state
 
   const handleAdd = async () => {
     // Validate form inputs
-    if (!startDateTime || !endDateTime) {
+    if (!startDate || !endDate) {
       setErrorMessage('Both start and end times are required.');
       return;
     }
 
-    if (new Date(startDateTime) >= new Date(endDateTime)) {
+    if (new Date(startDate) >= new Date(endDate)) {
       setErrorMessage('Start time must be before end time.');
       return;
     }
@@ -27,8 +27,8 @@ const AdminCreateEvent = ({ onClose, onAdd }) => {
     try {
       // Call the onAdd function passed from the parent component
       await onAdd({
-        startDateTime,
-        endDateTime,
+        startDate,
+        endDate,
         gender,
         weapon
       });
@@ -52,33 +52,32 @@ const AdminCreateEvent = ({ onClose, onAdd }) => {
           <label>Event Start Date Time</label>
           <input
             type="datetime-local"
-            value={startDateTime}
-            onChange={(e) => setStartDateTime(e.target.value)}
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
           />
           to
           <input
             type="datetime-local"
-            value={endDateTime}
-            onChange={(e) => setEndDateTime(e.target.value)}
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
           />
 
           <label>Gender</label>
           <select value={gender} onChange={(e) => setGender(e.target.value)}>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Mixed">Mixed</option>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
           </select>
 
           <label>Weapon</label>
           <select value={weapon} onChange={(e) => setWeapon(e.target.value)}>
-            <option value="Foil">Foil</option>
-            <option value="Epee">Épée</option>
-            <option value="Sabre">Sabre</option>
+            <option value="FOIL">Foil</option>
+            <option value="EPEE">Épée</option>
+            <option value="SABRE">Sabre</option>
           </select>
         </div>
         <div className="modal-actions">
           <button onClick={onClose} disabled={isSaving}>Cancel</button>
-          <button onClick={handleAdd} disabled={isSaving || !startDateTime || !endDateTime}>
+          <button onClick={handleAdd} disabled={isSaving || !startDate || !endDate}>
             {isSaving ? 'Adding...' : 'Add'}
           </button>
         </div>

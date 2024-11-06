@@ -5,6 +5,8 @@ import { jwtDecode } from 'jwt-decode';
 import '../styles/LoginPage.css';
 import '../styles/UserUpcomingMatchesPage.css';
 
+axios.defaults.baseURL = 'http://localhost:8080';
+
 const UpcomingMatchesPage = () => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);

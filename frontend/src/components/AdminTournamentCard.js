@@ -4,8 +4,8 @@ import '../styles/AdminTournamentCard.css';
 
 const AdminTournamentCard = ({ tournament, onSelect, onEdit, onDelete }) => {
   // Date formatting using date-fns for better control over the format
-  const formattedStartDate = format(new Date(tournament.startDate), 'PPP');
-  const formattedEndDate = format(new Date(tournament.endDate), 'PPP');
+  const formattedStartDate = format(new Date(tournament.tournamentStartDate), 'PPP');
+  const formattedEndDate = format(new Date(tournament.tournamentEndDate), 'PPP');
 
   return (
     <div

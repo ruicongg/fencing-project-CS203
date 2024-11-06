@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import '../styles/AdminEditEvent.css';
 
 const AdminEditEvent = ({ event, onClose, onSave }) => {
-  const [startDateTime, setStartDateTime] = useState('');
-  const [endDateTime, setEndDateTime] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [gender, setGender] = useState('');
   const [weapon, setWeapon] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -12,8 +12,8 @@ const AdminEditEvent = ({ event, onClose, onSave }) => {
   useEffect(() => {
     // Pre-fill values when event data changes
     if (event) {
-      setStartDateTime(event.startDateTime);
-      setEndDateTime(event.endDateTime);
+      setStartDate(event.startDate);
+      setEndDate(event.endDate);
       setGender(event.gender);
       setWeapon(event.weapon);
     }
@@ -21,12 +21,12 @@ const AdminEditEvent = ({ event, onClose, onSave }) => {
 
   const handleSave = async () => {
     // Validation: Check if the start date is before the end date
-    if (!startDateTime || !endDateTime) {
+    if (!startDate || !endDate) {
       setErrorMessage('Start and end dates are required.');
       return;
     }
 
-    if (new Date(startDateTime) >= new Date(endDateTime)) {
+    if (new Date(startDate) >= new Date(endDate)) {
       setErrorMessage('Start date must be before the end date.');
       return;
     }
@@ -37,8 +37,8 @@ const AdminEditEvent = ({ event, onClose, onSave }) => {
     try {
       await onSave({
         ...event,
-        startDateTime,
-        endDateTime,
+        startDate,
+        endDate,
         gender,
         weapon,
       });
@@ -60,9 +60,9 @@ const AdminEditEvent = ({ event, onClose, onSave }) => {
           <label>Event Date Time</label>
           <input
             type="datetime-local"
-            value={startDateTime}
+            value={startDate}
             onChange={(e) => {
-              setStartDateTime(e.target.value);
+              setStartDate(e.target.value);
               setErrorMessage(''); // Clear error message when editing
             }}
             disabled={isSaving}
@@ -70,9 +70,9 @@ const AdminEditEvent = ({ event, onClose, onSave }) => {
           to
           <input
             type="datetime-local"
-            value={endDateTime}
+            value={endDate}
             onChange={(e) => {
-              setEndDateTime(e.target.value);
+              setEndDate(e.target.value);
               setErrorMessage(''); // Clear error message when editing
             }}
             disabled={isSaving}
@@ -84,9 +84,8 @@ const AdminEditEvent = ({ event, onClose, onSave }) => {
             onChange={(e) => setGender(e.target.value)}
             disabled={isSaving}
           >
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-            <option value="Mixed">Mixed</option>
+            <option value="MALE">Male</option>
+            <option value="FEMALE">Female</option>
           </select>
 
           <label>Weapon</label>
@@ -95,16 +94,16 @@ const AdminEditEvent = ({ event, onClose, onSave }) => {
             onChange={(e) => setWeapon(e.target.value)}
             disabled={isSaving}
           >
-            <option value="Foil">Foil</option>
-            <option value="Epee">Épée</option>
-            <option value="Sabre">Sabre</option>
+            <option value="FOIL">Foil</option>
+            <option value="EPEE">Épée</option>
+            <option value="SABRE">Sabre</option>
           </select>
         </div>
         <div className="modal-actions">
           <button onClick={onClose} disabled={isSaving}>
             Cancel
           </button>
-          <button onClick={handleSave} disabled={isSaving || !startDateTime || !endDateTime}>
+          <button onClick={handleSave} disabled={isSaving || !startDate || !endDate}>
             {isSaving ? 'Saving...' : 'Save'}
           </button>
         </div>

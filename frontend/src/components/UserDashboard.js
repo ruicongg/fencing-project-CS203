@@ -6,11 +6,13 @@ import EventsList from './UserEventsList';  // For displaying events
 import UpcomingMatchesPage from './UserUpcomingMatchesPage';  // For upcoming matches
 import '../styles/UserDashboard.css';
 
+axios.defaults.baseURL = 'http://localhost:8080';
+
 const UserDashboard = () => {
-  const [activeTab, setActiveTab] = useState('myTournaments'); // Re-enable activeTab
   const [activeTournaments, setActiveTournaments] = useState([]);
   const [completedTournaments, setCompletedTournaments] = useState([]);
-  const [filteredTournaments, setFilteredTournaments] = useState([]); // For filtered results
+  const [activeTab, setActiveTab] = useState('active');
+  const [filteredTournaments, setFilteredTournaments] = useState([]);
   const [selectedTournament, setSelectedTournament] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -23,17 +25,17 @@ const UserDashboard = () => {
     fetchTournaments();
   }, []);
 
-  // Fetch tournaments
+  // Fetch tournaments and categorize them
   const fetchTournaments = async () => {
     try {
       setLoading(true);
       const response = await axios.get('/tournaments');
       const now = new Date();
-      const active = response.data.filter(tournament => new Date(tournament.endDate) > now);
-      const completed = response.data.filter(tournament => new Date(tournament.endDate) <= now);
+      const active = response.data.filter(t => new Date(t.tournamentEndDate) > now);
+      const completed = response.data.filter(t => new Date(t.tournamentEndDate) <= now);
       setActiveTournaments(active);
       setCompletedTournaments(completed);
-      applyFilters(active); // Apply filters initially
+      applyFilters(active); // Apply filters initially to active tournaments
     } catch (error) {
       setError('Failed to load tournaments');
       console.error('Error fetching tournaments:', error);
@@ -71,20 +73,21 @@ const UserDashboard = () => {
 
   const handleTimeframeChange = (e) => {
     setSelectedTimeframe(e.target.value);
-    applyFilters(activeTournaments);
+    applyFilters(activeTab === 'active' ? activeTournaments : completedTournaments);
   };
 
   const handleLocationChange = (e) => {
     setSelectedLocation(e.target.value);
-    applyFilters(activeTournaments);
-  };
-
-  const handleTournamentClick = (tournament) => {
-    setSelectedTournament(tournament);
+    applyFilters(activeTab === 'active' ? activeTournaments : completedTournaments);
   };
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
+    applyFilters(tab === 'active' ? activeTournaments : completedTournaments);
+  };
+
+  const handleTournamentClick = (tournament) => {
+    setSelectedTournament(tournament);
   };
 
   if (loading) {
@@ -96,86 +99,99 @@ const UserDashboard = () => {
   }
 
   return (
-    <Router>
-      <div className="user-dashboard">
-        {/* Tabs */}
-        <div className="tabs">
-          <button
-            className={activeTab === 'myTournaments' ? 'active' : ''}
-            onClick={() => handleTabClick('myTournaments')}
-          >
-            My Tournaments
-          </button>
-          <Link to="/upcoming-matches">
-            <button
-              className={activeTab === 'upcomingMatches' ? 'active' : ''}
-              onClick={() => handleTabClick('upcomingMatches')}
-            >
-              Upcoming
-            </button>
-          </Link>
-        </div>
+    <div className="user-dashboard">
+      {/* Sidebar */}
+      <div className="sidebar">
+        <ul>
+          <li>
+            <Link to="/dashboard/my-tournaments">Dashboard</Link>
+            <ul>
+              <li><Link to="/dashboard/my-tournaments">My Tournaments</Link></li>
+              <li><Link to="/dashboard/upcoming">Upcoming</Link></li>
+            </ul>
+          </li>
+          <li><Link to="/leaderboards">Leaderboards</Link></li>
+        </ul>
+      </div>
 
-        {/* Routes for navigation */}
+      {/* Main Content */}
+      <div className="main-content">
+        {/* Routes */}
         <Routes>
-          {/* My Tournaments */}
-          <Route
-            path="/my-tournaments"
-            element={
-              <div>
-                {/* Filter By Section */}
-                <div className="filter-by">
-                  <h4>Filter by</h4>
-                  <select value={selectedTimeframe} onChange={handleTimeframeChange}>
-                    <option value="This week">This week</option>
-                    <option value="This month">This month</option>
-                    <option value="This year">This year</option>
-                  </select>
-
-                  <select value={selectedLocation} onChange={handleLocationChange}>
-                    <option value="Global">Global</option>
-                    <option value="Local">Local</option>
-                  </select>
-                </div>
-
-                {/* Tournament Cards */}
-                <div className="tournament-cards">
-                  {filteredTournaments.length > 0 ? (
-                    <div className="tournaments-list">
-                      {filteredTournaments.map(tournament => (
-                        <TournamentCard
-                          key={tournament.id}
-                          tournament={tournament}
-                          onSelect={() => handleTournamentClick(tournament)}
-                          showStatus={true}
-                        />
-                      ))}
-                    </div>
-                  ) : (
-                    <p>No tournaments found.</p>
-                  )}
-                </div>
-
-                {/* Selected tournament's events */}
-                {selectedTournament && (
-                  <div className="events-section">
-                    <h2>My events for {selectedTournament.name}</h2>
-                    <EventsList tournamentId={selectedTournament.id} showWithdrawButton={false} />
-                  </div>
-                )}
+          {/* Default route for Dashboard */}
+          <Route path="/dashboard/my-tournaments" element={
+            <div>
+              {/* Tabs for Active and Completed */}
+              <div className="tabs">
+                <button
+                  onClick={() => handleTabClick('active')}
+                  className={activeTab === 'active' ? 'active' : ''}
+                >
+                  Active
+                </button>
+                <button
+                  onClick={() => handleTabClick('completed')}
+                  className={activeTab === 'completed' ? 'active' : ''}
+                >
+                  Completed
+                </button>
               </div>
-            }
-          />
 
-          {/* Route for Upcoming Matches */}
-          <Route path="/upcoming-matches" element={<UpcomingMatchesPage />} />
+              {/* Filter By Section */}
+              <div className="filter-by">
+                <h4>Filter by</h4>
+                <select value={selectedTimeframe} onChange={handleTimeframeChange}>
+                  <option value="This week">This week</option>
+                  <option value="This month">This month</option>
+                  <option value="This year">This year</option>
+                </select>
+
+                <select value={selectedLocation} onChange={handleLocationChange}>
+                  <option value="Global">Global</option>
+                  <option value="Local">Local</option>
+                </select>
+              </div>
+
+              <div className="tournament-cards">
+                {activeTab === 'active' && filteredTournaments.length === 0 && <p>No active tournaments</p>}
+                {activeTab === 'completed' && filteredTournaments.length === 0 && <p>No completed tournaments</p>}
+
+                {filteredTournaments.map(tournament => (
+                  <TournamentCard
+                    key={tournament.id}
+                    tournament={tournament}
+                    onSelect={() => handleTournamentClick(tournament)}
+                    showStatus={true}
+                  />
+                ))}
+              </div>
+
+              {/* Selected tournament's events */}
+              {selectedTournament && (
+                <div className="events-section">
+                  <h2>My events for {selectedTournament.name}</h2>
+                  <EventsList tournamentId={selectedTournament.id} showWithdrawButton={false} />
+                </div>
+              )}
+            </div>
+          } />
+
+          {/* Upcoming Matches Route */}
+          <Route path="/dashboard/upcoming" element={<UpcomingMatchesPage />} />
+
+          {/* Leaderboards Route */}
+          <Route path="/leaderboards" element={<div>Leaderboards Content Here</div>} />
         </Routes>
       </div>
-    </Router>
+    </div>
   );
 };
 
 export default UserDashboard;
+
+
+
+
 
 
 

@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Use navigate for routing
 import '../styles/UserTournamentsPage.css'; // CSS file for the page
 
+axios.defaults.baseURL = 'http://localhost:8080';
+
 const TournamentsPage = () => {
   const [tournaments, setTournaments] = useState([]);
   const [filters, setFilters] = useState({

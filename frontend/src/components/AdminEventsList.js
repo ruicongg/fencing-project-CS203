@@ -57,9 +57,11 @@ const AdminEventsList = ({ tournamentId, onEditEvent, onDeleteEvent }) => {
       {events.length > 0 ? (
         events.map((event) => (
           <div key={event.id} className="event-item" onClick={() => handleEventClick(event)}>
-            <h4>{event.name}</h4>
+            <h4>ID: {event.id}</h4>
+            <p>Gender: {event.gender || 'N/A'}</p>
+            <p>Weapon: {event.weapon || 'N/A'}</p>
             <p>
-              {format(new Date(event.startDateTime), 'PPPpp')} - {format(new Date(event.endDateTime), 'PPPpp')}
+              {format(new Date(event.startDate), 'PPPpp')} - {format(new Date(event.endDate), 'PPPpp')}
             </p>
             <button
               onClick={(e) => { e.stopPropagation(); onEditEvent(event); }}

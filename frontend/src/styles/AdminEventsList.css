@@ -1,4 +1,67 @@
-.events-list {
+.event-item {
+  background-color: #f4f4f4;
+  border: 1px solid #d1e7fd;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.event-id {
+  color: #007bff;
+}
+
+.event-details {
+  color: #555;
+}
+
+.event-date {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.event-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.edit-button,
+.delete-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  background-color: #007bff;
+  transition: background-color 0.2s;
+}
+
+.delete-button {
+  background-color: #dc3545;
+}
+
+.edit-button:hover {
+  background-color: #0056b3;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+
+/* .events-list {
   margin-top: 20px;
   background-color: #f8f9fa;
   padding: 20px;
@@ -35,7 +98,7 @@
 
 .event-item button:hover {
   background-color: #0056b3;
-}
+} */
 
 /* .events-list {
     margin-top: 20px;

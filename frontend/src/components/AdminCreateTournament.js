@@ -3,27 +3,27 @@ import '../styles/AdminCreateTournament.css';
 
 const AdminCreateTournament = ({ onClose, onAdd }) => {
   const [name, setName] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [tournamentStartDate, setStartDate] = useState('');
+  const [tournamentEndDate, setEndDate] = useState('');
   const [venue, setVenue] = useState('');
-  const [registrationStart, setRegistrationStart] = useState('');
-  const [registrationEnd, setRegistrationEnd] = useState('');
+  const [registrationStartDate, setRegistrationStart] = useState('');
+  const [registrationEndDate, setRegistrationEnd] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false); // Add a loading state
 
   const handleAdd = async () => {
     // Validation
-    if (!name || !startDate || !endDate || !venue || !registrationStart || !registrationEnd) {
+    if (!name || !tournamentStartDate || !tournamentEndDate || !venue || !registrationStartDate || !registrationEndDate) {
       setErrorMessage('All fields are required.');
       return;
     }
 
-    if (new Date(registrationStart) >= new Date(registrationEnd)) {
+    if (new Date(registrationStartDate) >= new Date(registrationEndDate)) {
       setErrorMessage('Registration start date must be before registration end date.');
       return;
     }
 
-    if (new Date(startDate) >= new Date(endDate)) {
+    if (new Date(tournamentStartDate) >= new Date(tournamentEndDate)) {
       setErrorMessage('Tournament start date must be before the tournament end date.');
       return;
     }
@@ -35,11 +35,11 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
       // If validation passes, call the onAdd function (which is asynchronous)
       await onAdd({
         name,
-        startDate,
-        endDate,
+        tournamentStartDate,
+        tournamentEndDate,
         venue,
-        registrationStart,
-        registrationEnd,
+        registrationStartDate,
+        registrationEndDate,
       });
 
       // Clear error and close modal after successful addition
@@ -69,14 +69,14 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
           <label>Registration Dates</label>
           <input
             type="date"
-            value={registrationStart}
+            value={registrationStartDate}
             onChange={(e) => setRegistrationStart(e.target.value)}
             disabled={isSaving}
           /> 
           to
           <input
             type="date"
-            value={registrationEnd}
+            value={registrationEndDate}
             onChange={(e) => setRegistrationEnd(e.target.value)}
             disabled={isSaving}
           />
@@ -84,14 +84,14 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
           <label>Tournament Dates</label>
           <input
             type="date"
-            value={startDate}
+            value={tournamentStartDate}
             onChange={(e) => setStartDate(e.target.value)}
             disabled={isSaving}
           /> 
           to
           <input
             type="date"
-            value={endDate}
+            value={tournamentEndDate}
             onChange={(e) => setEndDate(e.target.value)}
             disabled={isSaving}
           />
@@ -110,11 +110,11 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
             onClick={handleAdd}
             disabled={
               !name ||
-              !startDate ||
-              !endDate ||
+              !tournamentStartDate ||
+              !tournamentEndDate ||
               !venue ||
-              !registrationStart ||
-              !registrationEnd ||
+              !registrationStartDate ||
+              !registrationEndDate ||
               isSaving
             }
           >

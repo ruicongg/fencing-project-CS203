@@ -34,7 +34,7 @@ const CreateAccountPage = () => {
     setLoading(true); // Set loading state when form is submitted
 
     try {
-      await axios.post('/players', { username, email, password });
+      await axios.post('/api/v1/auth/register', { username, email, password, role: 'USER' }, { withCredentials: true });
       navigate('/login'); // Redirect to login page after account creation
     } catch (error) {
       setError('Error creating account. Please try again.');

@@ -6,6 +6,7 @@ import {
   BrowserRouter,
 } from "react-router-dom";
 import { Navigate } from "react-router-dom";
+import axios from 'axios';
 import LoginPage from "./components/LoginPage";
 import CreateAccountPage from "./components/CreateAccountPage";
 import AdminDashboard from "./components/AdminDashboard";
@@ -19,6 +20,19 @@ import UnauthorizedPage from "./components/UnauthorizedPage";
 import AdminEventDetailsPage from "./components/AdminEventDetailsPage";
 import AdminStageDetailsPage from "./components/AdminStageDetailsPage";
 import AdminMatchDetailsPage from "./components/AdminMatchDetailsPage";
+
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token'); // Retrieve token from localStorage
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`; // Attach token to Authorization header
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 const App = () => {
   return (
@@ -113,17 +127,15 @@ const AdminLayout = () => {
 
 const UserLayout = () => {
   return (
-    <>
+    <div className="user-layout">
       <Sidebar /> {/* Sidebar for users */}
-      <Routes>
-        <Route path="" element={<UserDashboard />} />{" "}
-        {/* UserDashboard as the default */}
-        {/* My Tournaments */}
-        <Route path="my-tournaments" element={<TournamentsPage />} />
-        {/* Upcoming Matches */}
-        <Route path="upcoming" element={<UpcomingMatchesPage />} />
-      </Routes>
-    </>
+      <div className="main-content">
+        <Routes>
+          <Route path="my-tournaments" element={<UserDashboard />} /> {/* Default redirect to My Tournaments */}
+          <Route path="upcoming" element={<UpcomingMatchesPage />} />
+        </Routes>
+      </div>
+    </div>
   );
 };
 

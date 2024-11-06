@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Import for decoding JWT token
 import '../styles/Sidebar.css';  // Custom styles
@@ -13,19 +13,31 @@ const Sidebar = () => {
     userRole = decodedToken.roles ? decodedToken.roles[0] : null; // Assuming roles are in an array
   }
 
+  const [isDashboardExpanded, setIsDashboardExpanded] = useState(false);
+
+  const toggleDashboardMenu = () => {
+    setIsDashboardExpanded(!isDashboardExpanded);
+  };
+
   return (
     <div className="sidebar">
       <ul>
-        <li><Link to="/newsfeed">Newsfeed</Link></li>
+        {/* <li><Link to="/newsfeed">Newsfeed</Link></li> */}
         <li><Link to="/tournaments">Tournaments</Link></li>
-        <li><Link to="/leaderboards">Leaderboards</Link></li>
+        {/* <li><Link to="/leaderboards">Leaderboards</Link></li> */}
 
         {/* Show additional items based on user role */}
         {userRole === 'USER' && (
           <>
-            <li><Link to="/dashboard">Dashboard</Link></li>
-            <li><Link to="/dashboard/my-tournaments">My Tournaments</Link></li>
-            <li><Link to="/dashboard/upcoming">Upcoming</Link></li>
+            <li onClick={toggleDashboardMenu} className="dashboard-tab">
+              <span>Dashboard</span>
+            </li>
+            {isDashboardExpanded && (
+              <ul className="submenu">
+                <li><Link to="/dashboard/my-tournaments">My tournaments</Link></li>
+                <li><Link to="/dashboard/upcoming">Upcoming</Link></li>
+              </ul>
+            )}
           </>
         )}
 
@@ -35,7 +47,7 @@ const Sidebar = () => {
           </>
         )}
         
-        <li><Link to="/profile">Profile</Link></li>
+        {/* <li><Link to="/profile">Profile</Link></li> */}
       </ul>
     </div>
   );

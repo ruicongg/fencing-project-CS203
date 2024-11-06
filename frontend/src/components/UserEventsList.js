@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/UserEventsList.css';
 
+axios.defaults.baseURL = 'http://localhost:8080';
+
 const EventsList = ({ tournamentId, showWithdrawButton }) => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);

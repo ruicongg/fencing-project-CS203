@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/ViewPlayers.css';
 
+axios.defaults.baseURL = 'http://localhost:8080';
+
 const ViewPlayers = ({ onClose, eventId, tournamentId }) => {
   const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
