@@ -11,6 +11,7 @@ import org.fencing.demo.match.MatchRepository;
 import org.fencing.demo.tournament.Tournament;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.fencing.demo.exception.*;
 
 @Service
 public class PlayerServiceImpl implements PlayerService {
@@ -70,11 +71,12 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     @Transactional
-    public void deletePlayer(Long id) {
-        Player player = playerRepository.findById(id)
-                .orElseThrow(() -> new PlayerNotFoundException(id));
+    public void deletePlayer(Long playerId) {
+        Player player = playerRepository.findById(playerId)
+                                        .orElseThrow(() -> new PlayerNotFoundException(playerId));
         playerRepository.delete(player);
     }
+    
 
     // Get all tournaments a player participated in
     public List<Tournament> findTournamentsByPlayer(Long playerId) {

@@ -15,6 +15,7 @@ import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @Entity
@@ -23,9 +24,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Setter
 @NoArgsConstructor
 public class Player extends User implements Comparable<Player>{
+
     private int elo;
 
     private static int STARTING_ELO = 1700;  
+
+    private boolean Reached2400;
 
     @OneToMany(mappedBy = "player1")
     @JsonIgnore

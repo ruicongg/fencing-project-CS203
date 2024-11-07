@@ -65,7 +65,11 @@ public class Match {
         return player1Score > player2Score ? player1 : player2;
     }
 
-    // need the number of k value in player
+    public Player getLoser(){
+        return player1Score < player2Score ? player1 : player2;
+    }
+
+    //need the number of k value in player
     // add the number of matches played in player
     // public void updateEloRanking(){
     // if(matchFinished){
@@ -89,5 +93,26 @@ public class Match {
     public int hashCode() {
         return Objects.hash(id); // Hash based on ID
     }
+
+    public boolean isFinished(){
+        if((player1Score > 0 || player2Score > 0) 
+        && player1 != null && player2 != null){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Match{" +
+            "id=" + id +
+            ", player1=" + player1.getId() + // Assuming Player has a getId() method
+            ", player2=" + player2.getId() + // Assuming Player has a getId() method
+            ", player1Score=" + player1Score +
+            ", player2Score=" + player2Score +
+            '}';
+    }
+
+
 
 }

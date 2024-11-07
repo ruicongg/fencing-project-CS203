@@ -27,12 +27,14 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
@@ -75,6 +77,7 @@ public class Event {
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Set<PlayerRank> rankings = new TreeSet<>(new PlayerRankComparator());
 
     // public TreeSet<Player> EloRank;
@@ -93,25 +96,39 @@ public class Event {
     @JsonIgnore
     private List<KnockoutStage> knockoutStages = new ArrayList<>();
 
-    // //added this
-    @Builder.Default
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Match> matches = new ArrayList<>();
+    private String status;
 
     //includes creating matches
-    public List<Match> createRoundsForGroupStages(GroupStage currGrpStage) {
-        //debugging line
-        //System.out.println("number of players after in Event class" + rankings.size());
-        //List<Match> allMatchesForGroup = new ArrayList<>();
+
+    public List<Match> createRoundsForGroupStages() {
+        System.out.println("all the player ranks in event.java = " + rankings);
+        List<Match> allMatchesForGroup = new ArrayList<>();
         //sort by elo ranks return grp num to playerRanks
         TreeMap<Integer, List<PlayerRank>> groups = BeforeGroupStage.sortByELO(rankings);
-        
+        System.out.println("\n\n");
+        System.out.println("BeforeGroupStage.sortByELO in Event.java" + groups);
+
         //within groups to sort
         TreeMap<Integer, List<Match>> groupMatches = WithinGroupSort.groupMatchMakingAlgorithm(groups, this);
 
+        System.out.println("\n\n");
+        System.out.println("WithinGroupSort.groupMatchMakingAlgorithm in Event.java" + groups);
+        System.out.println("\n\n");
+
+        for(Integer i:groups.keySet()){
+            GroupStage grpStage = new GroupStage();
+            grpStage.setPlayers(groups.get(i));
+            grpStage.setMatches(groupMatches.get(i));
+            // add all the matches to return
+            allMatchesForGroup.addAll(groupMatches.get(i));
+            grpStage.setEvent(this);
+            groupStages.add(grpStage);
+        }
+
         return groupMatches.get((int)currGrpStage.getId());
     }
+
+    //public List<GroupStage> 
 
     public List<Match> getMatchesForKnockoutStage(KnockoutStage knockoutStage) {
 

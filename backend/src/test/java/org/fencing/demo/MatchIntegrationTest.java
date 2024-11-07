@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -75,6 +76,9 @@ public class MatchIntegrationTest {
 
     @Autowired
     private PlayerRepository playerRepository;
+
+    @Autowired
+    private MatchRepository matchRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -153,12 +157,14 @@ public class MatchIntegrationTest {
         knockoutStageRepository.deleteAll();
         knockoutStage = createValidKnockoutStage(event);
         knockoutStageRepository.save(knockoutStage);
-       
+
+        
     }
 
 
     @AfterEach
     void tearDown() {
+        matchRepository.deleteAll();
         eventRepository.deleteAll();
         tournamentRepository.deleteAll();
         groupStageRepository.deleteAll();
@@ -172,14 +178,16 @@ public class MatchIntegrationTest {
      public void addInitialMatchForGroupStage_Success() throws Exception {
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/matches");
+ 
+        ParameterizedTypeReference<List<Match>> responseType = new ParameterizedTypeReference<List<Match>>() {};
+        ResponseEntity<List<Match>> result = restTemplate.withBasicAuth("admin", "adminPass")
+                                                .exchange(uri, HttpMethod.POST, null, responseType);
 
 
-        ResponseEntity<Match[]> result = restTemplate.withBasicAuth("admin", "adminPass")
-                                                    .postForEntity(uri, null, Match[].class);
-        //System.out.println(result.getBody());
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertNotNull(result.getBody());
-        assertTrue(result.getBody().length > 0);
+        System.out.println("Hello1234" + result.getBody());
+        assertTrue(result.getBody().size() > 0);
     }
 
     @Test // passed

@@ -66,6 +66,7 @@ public class MatchServiceImpl implements MatchService {
         }
         Event event = eventRepository.findById(eventId).get();
         List<GroupStage> groupStages = event.getGroupStages();
+        System.out.println("Group Stages: " + groupStages);
         if (groupStages.isEmpty()) {
             throw new IllegalStateException("No groupStage found for event " + eventId);
         }
@@ -80,6 +81,27 @@ public class MatchServiceImpl implements MatchService {
         return matchRepository.saveAll(allMatches);
         
     }
+
+
+    // @Override
+    // @Transactional
+    // public List<Match> addMatchesforAllGroupStages(Long eventId) {
+    //     if(eventId == null){
+    //         throw new IllegalArgumentException("Event ID cannot be null");
+    //     }
+    //     if (!eventRepository.existsById(eventId)) {
+    //         throw new EventNotFoundException(eventId);
+    //     }
+    //     Event event = eventRepository.findById(eventId).get();
+    //     List<GroupStage> groupStages = event.getGroupStages();
+    //     System.out.println("Group Stages: " + groupStages);
+    //     if (groupStages.isEmpty()) {
+    //         throw new IllegalStateException("No groupStage found for event " + eventId);
+    //     }
+    //     //event.createRoundsForGroupStages() return Set of all groupMatches under a single event
+    //     return matchRepository.saveAll(event.createRoundsForGroupStages());
+    // }
+
 
     @Override
     @Transactional
@@ -195,10 +217,20 @@ public class MatchServiceImpl implements MatchService {
         existingMatch.setPlayer2(newMatch.getPlayer2());
         existingMatch.setPlayer1Score(newMatch.getPlayer1Score());
         existingMatch.setPlayer2Score(newMatch.getPlayer2Score());
+        if (player1Rank == null || player2Rank == null){
+            throw new IllegalArgumentException("Player is not registered in this event");
+        }
+
+        System.out.println("the tempELO of player1 b4 match" + player1Rank.getTempElo());
+        System.out.println("the tempELO of player2 b4 match" + player2Rank.getTempElo());
+        System.out.println("\n\n");
         
-        player1Rank.updateAfterMatch(newMatch.getPlayer1Score(), newMatch.getPlayer2Score());
-        player2Rank.updateAfterMatch(newMatch.getPlayer2Score(), newMatch.getPlayer1Score());
+        player1Rank.updateAfterMatch(newMatch.getPlayer1Score(), newMatch.getPlayer2Score(), player2Rank);
+        player2Rank.updateAfterMatch(newMatch.getPlayer2Score(), newMatch.getPlayer1Score(), player1Rank);
         
+        System.out.println("the tempELO of player1 aft match" + player1Rank.getTempElo());
+        System.out.println("the tempELO of player2 aft match" + player2Rank.getTempElo());
+
         return matchRepository.save(existingMatch);
     }
 
