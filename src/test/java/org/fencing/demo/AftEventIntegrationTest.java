@@ -188,17 +188,17 @@ public class AftEventIntegrationTest {
         System.out.println();
     }
 
-    @AfterEach
-    void tearDown(){
-        playerRepository.deleteAll();
-        userRepository.deleteAll();
-        matchRepository.deleteAll();
-        groupStageRepository.deleteAll();
-        knockoutStageRepository.deleteAll();
-        eventRepository.deleteAll();
-        tournamentRepository.deleteAll();
+    // @AfterEach
+    // void tearDown(){
+    //     playerRepository.deleteAll();
+    //     userRepository.deleteAll();
+    //     matchRepository.deleteAll();
+    //     groupStageRepository.deleteAll();
+    //     knockoutStageRepository.deleteAll();
+    //     eventRepository.deleteAll();
+    //     tournamentRepository.deleteAll();
         
-    }
+    // }
 
 
 

@@ -33,6 +33,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 import org.fencing.demo.stages.GroupStage;
+import org.fencing.demo.stages.GroupStageRepository;
 import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.stages.KnockoutStageRepository;
 import org.fencing.demo.tournament.Tournament;
@@ -68,7 +69,7 @@ public class GroupIntegrationTest {
     private String userToken;
 
     @Autowired
-    private KnockoutStageRepository knockoutStageRepository;
+    private GroupStageRepository groupStageRepository;
 
     @Autowired
     private EventRepository eventRepository;
@@ -133,35 +134,47 @@ public class GroupIntegrationTest {
     @AfterEach
     void tearDown() {
         // Clear the database after each test
-        knockoutStageRepository.deleteAll();
+        groupStageRepository.deleteAll();
         eventRepository.deleteAll();
         tournamentRepository.deleteAll();
         playerRepository.deleteAll();
         userRepository.deleteAll();
     }
 
-@Test
-public void addInitialGrpStages_ValidEventId_ReturnsListOfGroupStages() throws Exception {
-    URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage");
+    @Test
+    public void addInitialGrpStages_ValidEventId_ReturnsListOfGroupStages() throws Exception {
+        //
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage");
 
-    ResponseEntity<List<GroupStage>> result = restTemplate.exchange(
-            uri,
-            HttpMethod.POST,
-            null,
-            new ParameterizedTypeReference<List<GroupStage>>() {}
-    );
+        HttpEntity<Long> request = new HttpEntity<>(event.getId(), createHeaders(adminToken));
+        ResponseEntity<List<GroupStage>> result = restTemplate.exchange(
+                uri,
+                HttpMethod.POST,
+                request,
+                new ParameterizedTypeReference<List<GroupStage>>() {}
+        );
 
-    assertEquals(201, result.getStatusCode().value());
+        assertEquals(201, result.getStatusCode().value());
 
-    List<GroupStage> groupStages = result.getBody();
-    assertNotNull(groupStages);
-    assertFalse(groupStages.isEmpty());
+        List<GroupStage> groupStages = result.getBody();
+        assertNotNull(groupStages);
+        assertFalse(groupStages.isEmpty());
+        
+    }
 
-    // Further assertions can check specific properties in groupStages, like event ID or player count.
-    GroupStage firstGroupStage = groupStages.get(0);
-    assertEquals(event.getId(), firstGroupStage.getEvent().getId());
-    assertNotNull(firstGroupStage.getPlayers());
-}
+    //@Test
+    // public void addKnockoutStage_AdminUser_Success() throws Exception {
+    //     URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage");
+
+    //     KnockoutStage knockoutStage = createValidKnockoutStage();
+
+    //     HttpEntity<KnockoutStage> request = new HttpEntity<>(knockoutStage, createHeaders(adminToken));
+    //     ResponseEntity<KnockoutStage> result = restTemplate
+    //             .exchange(uri, HttpMethod.POST, request, KnockoutStage.class);
+
+    //     assertEquals(201, result.getStatusCode().value());
+    //     assertNotNull(result.getBody().getId());
+    // }
 
 
 

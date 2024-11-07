@@ -43,6 +43,7 @@ public class PlayerRank {
 
     @ManyToOne
     @JoinColumn(name = "group_stage_id")
+    @JsonIgnore
     private GroupStage groupStage;
 
     private int score;
