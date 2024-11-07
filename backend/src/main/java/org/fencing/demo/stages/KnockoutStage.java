@@ -59,12 +59,4 @@ public class KnockoutStage {
     public int hashCode() {
         return Objects.hash(id, event);
     }
-
-    @Override
-    public String toString() {
-        return "KnockoutStage{" +
-            "id=" + id +
-            ", matchesCount=" + (matches != null ? matches.size() : 0) + // Count of matches instead of printing them
-            '}';
-    }
 }

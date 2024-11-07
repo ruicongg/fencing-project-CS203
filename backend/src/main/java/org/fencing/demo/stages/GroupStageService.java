@@ -8,8 +8,6 @@ public interface GroupStageService {
 
     GroupStage addGroupStage(Long eventId);
 
-    List<GroupStage> addInitialGrpStages(Long eventId);
-
     GroupStage getGroupStage(Long GroupStageId);
 
     GroupStage updateGroupStage(Long eventId, Long GroupStageId, GroupStage newGroupStage);

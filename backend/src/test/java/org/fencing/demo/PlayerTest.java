@@ -11,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.fencing.demo.exception.*;
+import org.fencing.demo.player.PlayerNotFoundException;
 
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;

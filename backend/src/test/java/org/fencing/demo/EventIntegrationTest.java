@@ -372,7 +372,6 @@ public class EventIntegrationTest {
         assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());  // Expecting 403 Forbidden
     }
 
-
     // Helper methods for creating valid entities
     private Tournament createValidTournament() {
         return Tournament.builder()
