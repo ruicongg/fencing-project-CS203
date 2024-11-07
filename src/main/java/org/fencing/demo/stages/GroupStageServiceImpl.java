@@ -56,6 +56,10 @@ public class GroupStageServiceImpl implements GroupStageService{
             grpStages.add(grpStage);
         }
 
+        System.out.println("\n\n");
+        System.out.println("in GroupStageServiceImple: " + grpStages);
+        System.out.println("\n\n");
+
         return grpStages;
 
     }

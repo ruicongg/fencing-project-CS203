@@ -4,6 +4,7 @@ import org.fencing.demo.events.Event;
 import org.fencing.demo.match.Match;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 // import org.fencing.demo.player.Player;
 import org.fencing.demo.events.PlayerRank;
@@ -48,9 +49,11 @@ public class GroupStage {
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "event_id", nullable = false)
+    @JsonManagedReference
     private Event event;
 
     @OneToMany(mappedBy = "groupStage")
+    @JsonManagedReference
     private List<PlayerRank> players;
 
     @OneToMany(mappedBy = "groupStage", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
