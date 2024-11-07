@@ -29,6 +29,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,6 +50,7 @@ import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.Gender;
 import org.fencing.demo.events.PlayerRank;
+import org.fencing.demo.events.PlayerRankRepository;
 import org.fencing.demo.events.WeaponType;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.match.MatchRepository;
@@ -105,6 +107,9 @@ public class AftEventIntegrationTest {
     private GroupStageRepository groupStageRepository;
 
     @Autowired
+    private PlayerRankRepository playerRankRepository; 
+
+    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     // @Autowired
@@ -113,13 +118,18 @@ public class AftEventIntegrationTest {
     @BeforeEach
     void setUp() {
         // Clear repositories in a consistent order to avoid conflicts
-        playerRepository.deleteAll();
-        userRepository.deleteAll();
-        matchRepository.deleteAll();
-        groupStageRepository.deleteAll();
-        knockoutStageRepository.deleteAll();
-        eventRepository.deleteAll();
-        tournamentRepository.deleteAll();
+        System.out.println("Starting setUp...");
+    
+    playerRankRepository.deleteAll();
+    matchRepository.deleteAll();
+    groupStageRepository.deleteAll();
+    knockoutStageRepository.deleteAll();
+    eventRepository.deleteAll();
+    tournamentRepository.deleteAll();
+    playerRepository.deleteAll();
+    userRepository.deleteAll();
+
+    System.out.println("Repositories cleared.");
 
         // Save users
         adminUser = new User("admin", passwordEncoder.encode("adminPass"), "admin@example.com", Role.ADMIN);
@@ -151,6 +161,8 @@ public class AftEventIntegrationTest {
         // Save PlayerRanks (only after groupStage is created)
         PlayerRank playerRank1 = createPlayerRank(player1, event, groupStage);
         PlayerRank playerRank2 = createPlayerRank(player2, event, groupStage);
+        playerRankRepository.save(playerRank1);
+        playerRankRepository.save(playerRank2);
         
 
         // Create and save matches
@@ -190,19 +202,67 @@ public class AftEventIntegrationTest {
 
     // @AfterEach
     // void tearDown(){
-    //     playerRepository.deleteAll();
-    //     userRepository.deleteAll();
+    //     //playerRankRepository.deleteAll();
     //     matchRepository.deleteAll();
     //     groupStageRepository.deleteAll();
     //     knockoutStageRepository.deleteAll();
     //     eventRepository.deleteAll();
     //     tournamentRepository.deleteAll();
+    //     playerRepository.deleteAll();
+    //     userRepository.deleteAll();
         
     // }
 
+    @Test
+    @DirtiesContext
+    //passed
+    public void endEvent_InvalidEventId_Failure()  throws Exception {
+        Long invalidId = -1L; // Use an invalid ID
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + invalidId + "/elo");
 
+        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
+                .exchange(uri, HttpMethod.PUT, null, String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+    }
+
+    // //Need check
+    //need seperate set up
+    @Test
+    @DirtiesContext
+        public void endEvent_IncompleteMatches_Failure() throws Exception {
+        
+       // Remove player ranks associated with group stage
+    playerRankRepository.deleteAll();  // Ensure no PlayerRanks remain
+
+    grpMatch.setPlayer1Score(0);
+    grpMatch.setPlayer2Score(0);
+    matchRepository.save(grpMatch);
+
+    URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/elo");
+
+    ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
+            .exchange(uri, HttpMethod.PUT, null, String.class);
+
+    assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    assertTrue(result.getBody().contains("not all matches completed"));
+    }
 
     @Test
+    @DirtiesContext
+    public void endEvent_ForbiddenForRegularUser_Failure() throws Exception {
+        Event event = createValidEvent(tournament);
+
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events" + event.getId() + "/elo");
+
+        ResponseEntity<String> result = restTemplate.withBasicAuth("user", "userPass")
+                                            .exchange(uri, HttpMethod.PUT, null, String.class);
+
+        assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());  
+    }
+
+    @Test
+    @DirtiesContext
     public void endEvent_Success() throws Exception {
         // Arrange
         // Create a URI for the endEvent endpoint
@@ -229,49 +289,6 @@ public class AftEventIntegrationTest {
                 System.out.println("Player " + player.getId() + ": " + player.getElo());
             }
         }
-    }
-
-
-    @Test
-    //passed
-    public void endEvent_InvalidEventId_Failure()  throws Exception {
-        Long invalidId = -1L; // Use an invalid ID
-        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + invalidId + "/elo");
-
-        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
-                .exchange(uri, HttpMethod.PUT, null, String.class);
-
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-    }
-
-    // //Need check
-    //need seperate set up
-    @Test
-    public void endEvent_IncompleteMatches_Failure() throws Exception {
-        grpMatch.setPlayer1Score(0);
-        grpMatch.setPlayer2Score(0);
-        matchRepository.save(grpMatch);
-        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/elo");
-
-        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
-                .exchange(uri, HttpMethod.PUT, null, String.class);
-
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-        assertTrue(result.getBody().contains("not all matches completed"));
-    }
-
-
-
-    @Test
-    public void endEvent_ForbiddenForRegularUser_Failure() throws Exception {
-        Event event = createValidEvent(tournament);
-
-        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events" + event.getId() + "/elo");
-
-        ResponseEntity<String> result = restTemplate.withBasicAuth("user", "userPass")
-                                            .exchange(uri, HttpMethod.PUT, null, String.class);
-
-        assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());  
     }
 
 
