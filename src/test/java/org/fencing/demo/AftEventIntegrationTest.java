@@ -29,6 +29,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -112,13 +113,13 @@ public class AftEventIntegrationTest {
     @BeforeEach
     void setUp() {
         // Clear repositories in a consistent order to avoid conflicts
-        matchRepository.deleteAll();
         playerRepository.deleteAll();
+        userRepository.deleteAll();
+        matchRepository.deleteAll();
         groupStageRepository.deleteAll();
         knockoutStageRepository.deleteAll();
         eventRepository.deleteAll();
         tournamentRepository.deleteAll();
-        userRepository.deleteAll();
 
         // Save users
         adminUser = new User("admin", passwordEncoder.encode("adminPass"), "admin@example.com", Role.ADMIN);
@@ -185,6 +186,18 @@ public class AftEventIntegrationTest {
         System.out.println("player1ranks: " + player1.getPlayerRanks());
         System.out.println("player2ranks: " + player2.getPlayerRanks());
         System.out.println();
+    }
+
+    @AfterEach
+    void tearDown(){
+        playerRepository.deleteAll();
+        userRepository.deleteAll();
+        matchRepository.deleteAll();
+        groupStageRepository.deleteAll();
+        knockoutStageRepository.deleteAll();
+        eventRepository.deleteAll();
+        tournamentRepository.deleteAll();
+        
     }
 
 
@@ -341,19 +354,6 @@ public class AftEventIntegrationTest {
 
     }
 
-    private Match createIncompleteGroupMatch(){
-        Match match = new Match();
-        match.setGroupStage(groupStage);
-        match.setEvent(event);
-        match.setPlayer1(player1);
-        match.setPlayer2(player2);
-
-        player1.getMatchesAsPlayer1().add(match);
-        player2.getMatchesAsPlayer2().add(match);
-
-        return match;
-
-    }
 
     private Match createValidKnockoutMatch(){
         Match match = new Match();

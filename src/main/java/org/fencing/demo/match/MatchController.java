@@ -1,6 +1,7 @@
 package org.fencing.demo.match;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,9 +29,10 @@ public class MatchController {
     }
 
     @PostMapping("/tournaments/{tournamentId}/events/{eventId}/groupStage/matches")
-    @ResponseStatus(HttpStatus.CREATED)
-    public List<Match> addInitialMatchforGroupStage(@PathVariable Long eventId) {
-        return matchService.addMatchesforAllGroupStages(eventId);
+    public ResponseEntity<List<Match>> addInitialMatchesForGroupStage(@PathVariable Long tournamentId, @PathVariable Long eventId) {
+        // Logic to create matches
+        List<Match> matches = matchService.addMatchesforAllGroupStages(eventId); // Example method
+        return ResponseEntity.status(HttpStatus.CREATED).body(matches);
     }
 
 

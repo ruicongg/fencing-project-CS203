@@ -54,12 +54,34 @@ public class MatchServiceImpl implements MatchService {
         }
         Event event = eventRepository.findById(eventId).get();
         List<GroupStage> groupStages = event.getGroupStages();
+        System.out.println("Group Stages: " + groupStages);
         if (groupStages.isEmpty()) {
             throw new IllegalStateException("No groupStage found for event " + eventId);
         }
         //event.createRoundsForGroupStages() return Set of all groupMatches under a single event
         return matchRepository.saveAll(event.createRoundsForGroupStages());
     }
+
+
+    // @Override
+    // @Transactional
+    // public List<Match> addMatchesforAllGroupStages(Long eventId) {
+    //     if(eventId == null){
+    //         throw new IllegalArgumentException("Event ID cannot be null");
+    //     }
+    //     if (!eventRepository.existsById(eventId)) {
+    //         throw new EventNotFoundException(eventId);
+    //     }
+    //     Event event = eventRepository.findById(eventId).get();
+    //     List<GroupStage> groupStages = event.getGroupStages();
+    //     System.out.println("Group Stages: " + groupStages);
+    //     if (groupStages.isEmpty()) {
+    //         throw new IllegalStateException("No groupStage found for event " + eventId);
+    //     }
+    //     //event.createRoundsForGroupStages() return Set of all groupMatches under a single event
+    //     return matchRepository.saveAll(event.createRoundsForGroupStages());
+    // }
+
 
     @Override
     @Transactional

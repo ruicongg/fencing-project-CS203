@@ -98,12 +98,22 @@ public class Event {
     private String status;
 
     //includes creating matches
+
     public List<Match> createRoundsForGroupStages() {
+        System.out.println("all the player ranks in event.java = " + rankings);
         List<Match> allMatchesForGroup = new ArrayList<>();
         //sort by elo ranks return grp num to playerRanks
         TreeMap<Integer, List<PlayerRank>> groups = BeforeGroupStage.sortByELO(rankings);
+        System.out.println("\n\n");
+        System.out.println("BeforeGroupStage.sortByELO in Event.java" + groups);
+
         //within groups to sort
         TreeMap<Integer, List<Match>> groupMatches = WithinGroupSort.groupMatchMakingAlgorithm(groups, this);
+
+        System.out.println("\n\n");
+        System.out.println("WithinGroupSort.groupMatchMakingAlgorithm in Event.java" + groups);
+        System.out.println("\n\n");
+
         for(Integer i:groups.keySet()){
             GroupStage grpStage = new GroupStage();
             grpStage.setPlayers(groups.get(i));
@@ -116,6 +126,8 @@ public class Event {
 
         return allMatchesForGroup;
     }
+
+    //public List<GroupStage> 
 
     public List<Match> getMatchesForKnockoutStage(KnockoutStage knockoutStage) {
         

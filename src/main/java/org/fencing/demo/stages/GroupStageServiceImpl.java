@@ -1,7 +1,16 @@
 package org.fencing.demo.stages;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.TreeMap;
+
+import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
+import org.fencing.demo.events.PlayerRank;
+import org.fencing.demo.matchMaking.BeforeGroupStage;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,6 +35,29 @@ public class GroupStageServiceImpl implements GroupStageService{
             event.getGroupStages().add(grpStage);
             return groupStageRepository.save(grpStage);
         }).orElseThrow(() -> new EventNotFoundException(eventId));
+    }
+
+
+    //methods added to add first grp stages
+    public List<GroupStage> addInitialGrpStages(Long eventId){
+        Optional<Event> optionalEvent = eventRepository.findById(eventId);
+        Event event = optionalEvent.orElseThrow(() -> new NoSuchElementException("Event not found"));
+
+        List<GroupStage> grpStages = new ArrayList<>();
+
+        TreeMap<Integer, List<PlayerRank>> groups = BeforeGroupStage.sortByELO(event.getRankings());
+
+        for(Integer i : groups.keySet()){
+            GroupStage grpStage = new GroupStage();
+            grpStage.setEvent(event);
+            grpStage.setPlayers(groups.get(i));
+            event.getGroupStages().add(grpStage);
+            groupStageRepository.save(grpStage);
+            grpStages.add(grpStage);
+        }
+
+        return grpStages;
+
     }
 
     public GroupStage getGroupStage(Long groupStageId){

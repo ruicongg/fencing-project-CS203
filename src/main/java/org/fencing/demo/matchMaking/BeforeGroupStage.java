@@ -15,6 +15,9 @@ public class BeforeGroupStage {
     
     // return the grp number with the set of PlayerRanks
     public static TreeMap<Integer, List<PlayerRank>> sortByELO(Set<PlayerRank> rankings){
+
+        //System.out.println("rankings in Before groupGroupStage: " + rankings);
+        
         //Check if event and rankings exist
         if (rankings == null) {
             return null;
@@ -28,6 +31,8 @@ public class BeforeGroupStage {
         for (PlayerRank pr : rankings) {
             players.add(pr);
         }
+
+        System.out.println("rankings in Before groupGroupStage: " + players);
 
         int playerNum = players.size();
         if (playerNum == 0) {
