@@ -8,13 +8,11 @@
 
 import React from 'react';
 import { useNavigate, Routes, Route } from 'react-router-dom';
-import EventsPage from './UserEventsPage'
+import EventsPage from './UserEventsPage';
 import UpcomingMatchesPage from './UserUpcomingMatchesPage';
 import TournamentsPage from './UserTournamentsPage';
 import TournamentEventsPage from './UserTournamentsEventsPage';
 import '../styles/UserDashboard.css';
-
-// axios.defaults.baseURL = 'http://localhost:8080';
 
 const UserDashboard = () => {
   const navigate = useNavigate();
@@ -23,9 +21,10 @@ const UserDashboard = () => {
     <div className="user-dashboard">
       {/* Navigation Buttons */}
       <div className="button-container">
+        <button onClick={() => navigate('/dashboard')}>Tournaments</button>
         <button onClick={() => navigate('/dashboard/my-events')}>My Events</button>
         <button onClick={() => navigate('/dashboard/upcoming')}>Upcoming</button>
-        <button onClick={() => navigate('/leaderboards')}>Leaderboards</button>
+        {/* <button onClick={() => navigate('/dashboard/leaderboards')}>Leaderboards</button> */}
       </div>
 
       {/* Main Content */}
@@ -39,11 +38,14 @@ const UserDashboard = () => {
           {/* Upcoming Matches Route */}
           <Route path="/dashboard/upcoming" element={<UpcomingMatchesPage />} />
 
-          {/* Leaderboards Route */}
-          <Route path="/dashboard/leaderboards" element={<div>Leaderboards Content Here</div>} />
+          {/* Leaderboards Route
+          <Route path="/dashboard/leaderboards" element={<div>Leaderboards Content Here</div>} /> */}
 
           {/* Tournament Events Route */}
           <Route path="/tournaments/:tournamentId/events" element={<TournamentEventsPage />} />
+
+          {/* Default Route Redirect */}
+          <Route path="*" element={<TournamentsPage />} />  {/* Redirects to TournamentsPage if path not found */}
         </Routes>
       </div>
     </div>

@@ -4,34 +4,15 @@ import '../styles/UserEventsList.css';
 
 axios.defaults.baseURL = 'http://localhost:8080';
 
-const EventsList = ({ tournamentId, showWithdrawButton }) => {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const EventsList = ({ events, showWithdrawButton, onWithdraw }) => {
+  
   const [withdrawing, setWithdrawing] = useState(null); // Track which event is being withdrawn
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await axios.get(`/tournaments/${tournamentId}/events`);
-        setEvents(response.data);
-      } catch (error) {
-        setError('Failed to fetch events.');
-        console.error('Error fetching events:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvents();
-  }, [tournamentId]);
 
   const handleWithdraw = async (eventId) => {
     setWithdrawing(eventId); // Set the event being withdrawn
     try {
       await axios.post(`/events/${eventId}/withdraw`);
-      // Dynamically update the event list without needing a page reload
-      setEvents(prevEvents => prevEvents.filter(event => event.id !== eventId));
+      onWithdraw(eventId); // Inform the parent component that the event was withdrawn
     } catch (error) {
       console.error('Error withdrawing from event:', error);
       alert('Failed to withdraw from the event.');
@@ -49,43 +30,37 @@ const EventsList = ({ tournamentId, showWithdrawButton }) => {
     return now < startDate && now < registrationEndDate;
   };
 
-  if (loading) {
-    return <p>Loading events...</p>;
-  }
-
-  if (error) {
-    return <p>{error}</p>;
+  if (!events || events.length === 0) {
+    return <p>No events found.</p>;
   }
 
   return (
     <div className="events-list">
-      {events.length > 0 ? (
-        events.map(event => (
-          <div key={event.id} className="event-item">
-            <h4>{event.name}</h4>
-            <p>{new Date(event.startDateTime).toLocaleString()} - {new Date(event.endDateTime).toLocaleString()}</p>
-            <p><strong>Weapon:</strong> {event.weapon}</p>
+      {events.map(event => (
+        <div key={event.id} className="event-item">
+          <h4>{event.name}</h4>
+          <p>{new Date(event.startDateTime).toLocaleString()} - {new Date(event.endDateTime).toLocaleString()}</p>
+          <p><strong>Weapon:</strong> {event.weapon}</p>
 
-            {/* Show "Withdraw" button for upcoming events within the registration period */}
-            {showWithdrawButton && isUpcomingAndWithinRegistrationPeriod(event) && (
-              <button
-                className="withdraw-button"
-                onClick={() => handleWithdraw(event.id)}
-                disabled={withdrawing === event.id} // Disable the button while withdrawing
-              >
-                {withdrawing === event.id ? 'Withdrawing...' : 'Withdraw'}
-              </button>
-            )}
-          </div>
-        ))
-      ) : (
-        <p>No events found for this tournament.</p>
-      )}
+          {/* Show "Withdraw" button for upcoming events within the registration period */}
+          {showWithdrawButton && isUpcomingAndWithinRegistrationPeriod(event) && (
+            <button
+              className="withdraw-button"
+              onClick={() => handleWithdraw(event.id)}
+              disabled={withdrawing === event.id} // Disable the button while withdrawing
+            >
+              {withdrawing === event.id ? 'Withdrawing...' : 'Withdraw'}
+            </button>
+          )}
+        </div>
+      ))}
     </div>
   );
 };
 
 export default EventsList;
+
+
 
 
 // import React, { useState, useEffect } from 'react';

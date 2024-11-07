@@ -15,7 +15,7 @@ const EventsPage = () => {
   useEffect(() => {
     const fetchMyEvents = async () => {
       try {
-        const response = await axios.get('/my-events'); // You may need to create this backend endpoint
+        const response = await axios.get('/tournaments'); // Make sure this endpoint is implemented
         const now = new Date();
 
         const active = response.data.filter(event => new Date(event.endDateTime) > now);
@@ -33,6 +33,13 @@ const EventsPage = () => {
 
     fetchMyEvents();
   }, []);
+
+  const handleWithdraw = (eventId) => {
+    // Filter out the withdrawn event from the active list
+    setActiveEvents((prevActiveEvents) =>
+      prevActiveEvents.filter((event) => event.id !== eventId)
+    );
+  };
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -68,7 +75,7 @@ const EventsPage = () => {
 
       {/* Events List */}
       {activeTab === 'active' ? (
-        <EventsList events={activeEvents} showWithdrawButton={true} />
+        <EventsList events={activeEvents} showWithdrawButton={true} onWithdraw={handleWithdraw} />
       ) : (
         <EventsList events={completedEvents} showWithdrawButton={false} />
       )}

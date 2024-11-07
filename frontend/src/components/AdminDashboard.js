@@ -93,8 +93,6 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard">
-    <h1>Admin Dashboard</h1>
-    <p>This is a test message to confirm rendering.</p>
       <nav className="breadcrumb">
         <span>Tournaments</span>
       </nav>
@@ -110,9 +108,11 @@ const AdminDashboard = () => {
         </button>
       </div>
 
-      <button className="new-tournament-button" onClick={() => setIsCreatingTournament(true)}>
-        + New tournament
-      </button>
+      {activeTab === 'active' && (
+        <button className="new-tournament-button" onClick={() => setIsCreatingTournament(true)}>
+          + New tournament
+        </button>
+      )}
 
       {loading && <p>Loading tournaments...</p>}
 
