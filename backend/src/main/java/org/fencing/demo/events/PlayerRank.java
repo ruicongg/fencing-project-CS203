@@ -2,6 +2,7 @@ package org.fencing.demo.events;
 
 import java.util.Objects;
 
+import org.fencing.demo.matchMaking.EloCalculator;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.stages.GroupStage;
 import jakarta.persistence.Entity;
@@ -42,6 +43,16 @@ public class PlayerRank {
 
     private int lossCount;
 
+    private int tempElo;
+
+    // Update tempElo after player is set
+    public void initializeTempElo() {
+        if (player != null) {
+            this.tempElo = player.getElo();
+        }
+    }
+
+
     @Override
     public int hashCode() {
         return Objects.hash(id); // Use the unique `id` field
@@ -57,14 +68,17 @@ public class PlayerRank {
         return id == that.id; // Use only `id` for equality comparison
     }
 
-    public void updateAfterMatch(int pointsWon, int pointsOpponent) {
+    public void updateAfterMatch(int pointsWon, int pointsOpponent, PlayerRank opponent) {
         if (pointsWon > pointsOpponent) {
             winCount++;
             score += (pointsWon * 5); // 5 points for each win
+            tempElo = EloCalculator.changeTempElo(this, opponent, true);
         } else {
             lossCount++;
+            tempElo = EloCalculator.changeTempElo(this, opponent, false);
         }
         score -= pointsOpponent; // Deduct opponent's points
     }
+
 
 }

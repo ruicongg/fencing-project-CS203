@@ -196,8 +196,8 @@ public class MatchServiceImpl implements MatchService {
         existingMatch.setPlayer1Score(newMatch.getPlayer1Score());
         existingMatch.setPlayer2Score(newMatch.getPlayer2Score());
         
-        player1Rank.updateAfterMatch(newMatch.getPlayer1Score(), newMatch.getPlayer2Score());
-        player2Rank.updateAfterMatch(newMatch.getPlayer2Score(), newMatch.getPlayer1Score());
+        player1Rank.updateAfterMatch(newMatch.getPlayer1Score(), newMatch.getPlayer2Score(), player2Rank);
+        player2Rank.updateAfterMatch(newMatch.getPlayer2Score(), newMatch.getPlayer1Score(), player1Rank);
         
         return matchRepository.save(existingMatch);
     }

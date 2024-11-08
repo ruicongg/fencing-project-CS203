@@ -2,6 +2,7 @@ package org.fencing.demo.events;
 
 import java.util.List;
 
+import org.fencing.demo.player.Player;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +46,12 @@ public class EventController {
     @ResponseStatus(HttpStatus.OK)
     public Event updateEvent(@PathVariable Long tournamentId, @PathVariable Long eventId, @Valid @RequestBody Event event) {
         return eventService.updateEvent(tournamentId, eventId, event);
+    }
+
+    @PutMapping("/tournaments/{tournamentId}/events/{eventId}/elo")
+    @ResponseStatus(HttpStatus.OK)
+    public List<Player> endEvent(@PathVariable Long tournamentId, @PathVariable Long eventId) {
+        return eventService.updatePlayerEloAfterEvent(eventId);
     }
 
     @PostMapping("/tournaments/{tournamentId}/events/{eventId}/addPlayer/{playerId}")
