@@ -38,12 +38,10 @@ public class Match {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    // Optional ManyToOne relationship with GroupStage
     @ManyToOne(optional = true)
     @JoinColumn(name = "group_stage_id")
     private GroupStage groupStage;
 
-    // Optional ManyToOne relationship with KnockoutStage
     @ManyToOne(optional = true)
     @JoinColumn(name = "knockout_stage_id")
     private KnockoutStage knockoutStage;

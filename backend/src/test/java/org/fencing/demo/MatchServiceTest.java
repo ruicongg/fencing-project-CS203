@@ -49,6 +49,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.mockito.ArgumentMatchers.anyInt;
+
 @ExtendWith(MockitoExtension.class)
 public class MatchServiceTest {
 
@@ -263,7 +265,8 @@ public class MatchServiceTest {
         
         when(matchRepository.findById(matchId)).thenReturn(Optional.of(existingMatch));
         when(matchRepository.save(any(Match.class))).thenReturn(existingMatch);
-
+        doNothing().when(playerRank1).updateAfterMatch(anyInt(), anyInt(), playerRank2);
+        doNothing().when(playerRank2).updateAfterMatch(anyInt(), anyInt(), playerRank1);
         Match result = matchService.updateMatch(eventId, matchId, newMatch);
 
         assertNotNull(result);
