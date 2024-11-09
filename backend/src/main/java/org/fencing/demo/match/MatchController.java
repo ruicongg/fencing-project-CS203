@@ -2,6 +2,8 @@ package org.fencing.demo.match;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 //import java.util.Set;
@@ -52,6 +54,13 @@ public class MatchController {
         return matchService.getMatch(matchId);
     }
 
+    @GetMapping("/upcoming-matches")
+    public List<Match> getUpcomingMatches() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return matchService.getMatchesScheduledForToday(username);
+    }
+
     @PutMapping("/tournaments/{tournamentId}/events/{eventId}/match/{matchId}")
     @ResponseStatus(HttpStatus.OK)
     public Match updateMatch(@PathVariable Long eventId, @PathVariable Long matchId, @RequestBody Match match) {
@@ -63,4 +72,6 @@ public class MatchController {
     public void deleteMatch(@PathVariable Long eventId, @PathVariable Long matchId) {
         matchService.deleteMatch(eventId, matchId);
     }
+
+    
 }

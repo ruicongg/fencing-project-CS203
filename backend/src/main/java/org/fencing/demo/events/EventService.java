@@ -1,6 +1,7 @@
 package org.fencing.demo.events;
 
 import java.util.List;
+import org.fencing.demo.player.Player;
 
 public interface EventService {
     Event addEvent(Long tournamentId, Event event);
@@ -14,4 +15,6 @@ public interface EventService {
     Event addPlayerToEvent(Long eventId, Long playerId);
 
     void deleteEvent(Long tournamentId, Long eventId);
+
+    List<Player> updatePlayerEloAfterEvent(Long eventId);
 }

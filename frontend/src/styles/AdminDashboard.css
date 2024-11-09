@@ -1,0 +1,126 @@
+.admin-dashboard {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  
+  .tabs {
+    margin-bottom: 20px;
+  }
+  
+  .tabs button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    background-color: #f0f0f0;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .tabs button.active {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .tournament-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .new-tournament-button {
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .events-section {
+    margin-top: 20px;
+  }
+  
+  .new-event-button {
+    padding: 8px 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+
+/* .admin-dashboard {
+    padding: 20px;
+    color: white;
+  }
+  
+  .tournaments-section {
+    background-color: #2d2f40;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .tournaments-section ul {
+    list-style-type: none;
+  }
+  
+  .tournaments-section ul li {
+    cursor: pointer;
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #1d1f2f;
+    border-radius: 5px;
+  }
+  
+  .events-section {
+    background-color: #2d2f40;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .stages-section {
+    margin-top: 20px;
+  }
+  
+  .stages-section ul {
+    list-style-type: none;
+  }
+  
+  .stages-section ul li {
+    background-color: #1d1f2f;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+  }
+
+  .breadcrumb {
+    margin-bottom: 20px;
+  }
+  
+  .breadcrumb a {
+    color: #00f;
+    text-decoration: none;
+  }
+  
+  .breadcrumb span {
+    color: #fff;
+  }  
+  
+  button {
+    padding: 10px;
+    background-color: #ff7a59;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  } */
+  

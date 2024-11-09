@@ -38,11 +38,11 @@ public class PlayerServiceImpl implements PlayerService {
     @Override
     @Transactional
     public Player addPlayer(Player player) {
-        List<Player> sameUser = playerRepository.findByUsername(player.getUsername());
-        if (sameUser.isEmpty())
+        Optional<Player> sameUser = playerRepository.findByUsername(player.getUsername());
+        if (!sameUser.isPresent())
             return playerRepository.save(player);
         else
-            return null;
+            throw new IllegalArgumentException("Username is already taken: " + player.getUsername());
     }
 
     @Override

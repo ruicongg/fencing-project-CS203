@@ -1,0 +1,41 @@
+.events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .event-item {
+    padding: 15px;
+    background-color: #1f1f1f;
+    border-radius: 8px;
+    border: 1px solid #00BFFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: default;
+  }
+  
+  .event-item h4 {
+    font-size: 18px;
+    color: #00BFFF;
+    margin-bottom: 8px;
+  }
+  
+  .event-item p {
+    font-size: 16px;
+    color: #aaaaaa;
+  }
+  
+  .withdraw-button {
+    background-color: #FF4500;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .withdraw-button:hover {
+    background-color: #ff6347;
+  }
+  

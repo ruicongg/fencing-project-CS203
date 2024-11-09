@@ -1,6 +1,5 @@
 package org.fencing.demo.player;
 
-
 // import org.fencing.demo.tournaments.Tournament;
 
 import jakarta.persistence.*;
@@ -27,7 +26,6 @@ public class Player extends User implements Comparable<Player>{
 
     private static int STARTING_ELO = 1700;  
 
-
     @OneToMany(mappedBy = "player1")
     @JsonIgnore
     private Set<Match> matchesAsPlayer1;
@@ -36,9 +34,11 @@ public class Player extends User implements Comparable<Player>{
     @JsonIgnore
     private Set<Match> matchesAsPlayer2;
 
-    @OneToMany(mappedBy = "player")
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     Set<PlayerRank> playerRanks;
+
+    private boolean reached2400;
 
 
     public Player(String username, String password, String email, Role role) {
