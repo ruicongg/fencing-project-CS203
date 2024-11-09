@@ -35,6 +35,7 @@ public class User implements UserDetails{
     
     @Email(message = "Email should be valid")
     @NotNull(message = "Email is required")
+    @Column(unique = true)
     private String email;
 
     @Enumerated(EnumType.STRING)
