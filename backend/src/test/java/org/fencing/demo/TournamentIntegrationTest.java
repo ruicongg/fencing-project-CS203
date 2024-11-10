@@ -4,13 +4,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.HashSet;
 
 import org.fencing.demo.tournament.Tournament;
 import org.fencing.demo.tournament.TournamentRepository;
+import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
 import org.fencing.demo.user.UserRepository;
-import org.fencing.demo.user.Role;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import java.util.HashSet;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class TournamentIntegrationTest {

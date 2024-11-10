@@ -1,11 +1,13 @@
 package org.fencing.demo.stages;
 
+import java.util.List;
+
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
-import org.springframework.stereotype.Service;
 import org.fencing.demo.match.Match;
-import java.util.List;
+import org.springframework.stereotype.Service;
+
 @Service
 public class KnockoutStageServiceImpl implements KnockoutStageService{
     private final KnockoutStageRepository knockoutStageRepository;

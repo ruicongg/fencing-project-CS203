@@ -1,17 +1,18 @@
 package org.fencing.demo.matchmaking;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import java.util.*;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.PlayerRank;
+import org.fencing.demo.events.PlayerRankEloComparator;
 import org.fencing.demo.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.fencing.demo.events.PlayerRankEloComparator;
 
 @ExtendWith(MockitoExtension.class)
 class GroupDistributionServiceTest {

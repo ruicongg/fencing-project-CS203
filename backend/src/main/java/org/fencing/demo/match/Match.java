@@ -1,14 +1,5 @@
 package org.fencing.demo.match;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
 import java.util.Objects;
 
 import org.fencing.demo.events.Event;
@@ -16,6 +7,13 @@ import org.fencing.demo.player.Player;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.KnockoutStage;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

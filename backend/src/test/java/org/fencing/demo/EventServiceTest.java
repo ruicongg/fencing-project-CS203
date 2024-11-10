@@ -12,25 +12,21 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.TreeSet;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.EventServiceImpl;
 import org.fencing.demo.events.Gender;
-import org.fencing.demo.events.PlayerRankComparator;
 import org.fencing.demo.events.WeaponType;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.tournament.Tournament;
 import org.fencing.demo.tournament.TournamentNotFoundException;
 import org.fencing.demo.tournament.TournamentRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

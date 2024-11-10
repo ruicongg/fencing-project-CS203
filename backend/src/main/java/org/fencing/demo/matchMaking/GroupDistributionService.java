@@ -3,17 +3,16 @@ package org.fencing.demo.matchmaking;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.stream.IntStream;
 
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.events.PlayerRankEloComparator;
-import jakarta.validation.constraints.NotNull;
-import java.util.Map;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
+
+import jakarta.validation.constraints.NotNull;
 
 @Component
 public class GroupDistributionService {

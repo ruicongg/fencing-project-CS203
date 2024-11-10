@@ -13,8 +13,9 @@ import static org.mockito.Mockito.when;
 import java.util.Optional;
 
 import org.apache.hc.client5.http.auth.InvalidCredentialsException;
-import org.fencing.demo.user.User;
 import org.fencing.demo.user.Role;
+import org.fencing.demo.user.User;
+import org.fencing.demo.user.UserNotFoundException;
 import org.fencing.demo.user.UserRepository;
 import org.fencing.demo.user.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,9 +26,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.fencing.demo.user.UserNotFoundException;
-
-
 
 @ExtendWith(MockitoExtension.class)
 public class UserTest {

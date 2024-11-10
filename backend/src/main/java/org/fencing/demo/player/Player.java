@@ -1,10 +1,5 @@
 package org.fencing.demo.player;
 
-// import org.fencing.demo.tournaments.Tournament;
-
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,6 +10,9 @@ import org.fencing.demo.user.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+// import org.fencing.demo.tournaments.Tournament;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "players")

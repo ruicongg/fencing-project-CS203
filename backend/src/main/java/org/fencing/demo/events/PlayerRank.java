@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import org.fencing.demo.matchmaking.EloCalculator;
 import org.fencing.demo.player.Player;
-import org.fencing.demo.stages.GroupStage;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

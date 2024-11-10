@@ -1,6 +1,5 @@
 package org.fencing.demo.stages;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

@@ -7,28 +7,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.contains;
 
 import java.net.URI;
-import java.net.http.HttpHeaders;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Optional;
-import java.util.TreeSet;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.Gender;
-import org.fencing.demo.events.PlayerRankComparator;
 import org.fencing.demo.events.WeaponType;
 import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.tournament.Tournament;
 import org.fencing.demo.tournament.TournamentRepository;
-import org.fencing.demo.user.UserRepository;
-import org.hibernate.Hibernate;
 import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
+import org.fencing.demo.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +31,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
-
-import jakarta.persistence.EntityManager;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class EventIntegrationTest {

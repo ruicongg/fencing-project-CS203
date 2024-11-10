@@ -10,42 +10,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-
-import org.fencing.demo.stages.GroupStage;
-import org.fencing.demo.stages.GroupStageRepository;
-import org.fencing.demo.stages.KnockoutStage;
-import org.fencing.demo.stages.KnockoutStageRepository;
-import org.fencing.demo.tournament.Tournament;
-import org.fencing.demo.tournament.TournamentRepository;
 import org.fencing.demo.events.Event;
-import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.Gender;
 import org.fencing.demo.events.PlayerRank;
@@ -54,10 +20,33 @@ import org.fencing.demo.match.Match;
 import org.fencing.demo.match.MatchRepository;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
+import org.fencing.demo.stages.GroupStage;
+import org.fencing.demo.stages.GroupStageRepository;
+import org.fencing.demo.stages.KnockoutStage;
+import org.fencing.demo.stages.KnockoutStageRepository;
+import org.fencing.demo.tournament.Tournament;
+import org.fencing.demo.tournament.TournamentRepository;
 import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
 import org.fencing.demo.user.UserRepository;
-import org.hibernate.Hibernate;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class AftEventIntegrationTest {

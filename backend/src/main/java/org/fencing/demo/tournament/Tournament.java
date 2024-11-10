@@ -1,30 +1,29 @@
 package org.fencing.demo.tournament;
 
+import java.time.LocalDate;
+import java.util.Objects;
+import java.util.Set;
+
+import org.fencing.demo.events.Event;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
-
-import jakarta.persistence.Column;
-
-import org.fencing.demo.events.Event;
-
-import java.util.Objects;
-import java.util.Set;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;    
 
 @AllArgsConstructor
 @NoArgsConstructor

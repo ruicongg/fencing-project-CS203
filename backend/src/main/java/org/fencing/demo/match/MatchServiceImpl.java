@@ -1,28 +1,24 @@
 package org.fencing.demo.match;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.stream.Collectors;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.PlayerRank;
-import org.fencing.demo.stages.GroupStage;
+import org.fencing.demo.player.Player;
+import org.fencing.demo.player.PlayerNotFoundException;
+import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.stages.GroupStageNotFoundException;
 import org.fencing.demo.stages.GroupStageRepository;
 import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.stages.KnockoutStageNotFoundException;
 import org.fencing.demo.stages.KnockoutStageRepository;
-import org.fencing.demo.player.Player;
-import org.fencing.demo.player.PlayerNotFoundException;
-import org.fencing.demo.player.PlayerRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MatchServiceImpl implements MatchService {

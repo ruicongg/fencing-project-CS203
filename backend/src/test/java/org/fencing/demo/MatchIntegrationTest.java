@@ -9,15 +9,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.Gender;
 import org.fencing.demo.events.PlayerRank;
-import org.fencing.demo.events.PlayerRankComparator;
 import org.fencing.demo.events.WeaponType;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.match.MatchRepository;
@@ -39,13 +35,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class MatchIntegrationTest {

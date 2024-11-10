@@ -1,8 +1,8 @@
 package org.fencing.demo.matchmaking;
 
-import java.util.Map;
-import java.util.HashMap;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 class GroupSizeCalculator {
     private final int numberOfPlayers;

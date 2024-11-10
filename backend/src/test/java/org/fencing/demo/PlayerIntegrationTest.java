@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
+import java.security.Key;
 import java.util.Date;
 import java.util.Optional;
 
@@ -30,7 +31,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import java.security.Key;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class PlayerIntegrationTest {

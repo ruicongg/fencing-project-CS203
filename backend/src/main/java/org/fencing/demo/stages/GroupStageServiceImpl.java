@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.fencing.demo.events.*;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.PlayerRank;
-import org.springframework.stereotype.Service;
-import org.fencing.demo.events.*;
 import org.fencing.demo.matchmaking.*;
+import org.springframework.stereotype.Service;
 
 @Service
 public class GroupStageServiceImpl implements GroupStageService{

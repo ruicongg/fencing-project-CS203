@@ -6,14 +6,25 @@ import java.net.URI;
 import java.security.Key;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.*;
 
-import javax.swing.GroupLayout.Group;
-
+import org.fencing.demo.events.*;
+import org.fencing.demo.match.Match;
+import org.fencing.demo.match.MatchRepository;
+import org.fencing.demo.player.Player;
+import org.fencing.demo.player.PlayerRepository;
+import org.fencing.demo.stages.GroupStage;
+import org.fencing.demo.stages.GroupStageRepository;
+import org.fencing.demo.tournament.Tournament;
+import org.fencing.demo.tournament.TournamentRepository;
+import org.fencing.demo.user.Role;
+import org.fencing.demo.user.User;
+import org.fencing.demo.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -24,28 +35,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-
-import org.fencing.demo.stages.GroupStage;
-import org.fencing.demo.stages.GroupStageRepository;
-import org.fencing.demo.stages.KnockoutStage;
-import org.fencing.demo.stages.KnockoutStageRepository;
-import org.fencing.demo.tournament.Tournament;
-import org.fencing.demo.tournament.TournamentRepository;
-import org.fencing.demo.match.Match;
-import org.fencing.demo.player.Player;
-import org.fencing.demo.player.PlayerRepository;
-import org.fencing.demo.user.Role;
-import org.fencing.demo.user.User;
-import org.fencing.demo.user.UserRepository;
-import org.fencing.demo.match.MatchRepository;
-import java.util.*;
-import org.fencing.demo.events.*;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class GroupStageIntegrationTest {

@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.IntStream;
 
-import org.fencing.demo.match.Match;
-import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.events.Event;
+import org.fencing.demo.events.PlayerRank;
+import org.fencing.demo.match.Match;
 import org.fencing.demo.stages.GroupStage;
 import org.springframework.stereotype.Component;
 

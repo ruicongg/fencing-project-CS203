@@ -2,20 +2,21 @@ package org.fencing.demo.matchmaking;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.fencing.demo.match.Match;
-import org.fencing.demo.stages.GroupStage;
-import org.fencing.demo.stages.GroupStageRepository;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.PlayerRank;
+import org.fencing.demo.match.Match;
 import org.fencing.demo.match.MatchRepository;
+import org.fencing.demo.stages.GroupStage;
+import org.fencing.demo.stages.GroupStageRepository;
 import org.springframework.stereotype.Service;
-import jakarta.validation.constraints.NotNull;
+
 import jakarta.transaction.Transactional;
-import java.util.Map;
-import java.util.stream.Collectors;
+import jakarta.validation.constraints.NotNull;
 
 @Service
 @Transactional

@@ -1,10 +1,10 @@
 package org.fencing.demo.matchmaking;
 
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.TreeMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.events.PlayerRankEloComparator;
