@@ -3,9 +3,9 @@ package org.fencing.demo.match;
 import java.util.Objects;
 
 import org.fencing.demo.events.Event;
+import org.fencing.demo.groupstage.GroupStage;
+import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.player.Player;
-import org.fencing.demo.stages.GroupStage;
-import org.fencing.demo.stages.KnockoutStage;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

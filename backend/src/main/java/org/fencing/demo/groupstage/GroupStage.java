@@ -1,4 +1,4 @@
-package org.fencing.demo.stages;
+package org.fencing.demo.groupstage;
 
 import java.util.List;
 

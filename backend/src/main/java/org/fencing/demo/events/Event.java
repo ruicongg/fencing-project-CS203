@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.fencing.demo.groupstage.GroupStage;
+import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.player.Player;
-import org.fencing.demo.stages.GroupStage;
-import org.fencing.demo.stages.KnockoutStage;
 import org.fencing.demo.tournament.Tournament;
 import org.springframework.format.annotation.DateTimeFormat;
 

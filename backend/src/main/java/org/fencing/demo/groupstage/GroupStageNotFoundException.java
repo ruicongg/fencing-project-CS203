@@ -1,4 +1,4 @@
-package org.fencing.demo.stages;
+package org.fencing.demo.groupstage;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

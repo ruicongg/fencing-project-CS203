@@ -8,11 +8,11 @@ import java.util.*;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
+import org.fencing.demo.groupstage.GroupStage;
+import org.fencing.demo.groupstage.GroupStageNotFoundException;
+import org.fencing.demo.groupstage.GroupStageRepository;
+import org.fencing.demo.groupstage.GroupStageServiceImpl;
 import org.fencing.demo.match.Match;
-import org.fencing.demo.stages.GroupStage;
-import org.fencing.demo.stages.GroupStageNotFoundException;
-import org.fencing.demo.stages.GroupStageRepository;
-import org.fencing.demo.stages.GroupStageServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

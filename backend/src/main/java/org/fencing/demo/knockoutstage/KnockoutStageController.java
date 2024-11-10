@@ -1,4 +1,4 @@
-package org.fencing.demo.stages;
+package org.fencing.demo.knockoutstage;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

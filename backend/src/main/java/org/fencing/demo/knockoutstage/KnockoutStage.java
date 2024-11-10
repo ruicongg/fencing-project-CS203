@@ -1,4 +1,4 @@
-package org.fencing.demo.stages;
+package org.fencing.demo.knockoutstage;
 
 import java.util.ArrayList;
 import java.util.List;

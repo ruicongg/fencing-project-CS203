@@ -6,9 +6,9 @@ import java.util.*;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.PlayerRank;
+import org.fencing.demo.groupstage.GroupStage;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.player.Player;
-import org.fencing.demo.stages.GroupStage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,7 +62,6 @@ public class GroupMatchGeneratorTest {
         // For 4 players, we should have 6 matches (4C2 = 6)
         assertEquals(6, groupMatches.size());
         
-        // Verify each match has correct setup
         for (Match match : groupMatches) {
             assertNotNull(match.getPlayer1());
             assertNotNull(match.getPlayer2());
