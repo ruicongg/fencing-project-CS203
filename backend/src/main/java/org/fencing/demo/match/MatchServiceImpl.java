@@ -6,10 +6,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.fencing.demo.events.Event;
+import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.groupstage.GroupStageNotFoundException;
 import org.fencing.demo.groupstage.GroupStageRepository;
+import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.knockoutstage.KnockoutStageNotFoundException;
 import org.fencing.demo.knockoutstage.KnockoutStageRepository;
 import org.fencing.demo.player.Player;
@@ -22,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class MatchServiceImpl implements MatchService {
 
     private final MatchRepository matchRepository;
-    private final EventRepository eventRepository;
     private final KnockoutStageRepository knockoutStageRepository;
     private final GroupStageRepository groupStageRepository;
     private final PlayerRepository playerRepository;
@@ -31,7 +32,6 @@ public class MatchServiceImpl implements MatchService {
     KnockoutStageRepository knockoutStageRepository, GroupStageRepository groupStageRepository,
     PlayerRepository playerRepository) {
         this.matchRepository = matchRepository;
-        this.eventRepository = eventRepository;
         this.knockoutStageRepository = knockoutStageRepository;
         this.groupStageRepository = groupStageRepository;
         this.playerRepository = playerRepository;

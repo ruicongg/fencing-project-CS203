@@ -3,13 +3,10 @@ package org.fencing.demo.groupmatchmaking;
 import java.util.*;
 
 class GroupSizeCalculator {
-    private final int numberOfPlayers;
+
     private static final int MIN_GROUP_SIZE = 4;
     private static final int MAX_GROUP_SIZE = 7;
 
-    public GroupSizeCalculator(int numberOfPlayers) {
-        this.numberOfPlayers = numberOfPlayers;
-    }
 
 
     /**
@@ -25,7 +22,7 @@ class GroupSizeCalculator {
      *                                  minimum required for more than one group
      */
 
-    public int calculateOptimalNumberOfGroups() {
+    public int calculateOptimalNumberOfGroups(int numberOfPlayers) {
 
         if (numberOfPlayers < MAX_GROUP_SIZE) {
             throw new IllegalArgumentException("Not enough players to create groups, need at least " + (MAX_GROUP_SIZE + 1) + " players for more than one group");

@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.fencing.demo.knockoutmatchmaking.KnockoutStageGenerator;
 
 @ExtendWith(MockitoExtension.class)
 public class KnockoutMatchMakingServiceTest {
@@ -37,13 +38,17 @@ public class KnockoutMatchMakingServiceTest {
     private MatchRepository matchRepository;
 
     private KnockoutMatchMakingService knockoutMatchMakingService;
+
+    @Mock
+    private KnockoutStageGenerator knockoutStageGenerator;
     
     @BeforeEach
     void setUp() {
         knockoutMatchMakingService = new KnockoutMatchMakingServiceImpl(
             eventRepository, 
             knockoutStageRepository, 
-            matchRepository
+            matchRepository,
+            knockoutStageGenerator
         );
     }
     
@@ -135,7 +140,7 @@ public class KnockoutMatchMakingServiceTest {
     private Event createValidEvent() {
         Event event = new Event();
         event.setKnockoutStages(new ArrayList<>());
-        event.setRankings(new HashSet<>());
+        event.setRankings(new TreeSet<>());
         return event;
     }
     

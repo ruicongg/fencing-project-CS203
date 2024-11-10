@@ -47,7 +47,11 @@ public class Player extends User implements Comparable<Player>{
     @Override
     public int compareTo(Player otherPlayer) {
         // Sort in descending order of ELO
-        return Integer.compare(otherPlayer.elo, this.elo); // Higher ELO comes first
+        if (this.elo != otherPlayer.elo) {
+            return Integer.compare(otherPlayer.elo, this.elo); // Higher ELO comes first
+        }
+        return Long.compare(this.getId(), otherPlayer.getId()); // If ELO is the same, compare by ID
+        
     }
 
     @Override

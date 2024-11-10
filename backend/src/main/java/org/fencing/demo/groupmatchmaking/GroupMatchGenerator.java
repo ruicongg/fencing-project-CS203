@@ -6,20 +6,19 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.fencing.demo.events.Event;
-import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.groupstage.GroupStage;
 import org.fencing.demo.match.Match;
 import org.springframework.stereotype.Component;
-
+import org.fencing.demo.player.Player;
 @Component
 public class GroupMatchGenerator {
     
-    public Map<Integer, List<Match>> generateGroupMatches(Map<Integer, List<PlayerRank>> groups, Event event) {
+    public Map<Integer, List<Match>> generateGroupMatches(Map<Integer, List<Player>> groups, Event event) {
         Map<Integer, List<Match>> resultMap = new TreeMap<>();
         
-        for (Map.Entry<Integer, List<PlayerRank>> entry : groups.entrySet()) {
+        for (Map.Entry<Integer, List<Player>> entry : groups.entrySet()) {
             Integer groupNumber = entry.getKey();
-            List<PlayerRank> players = entry.getValue();
+            List<Player> players = entry.getValue();
             GroupStage groupStage = event.getGroupStages().get(groupNumber);
             List<Match> matches = generateMatchesForGroup(players, event, groupStage);
             resultMap.put(groupNumber, matches);
@@ -28,13 +27,13 @@ public class GroupMatchGenerator {
         return resultMap;
     }
 
-    private List<Match> generateMatchesForGroup(List<PlayerRank> players, Event event, GroupStage groupStage) {
+    private List<Match> generateMatchesForGroup(List<Player> players, Event event, GroupStage groupStage) {
         return generateAllPossiblePairings(players).stream()
             .map(pair -> createMatch(pair, event, groupStage))
             .toList();
     }
 
-    private List<Pair> generateAllPossiblePairings(List<PlayerRank> players) {
+    private List<Pair> generateAllPossiblePairings(List<Player> players) {
         List<Pair> pairings = new ArrayList<>();
         
         for (int i = 0; i < players.size(); i++) {
@@ -47,8 +46,8 @@ public class GroupMatchGenerator {
 
     private Match createMatch(Pair pair, Event event, GroupStage groupStage) {
         Match match = new Match();
-        match.setPlayer1(pair.getPlayerRank1().getPlayer());
-        match.setPlayer2(pair.getPlayerRank2().getPlayer());
+        match.setPlayer1(pair.getPlayer1());
+        match.setPlayer2(pair.getPlayer2());
         match.setEvent(event);
         match.setGroupStage(groupStage);
         return match;

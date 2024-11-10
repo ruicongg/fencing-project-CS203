@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
+import org.fencing.demo.player.Player;
 
 @Service
 @Transactional
@@ -41,7 +42,7 @@ public class GroupMatchMakingServiceImpl implements GroupMatchMakingService {
     @Override
     public List<GroupStage> createGroupStages(@NotNull Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
-        Map<Integer, List<PlayerRank>> groups = groupDistributionService
+        Map<Integer, List<Player>> groups = groupDistributionService
                 .distributePlayersIntoGroups(event.getRankings());
 
         // Create and save group stages
@@ -59,7 +60,7 @@ public class GroupMatchMakingServiceImpl implements GroupMatchMakingService {
     public List<Match> createMatchesInGroupStages(@NotNull Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
 
-        Map<Integer, List<PlayerRank>> groups = groupDistributionService
+        Map<Integer, List<Player>> groups = groupDistributionService
                 .distributePlayersIntoGroups(event.getRankings());
         List<GroupStage> groupStages = event.getGroupStages();
         if (groupStages == null || groupStages.isEmpty()) {

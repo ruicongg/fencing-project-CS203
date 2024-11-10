@@ -21,7 +21,7 @@ import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.EventServiceImpl;
 import org.fencing.demo.events.Gender;
 import org.fencing.demo.events.PlayerRank;
-import org.fencing.demo.events.PlayerRankComparator;
+
 import org.fencing.demo.events.WeaponType;
 import org.fencing.demo.groupstage.GroupStageRepository;
 import org.fencing.demo.knockoutstage.KnockoutStage;
@@ -336,7 +336,7 @@ public class MatchServiceTest {
     }
 
     private Set<PlayerRank> createPlayers(Event event) {
-        Set<PlayerRank> players = new TreeSet<>(new PlayerRankComparator());
+        Set<PlayerRank> players = new TreeSet<>();
         for (int i = 1; i <= 8; i++) {
             Player player = createValidPlayer(i); 
             PlayerRank playerRank = createPlayerRank(i, player, event);

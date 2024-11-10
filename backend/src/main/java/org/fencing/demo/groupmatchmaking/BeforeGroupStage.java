@@ -7,7 +7,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.fencing.demo.events.PlayerRank;
-import org.fencing.demo.events.PlayerRankEloComparator;
 
 //ELO sort
 public class BeforeGroupStage {
@@ -23,7 +22,7 @@ public class BeforeGroupStage {
         TreeMap<Integer, List<PlayerRank>> resultMatches = new TreeMap<>();
 
         //sort players according to Elo
-        Set<PlayerRank> players = new TreeSet<>(new PlayerRankEloComparator());
+        TreeSet<PlayerRank> players = new TreeSet<>();
 
 
         // Add players from rankings to the TreeSet (automatically sorted)

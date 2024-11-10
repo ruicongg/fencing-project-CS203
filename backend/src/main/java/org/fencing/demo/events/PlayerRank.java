@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "player_rank", uniqueConstraints = @UniqueConstraint(columnNames = { "player_id", "event_id" }))
-public class PlayerRank {
+public class PlayerRank implements Comparable<PlayerRank> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -52,6 +52,28 @@ public class PlayerRank {
         }
     }
 
+    @Override
+    public int compareTo(PlayerRank other) {
+        
+        // First compare by higher win count
+        if (this.getWinCount() != other.getWinCount()) {
+            return Integer.compare(other.getWinCount(), this.getWinCount()); // Descending order of wins
+        }
+
+        // If win count is the same, compare by lower loss count
+        if (this.getLossCount() != other.getLossCount()) {
+            return Integer.compare(this.getLossCount(), other.getLossCount()); // Ascending order of losses
+        }
+
+        // If both win and loss counts are the same, compare by higher score
+        if (this.getScore() != other.getScore()) {
+            return Integer.compare(other.getScore(), this.getScore()); // Descending order of score
+        }
+
+        // As a final tiebreaker, compare by Player ID to ensure no two PlayerRanks are considered equal unless they are for the same player
+        return Long.compare(this.getPlayer().getId(), other.getPlayer().getId()); 
+
+    }
 
     @Override
     public int hashCode() {

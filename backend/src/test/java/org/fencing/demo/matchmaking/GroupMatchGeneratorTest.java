@@ -23,7 +23,7 @@ public class GroupMatchGeneratorTest {
     private GroupMatchGenerator groupMatchGenerator;
 
     private Event event;
-    private Map<Integer, List<PlayerRank>> groups;
+    private Map<Integer, List<Player>> groups;
 
     @BeforeEach
     void setUp() {
@@ -33,13 +33,11 @@ public class GroupMatchGeneratorTest {
         int numberOfGroups = 2;
         int groupSize = 4;
         for (int i = 0; i < numberOfGroups; i++) { 
-            List<PlayerRank> group = new ArrayList<>();
+            List<Player> group = new ArrayList<>();
             for (int j = 0; j < groupSize; j++) {
                 Player player = new Player();
                 player.setId((long) (i * groupSize + j));
-                PlayerRank rank = new PlayerRank();
-                rank.setPlayer(player);
-                group.add(rank);
+                group.add(player);
             }
             groups.put(i, group);
         }

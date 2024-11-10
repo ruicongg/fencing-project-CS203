@@ -66,7 +66,7 @@ public class Event {
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private Set<PlayerRank> rankings = new TreeSet<>(new PlayerRankComparator());
+    private TreeSet<PlayerRank> rankings = new TreeSet<>();
 
     // public TreeSet<Player> EloRank;
     // for sorting first when go to group stage
