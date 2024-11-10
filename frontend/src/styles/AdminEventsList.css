@@ -1,0 +1,150 @@
+/* Main container for the events list */
+.events-list {
+  padding: 20px;
+  background-color: #141414;
+  color: #ffffff;
+  border-radius: 8px;
+}
+
+/* Styling for each individual event item */
+.event-item {
+  padding: 15px;
+  background-color: #1f1f1f;
+  border-radius: 8px;
+  border: 1px solid #00BFFF;
+  margin-bottom: 15px;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-item:hover {
+  background-color: #2e2e2e;
+  transform: translateY(-2px);
+}
+
+.event-item h4 {
+  font-size: 18px;
+  color: #00BFFF;
+  margin-bottom: 8px;
+}
+
+.event-item p {
+  font-size: 14px;
+  color: #cccccc;
+  margin: 4px 0;
+}
+
+/* Button styling */
+.event-item .edit-button,
+.event-item .delete-button {
+  padding: 8px 12px;
+  margin-top: 10px;
+  margin-right: 5px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Edit button specific styles */
+.event-item .edit-button {
+  background-color: #007bff;
+}
+
+.event-item .edit-button:hover {
+  background-color: #0056b3;
+}
+
+/* Delete button specific styles */
+.event-item .delete-button {
+  background-color: #dc3545;
+}
+
+.event-item .delete-button:hover {
+  background-color: #c82333;
+}
+
+/* Loading and error message styles */
+.loading,
+.error {
+  font-size: 16px;
+  color: #cccccc;
+  text-align: center;
+  margin-top: 20px;
+}
+
+
+
+/* .events-list {
+  margin-top: 20px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.events-list .event-item {
+  background-color: #f0f0f0;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.event-item h4 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.event-item p {
+  color: #6c757d;
+}
+
+.event-item button {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.event-item button:hover {
+  background-color: #0056b3;
+} */
+
+/* .events-list {
+    margin-top: 20px;
+    background-color: #2d2f40;
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+  }
+  
+  .event-item {
+    background-color: #1d1f2f;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .event-item h4 {
+    margin: 0;
+    font-size: 18px;
+    color: white;
+  }
+  
+  .event-item p {
+    margin: 0;
+    font-size: 14px;
+    color: #b0b0b0;
+  }
+   */
