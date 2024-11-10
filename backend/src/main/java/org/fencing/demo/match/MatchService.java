@@ -5,7 +5,6 @@ import java.util.List;
 public interface MatchService {
 
 
-    List<Match> addMatchesforKnockoutStage(Long eventId);
 
     // List<Match> getAllMatchesByEventId(Long eventId);
 

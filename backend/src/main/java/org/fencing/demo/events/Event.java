@@ -2,7 +2,6 @@ package org.fencing.demo.events;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 // import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,7 +10,6 @@ import java.util.TreeSet;
 import org.fencing.demo.groupstage.GroupStage;
 import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.match.Match;
-import org.fencing.demo.player.Player;
 import org.fencing.demo.tournament.Tournament;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -91,61 +89,6 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Match> matches = new ArrayList<>();
-
-    public List<Match> getMatchesForKnockoutStage(KnockoutStage knockoutStage) {
-
-        List<Player> players = new ArrayList<>();
-        int roundNum = knockoutStages.indexOf(knockoutStage);
-
-        if (roundNum == 0) {
-            // For the first round, convert PlayerRank set to a list of Players
-            players = convertToPlayerList(rankings);
-
-        } else {
-            KnockoutStage previousRound = knockoutStages.get(roundNum - 1);
-            List<Match> previousMatches = previousRound.getMatches();
-            for (Match match : previousMatches) {
-                players.add(match.getWinner()); // Get the winner of each match
-
-            }
-        }
-
-        List<Match> nextRound = createMatches(players, knockoutStage);
-        return nextRound; // Create matches for the next round
-    }
-
-    // Method to create matches for both first and subsequent rounds
-    private List<Match> createMatches(List<Player> players, KnockoutStage knockoutStage) {
-        List<Match> matches = new ArrayList<>();
-        int n = players.size();
-
-        for (int i = 0; i < n / 2; i++) {
-            Player player1 = players.get(i);
-            Player player2 = players.get(n - 1 - i);
-            // System.out.println(player1);
-            // System.out.println(player2);
-
-            // Create a match between the two players
-            Match match = new Match();
-            match.setPlayer1(player1);
-            match.setPlayer2(player2);
-            match.setEvent(this);
-            match.setKnockoutStage(knockoutStage);
-            matches.add(match);
-        }
-        return matches;
-    }
-
-    public List<Player> convertToPlayerList(Set<PlayerRank> rankings) {
-        List<PlayerRank> playerRankList = new ArrayList<>(rankings);
-        playerRankList.sort(Comparator.comparing(PlayerRank::getScore));
-
-        List<Player> players = new ArrayList<>();
-        for (PlayerRank playerRank : playerRankList) {
-            players.add(playerRank.getPlayer()); // Extract the Player object from PlayerRank
-        }
-        return players;
-    }
 
     @Override
     public String toString() {

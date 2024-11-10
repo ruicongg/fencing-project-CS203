@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,7 +17,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.fencing.demo.events.Event;
-import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.EventServiceImpl;
 import org.fencing.demo.events.Gender;
@@ -88,69 +86,6 @@ public class MatchServiceTest {
     //     verify(eventRepository, times(1)).existsById(eventId);
     // }
 
-    @Test
-    public void addMatchesForKnockoutStage_ValidEvent_ReturnsSavedMatches() {
-        Long eventId = 1L;
-        Event event = createValidEvent();
-        KnockoutStage knockoutStage = createValidKnockoutStage(event);
-        event.getKnockoutStages().add(knockoutStage);
-        
-        // Add 8 players to the event
-        // wait...need player repo?
-        Set<PlayerRank> players = createPlayers(event);
-        event.getRankings().addAll(players);
-
-        // Mock the event repository behavior
-        when(eventRepository.existsById(eventId)).thenReturn(true);
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
-
-        // Create the expected matches for the knockout stage
-        List<Match> expectedMatches = event.getMatchesForKnockoutStage(knockoutStage);
-        when(matchRepository.saveAll(anyList())).thenReturn(expectedMatches);
-
-        List<Match> result = matchService.addMatchesforKnockoutStage(eventId);
-
-        assertNotNull(result);
-        assertEquals(expectedMatches.size(), result.size());
-        verify(matchRepository, times(1)).saveAll(anyList());
-        verify(eventRepository, times(1)).existsById(eventId);
-        verify(eventRepository, times(1)).findById(eventId);
-    }
-
-    @Test
-    public void addMatchesForKnockoutStage_NonExistingEvent_ThrowsEventNotFoundException() {
-        Long eventId = 1L;
-
-        when(eventRepository.existsById(eventId)).thenReturn(false);
-
-        assertThrows(EventNotFoundException.class, () -> {
-            matchService.addMatchesforKnockoutStage(eventId);
-        });
-
-        verify(eventRepository, times(1)).existsById(eventId);
-    }
-
-    @Test
-    public void addMatchesForKnockoutStage_NoKnockoutStage_ThrowsIllegalStateException() {
-        Long eventId = 1L;
-
-        // Create an event without knockout stages
-        Event event = createValidEvent();
-        event.setKnockoutStages(new ArrayList<>()); // Empty knockout stages
-
-        // Mock the event repository
-        when(eventRepository.existsById(eventId)).thenReturn(true);
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
-
-        // Verify that IllegalStateException is thrown when there are no knockout stages
-        assertThrows(IllegalStateException.class, () -> {
-            matchService.addMatchesforKnockoutStage(eventId);
-        });
-
-        // Verify that repository methods were called correctly
-        verify(eventRepository, times(1)).existsById(eventId);
-        verify(eventRepository, times(1)).findById(eventId);
-    }
 
     @Test
     public void getMatch_ValidId_ReturnsMatch() {

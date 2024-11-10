@@ -2,7 +2,7 @@ package org.fencing.demo.events;
 
 import java.util.Objects;
 
-import org.fencing.demo.matchmaking.EloCalculator;
+import org.fencing.demo.groupmatchmaking.EloCalculator;
 import org.fencing.demo.player.Player;
 
 import jakarta.persistence.Entity;

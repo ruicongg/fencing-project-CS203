@@ -10,7 +10,7 @@ import java.util.TreeSet;
 
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.events.PlayerRankEloComparator;
-import org.fencing.demo.matchmaking.BeforeGroupStage;
+import org.fencing.demo.groupmatchmaking.BeforeGroupStage;
 import org.fencing.demo.player.Player;
 import org.junit.jupiter.api.Test;
 

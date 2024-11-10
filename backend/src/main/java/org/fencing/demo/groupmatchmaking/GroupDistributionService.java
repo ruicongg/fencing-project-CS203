@@ -1,4 +1,4 @@
-package org.fencing.demo.matchmaking;
+package org.fencing.demo.groupmatchmaking;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,26 +16,25 @@ import jakarta.validation.constraints.NotNull;
 
 @Component
 public class GroupDistributionService {
-    Map<Integer, List<PlayerRank>> distributePlayersIntoGroups(@NotNull Set<PlayerRank> rankings) {
+    public Map<Integer, List<PlayerRank>> distributePlayersIntoGroups(@NotNull Set<PlayerRank> rankings) {
+
         Set<PlayerRank> players = new TreeSet<>(new PlayerRankEloComparator());
         players.addAll(rankings);
-
         int numberOfPlayers = players.size();
 
-        // throws an exception if there are no players
         GroupSizeCalculator groupSizeCalculator = new GroupSizeCalculator(numberOfPlayers);
-        int groupSize = groupSizeCalculator.findOptimalGroupSize();
-        int numberOfGroups = groupSizeCalculator.findNumberOfGroups(groupSize);
-        return distributePlayersRoundRobin(players, numberOfGroups);
+        
+        // this throws an exception if there are not enough players to create at least one group
+        int optimalNumberOfGroups = groupSizeCalculator.calculateOptimalNumberOfGroups();
+
+        return distributePlayersRoundRobin(players, optimalNumberOfGroups);
     }
 
     private static Map<Integer, List<PlayerRank>> distributePlayersRoundRobin(
             Set<PlayerRank> sortedPlayers, 
             int numberOfGroups) {
-        Map<Integer, List<PlayerRank>> groups = new TreeMap<>();
-        for (int i = 0; i < numberOfGroups; i++) {
-            groups.put(i, new ArrayList<>());
-        }
+                
+        Map<Integer, List<PlayerRank>> groups = initializeGroups(numberOfGroups);
         Iterator<PlayerRank> iterator = sortedPlayers.iterator();
         int index = 0;
         while (iterator.hasNext()) {
@@ -43,6 +42,15 @@ public class GroupDistributionService {
             index++;
         }
         return groups; 
+    }
+
+
+    private static Map<Integer, List<PlayerRank>> initializeGroups(int numberOfGroups) {
+        Map<Integer, List<PlayerRank>> groups = new TreeMap<>();
+        for (int i = 0; i < numberOfGroups; i++) {
+            groups.put(i, new ArrayList<>());
+        }
+        return groups;
     }
 
     

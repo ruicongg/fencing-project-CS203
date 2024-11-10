@@ -1,4 +1,4 @@
-package org.fencing.demo.matchmaking;
+package org.fencing.demo.groupmatchmaking;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GroupMatchGenerator {
     
-    /**
-     * Generates matches for all groups of players
-     */
-    Map<Integer, List<Match>> generateGroupMatches(Map<Integer, List<PlayerRank>> groups, Event event) {
+    public Map<Integer, List<Match>> generateGroupMatches(Map<Integer, List<PlayerRank>> groups, Event event) {
         Map<Integer, List<Match>> resultMap = new TreeMap<>();
         
         for (Map.Entry<Integer, List<PlayerRank>> entry : groups.entrySet()) {

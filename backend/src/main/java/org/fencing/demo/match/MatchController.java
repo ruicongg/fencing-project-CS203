@@ -24,12 +24,6 @@ public class MatchController {
     //     return matchService.addMatchesforAllGroupStages(eventId);
     // }
 
-    @PostMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/{knockoutStageId}/matches")
-    @ResponseStatus(HttpStatus.CREATED)
-    public List<Match> addMatchesforKnockoutStage(@PathVariable Long eventId) {
-        return matchService.addMatchesforKnockoutStage(eventId);
-    }
-
 
     @GetMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/{knockoutStageId}/matches")
     @ResponseStatus(HttpStatus.OK)

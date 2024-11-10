@@ -6,12 +6,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.fencing.demo.events.Event;
-import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.groupstage.GroupStageNotFoundException;
 import org.fencing.demo.groupstage.GroupStageRepository;
-import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.knockoutstage.KnockoutStageNotFoundException;
 import org.fencing.demo.knockoutstage.KnockoutStageRepository;
 import org.fencing.demo.player.Player;
@@ -51,30 +49,6 @@ public class MatchServiceImpl implements MatchService {
 
 
 
-    @Override
-    @Transactional
-    public List<Match> addMatchesforKnockoutStage(Long eventId) {
-        if (eventId == null) {
-            throw new IllegalArgumentException("Event ID cannot be null");
-        }
-        if (!eventRepository.existsById(eventId)) {
-            throw new EventNotFoundException(eventId);
-        }
-
-        Event event = eventRepository.findById(eventId).get();
-        List<KnockoutStage> knockoutStages = event.getKnockoutStages();
-
-        if (knockoutStages == null || knockoutStages.isEmpty()) {
-            throw new IllegalStateException("No KnockoutStage found for event " + eventId);
-        }
-        
-        KnockoutStage knockoutStage = knockoutStages.get(knockoutStages.size() - 1);
-        List<Match> knockoutStageMatches = event.getMatchesForKnockoutStage(knockoutStage);
-
-        knockoutStage.getMatches().addAll(knockoutStageMatches);
-
-        return matchRepository.saveAll(knockoutStageMatches);
-    }
 
     // @Override
     // public List<Match> getAllMatchesByEventId(Long eventId) {

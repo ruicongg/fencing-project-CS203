@@ -1,4 +1,4 @@
-package org.fencing.demo.matchmaking;
+package org.fencing.demo.groupmatchmaking;
 
 import java.util.ArrayList;
 import java.util.List;
