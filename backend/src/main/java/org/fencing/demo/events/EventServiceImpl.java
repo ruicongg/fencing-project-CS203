@@ -4,7 +4,6 @@ import java.util.List;
 import java.time.LocalDate;
 
 import org.fencing.demo.player.Player;
-import org.fencing.demo.exception.MatchesNotCompleteException;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.KnockoutStage;
