@@ -53,33 +53,7 @@ public class MatchServiceImpl implements MatchService {
     //     }).orElseThrow(() -> new EventNotFoundException(eventId));
     // }
 
-    
-    @Override
-    @Transactional
-    public List<Match> addMatchesforGroupStages(Long eventId) {
-        List<Match> allMatches = new ArrayList<>();
-        if(eventId == null){
-            throw new IllegalArgumentException("Event ID cannot be null");
-        }
-        if (!eventRepository.existsById(eventId)) {
-            throw new EventNotFoundException(eventId);
-        }
-        Event event = eventRepository.findById(eventId).get();
-        List<GroupStage> groupStages = event.getGroupStages();
-        if (groupStages.isEmpty()) {
-            throw new IllegalStateException("No groupStage found for event " + eventId);
-        }
-        for(int i = 0; i < groupStages.size(); i++){
-            List<Match> matches = event.createRoundsForGroupStages(groupStages.get(i));
-            allMatches.addAll(matches);
-        }
-        // for (int i = 0; i < allMatches.size(); i++) {
-        //     System.out.println(allMatches.get(i));
-        // }
 
-        return matchRepository.saveAll(allMatches);
-        
-    }
 
     @Override
     @Transactional

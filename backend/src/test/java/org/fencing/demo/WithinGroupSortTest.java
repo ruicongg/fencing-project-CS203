@@ -11,8 +11,8 @@ import org.fencing.demo.events.Event;
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.events.PlayerRankEloComparator;
 import org.fencing.demo.match.Match;
-import org.fencing.demo.matchMaking.BeforeGroupStage;
-import org.fencing.demo.matchMaking.WithinGroupSort;
+import org.fencing.demo.matchmaking.BeforeGroupStage;
+import org.fencing.demo.matchmaking.WithinGroupSort;
 import org.fencing.demo.player.Player;
 import org.junit.jupiter.api.Test;
 

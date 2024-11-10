@@ -10,8 +10,6 @@ import java.util.TreeSet;
 import java.util.TreeMap;
 
 import org.fencing.demo.match.Match;
-import org.fencing.demo.matchMaking.BeforeGroupStage;
-import org.fencing.demo.matchMaking.WithinGroupSort;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.stages.GroupStage;
 import org.fencing.demo.stages.KnockoutStage;
@@ -98,20 +96,6 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Match> matches = new ArrayList<>();
-
-    //includes creating matches
-    public List<Match> createRoundsForGroupStages(GroupStage currGrpStage) {
-        //debugging line
-        //System.out.println("number of players after in Event class" + rankings.size());
-        //List<Match> allMatchesForGroup = new ArrayList<>();
-        //sort by elo ranks return grp num to playerRanks
-        TreeMap<Integer, List<PlayerRank>> groups = BeforeGroupStage.sortByELO(rankings);
-        
-        //within groups to sort
-        TreeMap<Integer, List<Match>> groupMatches = WithinGroupSort.groupMatchMakingAlgorithm(groups, this);
-
-        return groupMatches.get((int)currGrpStage.getId());
-    }
 
     public List<Match> getMatchesForKnockoutStage(KnockoutStage knockoutStage) {
 

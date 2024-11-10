@@ -1,4 +1,4 @@
-package org.fencing.demo.matchMaking;
+package org.fencing.demo.matchmaking;
 
 import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.match.Match;

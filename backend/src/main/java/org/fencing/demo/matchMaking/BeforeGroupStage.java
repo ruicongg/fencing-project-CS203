@@ -1,4 +1,4 @@
-package org.fencing.demo.matchMaking;
+package org.fencing.demo.matchmaking;
 
 import java.util.Set;
 import java.util.TreeSet;

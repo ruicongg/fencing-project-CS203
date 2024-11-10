@@ -46,8 +46,6 @@ public class PlayerController {
     @ResponseStatus(HttpStatus.CREATED)
     public Player addPlayer(@Valid @RequestBody Player player) {
         Player savedPlayer = playerService.addPlayer(player);
-        if (savedPlayer == null)
-            throw new PlayerExistException(player.getUsername());
         return savedPlayer;
     }
 
@@ -56,7 +54,7 @@ public class PlayerController {
     public Player updatePlayer(@PathVariable Long id, @Valid @RequestBody Player updatedPlayerInfo) {
         Player player = playerService.updatePlayer(id, updatedPlayerInfo);
         if (player == null)
-        throw new PlayerNotFoundException(id);
+            throw new PlayerNotFoundException(id);
 
         return player;
     }
