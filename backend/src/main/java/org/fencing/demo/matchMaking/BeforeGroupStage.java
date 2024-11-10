@@ -54,19 +54,14 @@ public class BeforeGroupStage {
                 grpSize = factor;
                 break;
             }
-            // Otherwise, pick the factor with the largest remainder
-            if (factorRemainder.get(factor) > factorRemainder.get(grpSize)) {
+            // Otherwise, pick the factor with the smallest remainder
+            if (factorRemainder.get(factor) < factorRemainder.get(grpSize) && grpSize != 7) {
                 grpSize = factor;
             }
         }
 
         int numGroups = playerNum / grpSize;
-        int remainder = playerNum % grpSize;
-
-        // If there's a remainder, we need one more group
-        if (remainder != 0) {
-            numGroups++;
-        }
+        
 
         // Initialize the groups
         for (int i = 1; i <= numGroups; i++) {

@@ -308,14 +308,15 @@ public class BeforeGroupStageTest {
         TreeMap<Integer, List<PlayerRank>> result = BeforeGroupStage.sortByELO(rankings);
 
         // Test the number of groups (should be 2 groups of 5 players each)
-        assertEquals(3, result.size(), "There should be 3 groups for 17 players");
+        assertEquals(4, result.size(), "There should be 3 groups for 17 players");
 
         //Check if the groups have the correct number of players
         // for (Integer group : result.keySet()) {
         //     assertTrue(result.get(group).size() >= 4 && result.get(group).size() <= 5, 
         //                "Groups should be balanced, 4-5 players per group");
         // }
-                assertTrue(result.get(1).size() == 6 && result.get(2).size() == 6 && result.get(3).size() == 5, 
+                assertTrue(result.get(1).size() == 5 && result.get(2).size() == 4 && result.get(3).size() == 4
+                && result.get(4).size() == 4, 
                            "Groups should be balanced, 5-6 players per group");
     }
 

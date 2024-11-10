@@ -61,9 +61,8 @@ class GroupStageIntegrationTest {
     private User adminUser;
     private User regularUser;
     private Tournament tournament;
+    List<Player> players;
     private Event event;
-    private Player player1;
-    private Player player2;
     private String adminToken;
     private String userToken;
 
@@ -104,13 +103,15 @@ class GroupStageIntegrationTest {
 
         // Initialize players for the matches
         playerRepository.deleteAll();
-        player1 = new Player("player1", passwordEncoder.encode("password1"), "player1@example.com", Role.USER);
-        player1.setElo(1700);
-        playerRepository.save(player1);
+        players = new ArrayList<>();
 
-        player2 = new Player("player2", passwordEncoder.encode("password2"), "player2@example.com", Role.USER);
-        player2.setElo(1700);
-        playerRepository.save(player2);
+        //add 8 player into database
+        for(int i = 1; i <= 8; i++){
+                Player tempPlayer = new Player("player" + i, passwordEncoder.encode("password" + i), "player" + i + "@example.com", Role.USER);
+                tempPlayer.setElo(1700);
+                playerRepository.save(tempPlayer);
+                players.add(tempPlayer);
+        }
 
         // Initialize and save a Tournament object
         tournamentRepository.deleteAll();
@@ -134,8 +135,9 @@ class GroupStageIntegrationTest {
                 .tournament(tournament)
                 .build();
 
-        event.getRankings().add(createPlayerRank(player1, event));
-        event.getRankings().add(createPlayerRank(player2, event));
+        for(Player p:players){
+                event.getRankings().add(createPlayerRank(p, event));
+        }
         event = eventRepository.save(event);
     }
 
@@ -150,7 +152,7 @@ class GroupStageIntegrationTest {
     }
 
     @Test
-    public void getKnockoutStage_ValidKnockoutStageId_Success() throws Exception {
+    public void getGroupStage_ValidGroupStageId_Success() throws Exception {
         GroupStage grpStage = createValidGroupStage();
         Long id = grpStageRepository.save(grpStage).getId();
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId()
@@ -229,8 +231,8 @@ class GroupStageIntegrationTest {
 
         // Add a new match to the GroupStage
         Match newMatch = Match.builder()
-                .player1(player1)
-                .player2(player2)
+                .player1(players.get(1))
+                .player2(players.get(2))
                 .player1Score(15)
                 .player2Score(10)
                 .event(event) // Make sure event is associated with the match
