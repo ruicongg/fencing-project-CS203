@@ -55,6 +55,7 @@ public class Match {
     @ManyToOne
     @JoinColumn(name = "player2_id", nullable = false)
     private Player player2;
+    
     private int player1Score;
     private int player2Score;
 

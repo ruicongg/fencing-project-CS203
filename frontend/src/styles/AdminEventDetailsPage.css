@@ -1,73 +1,125 @@
 .event-details-page {
-    padding: 20px;
-  }
-  
-  .breadcrumb {
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
-  
-  .breadcrumb span {
-    cursor: pointer;
-    color: #007bff;
-  }
-  
-  .breadcrumb span:hover {
-    text-decoration: underline;
-  }
-  
-  .event-info {
-    margin-bottom: 20px;
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-  }
-  
-  .event-info p {
-    margin: 10px 0;
-  }
-  
-  button {
-    padding: 8px 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  .group-stages-section, .knockout-stages-section {
-    margin-top: 30px;
-  }
-  
-  h2 {
-    margin-bottom: 10px;
-  }
-  
-  ul {
-    list-style-type: none;
-    padding-left: 0;
-  }
-  
-  ul li {
-    padding: 10px;
-    background-color: #f0f0f0;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  ul li button {
-    background-color: #17a2b8;
-  }
-  
-  ul li button:hover {
-    background-color: #138496;
-  }
-  
+  padding: 20px;
+  background-color: #141414;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+}
+
+.breadcrumb {
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #cccccc;
+}
+
+.breadcrumb a {
+  color: #00BFFF;
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+/* Main Title */
+.event-details-page h1 {
+  font-size: 28px;
+  color: #00BFFF;
+  margin-bottom: 20px;
+}
+
+/* Event Information Section */
+.event-info p {
+  font-size: 16px;
+  margin: 5px 0;
+}
+
+.event-info p strong {
+  color: #00BFFF;
+}
+
+.event-info button {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.event-info button:hover {
+  background-color: #0056b3;
+}
+
+/* Group and Knockout Stages Sections */
+.group-stages-section,
+.knockout-stages-section {
+  margin-top: 30px;
+}
+
+.group-stages-section h2,
+.knockout-stages-section h2 {
+  font-size: 22px;
+  color: #00BFFF;
+  margin-bottom: 10px;
+}
+
+/* No Stages Message */
+.group-stages-section p,
+.knockout-stages-section p {
+  color: #cccccc;
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+/* Buttons for generating stages */
+.group-stages-section button,
+.knockout-stages-section button {
+  padding: 8px 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.group-stages-section button:hover,
+.knockout-stages-section button:hover {
+  background-color: #218838;
+}
+
+/* List of stages */
+.group-stages-section ul,
+.knockout-stages-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.group-stages-section li,
+.knockout-stages-section li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #1f1f1f;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.group-stages-section li button,
+.knockout-stages-section li button {
+  padding: 6px 10px;
+  background-color: #00BFFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.group-stages-section li button:hover,
+.knockout-stages-section li button:hover {
+  background-color: #007acc;
+}

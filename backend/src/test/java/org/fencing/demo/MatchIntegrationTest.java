@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -245,6 +246,36 @@ public class MatchIntegrationTest {
                                                     .postForEntity(uri, null, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+    }
+
+    @Test
+    public void getAllMatches_Admin_ReturnsAllMatches() throws Exception {
+        URI uri = new URI(baseUrl + port + "/matches");
+
+        ResponseEntity<Match[]> response = restTemplate.withBasicAuth("admin", "adminPass")
+                                                       .getForEntity(uri, Match[].class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().length > 0);
+
+        List<Match> matches = Arrays.asList(response.getBody());
+        matches.forEach(match -> assertNotNull(match.getId()));
+    }
+
+    @Test
+    public void getAllMatches_User_ReturnsAllMatches() throws Exception {
+        URI uri = new URI(baseUrl + port + "/matches");
+
+        ResponseEntity<Match[]> response = restTemplate.withBasicAuth("user", "userPass")
+                                                       .getForEntity(uri, Match[].class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertTrue(response.getBody().length > 0);
+
+        List<Match> matches = Arrays.asList(response.getBody());
+        matches.forEach(match -> assertNotNull(match.getId()));
     }
 
 

@@ -21,31 +21,42 @@ const UserDashboard = () => {
     <div className="user-dashboard">
       {/* Navigation Buttons */}
       <div className="button-container">
-        <button onClick={() => navigate('/dashboard')}>Tournaments</button>
-        <button onClick={() => navigate('/dashboard/my-events')}>My Events</button>
-        <button onClick={() => navigate('/dashboard/upcoming')}>Upcoming</button>
-        {/* <button onClick={() => navigate('/dashboard/leaderboards')}>Leaderboards</button> */}
+        <button
+          className={window.location.pathname === '/dashboard' ? 'active' : ''}
+          onClick={() => navigate('/dashboard')}
+        >
+          Tournaments
+        </button>
+        <button
+          className={window.location.pathname === '/dashboard/my-events' ? 'active' : ''}
+          onClick={() => navigate('/dashboard/my-events')}
+        >
+          My Events
+        </button>
+        <button
+          className={window.location.pathname === '/dashboard/upcoming' ? 'active' : ''}
+          onClick={() => navigate('/dashboard/upcoming')}
+        >
+          Upcoming
+        </button>
+        {/* <button
+          className={window.location.pathname === '/dashboard/leaderboards' ? 'active' : ''}
+          onClick={() => navigate('/dashboard/leaderboards')}
+        >
+          Leaderboards
+        </button> */}
       </div>
 
       {/* Main Content */}
       <div className="main-content">
         <Routes>
-          {/* Default Dashboard Route to show Tournaments */}
           <Route path="/dashboard" element={<TournamentsPage />} />
-
           <Route path="/dashboard/my-events" element={<EventsPage />} />
-          
-          {/* Upcoming Matches Route */}
           <Route path="/dashboard/upcoming" element={<UpcomingMatchesPage />} />
-
-          {/* Leaderboards Route
-          <Route path="/dashboard/leaderboards" element={<div>Leaderboards Content Here</div>} /> */}
-
-          {/* Tournament Events Route */}
+          {/* Uncomment below when Leaderboards is needed */}
+          {/* <Route path="/dashboard/leaderboards" element={<div>Leaderboards Content Here</div>} /> */}
           <Route path="/tournaments/:tournamentId/events" element={<TournamentEventsPage />} />
-
-          {/* Default Route Redirect */}
-          <Route path="*" element={<TournamentsPage />} />  {/* Redirects to TournamentsPage if path not found */}
+          <Route path="*" element={<TournamentsPage />} />
         </Routes>
       </div>
     </div>
@@ -53,6 +64,46 @@ const UserDashboard = () => {
 };
 
 export default UserDashboard;
+
+// const UserDashboard = () => {
+//   const navigate = useNavigate();
+
+//   return (
+//     <div className="user-dashboard">
+//       {/* Navigation Buttons */}
+//       <div className="button-container">
+//         <button onClick={() => navigate('/dashboard')}>Tournaments</button>
+//         <button onClick={() => navigate('/dashboard/my-events')}>My Events</button>
+//         <button onClick={() => navigate('/dashboard/upcoming')}>Upcoming</button>
+//         {/* <button onClick={() => navigate('/dashboard/leaderboards')}>Leaderboards</button> */}
+//       </div>
+
+//       {/* Main Content */}
+//       <div className="main-content">
+//         <Routes>
+//           {/* Default Dashboard Route to show Tournaments */}
+//           <Route path="/dashboard" element={<TournamentsPage />} />
+
+//           <Route path="/dashboard/my-events" element={<EventsPage />} />
+          
+//           {/* Upcoming Matches Route */}
+//           <Route path="/dashboard/upcoming" element={<UpcomingMatchesPage />} />
+
+//           {/* Leaderboards Route
+//           <Route path="/dashboard/leaderboards" element={<div>Leaderboards Content Here</div>} /> */}
+
+//           {/* Tournament Events Route */}
+//           <Route path="/tournaments/:tournamentId/events" element={<TournamentEventsPage />} />
+
+//           {/* Default Route Redirect */}
+//           <Route path="*" element={<TournamentsPage />} />  {/* Redirects to TournamentsPage if path not found */}
+//         </Routes>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default UserDashboard;
 
 // const UserDashboard = () => {
 //   const [activeTournaments, setActiveTournaments] = useState([]);

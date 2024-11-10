@@ -9,10 +9,9 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
   const [registrationStartDate, setRegistrationStart] = useState('');
   const [registrationEndDate, setRegistrationEnd] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [isSaving, setIsSaving] = useState(false); // Add a loading state
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleAdd = async () => {
-    // Validation
     if (!name || !tournamentStartDate || !tournamentEndDate || !venue || !registrationStartDate || !registrationEndDate) {
       setErrorMessage('All fields are required.');
       return;
@@ -24,15 +23,13 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
     }
 
     if (new Date(tournamentStartDate) >= new Date(tournamentEndDate)) {
-      setErrorMessage('Tournament start date must be before the tournament end date.');
+      setErrorMessage('Tournament start date must be before tournament end date.');
       return;
     }
 
-    // Set loading state
     setIsSaving(true);
 
     try {
-      // If validation passes, call the onAdd function (which is asynchronous)
       await onAdd({
         name,
         tournamentStartDate,
@@ -42,70 +39,83 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
         registrationEndDate,
       });
 
-      // Clear error and close modal after successful addition
       setErrorMessage('');
       onClose();
     } catch (error) {
       setErrorMessage('Failed to add tournament. Please try again.');
     } finally {
-      setIsSaving(false); // Stop the loading state
+      setIsSaving(false);
     }
   };
 
   return (
-    <div className="modal-backdrop">
+    <div className="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="create-tournament-title">
       <div className="modal">
-        <h2>Create New Tournament</h2>
+        <h2 id="create-tournament-title">Create New Tournament</h2>
         <div className="modal-content">
           {errorMessage && <p className="error-message">{errorMessage}</p>}
-          <label>Tournament Name</label>
+          
+          <label htmlFor="tournament-name">Tournament Name</label>
           <input
+            id="tournament-name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             disabled={isSaving}
+            aria-required="true"
           />
 
           <label>Registration Dates</label>
-          <input
-            type="date"
-            value={registrationStartDate}
-            onChange={(e) => setRegistrationStart(e.target.value)}
-            disabled={isSaving}
-          /> 
-          to
-          <input
-            type="date"
-            value={registrationEndDate}
-            onChange={(e) => setRegistrationEnd(e.target.value)}
-            disabled={isSaving}
-          />
+          <div className="date-range">
+            <input
+              type="date"
+              value={registrationStartDate}
+              onChange={(e) => setRegistrationStart(e.target.value)}
+              disabled={isSaving}
+              aria-required="true"
+            /> 
+            to
+            <input
+              type="date"
+              value={registrationEndDate}
+              onChange={(e) => setRegistrationEnd(e.target.value)}
+              disabled={isSaving}
+              aria-required="true"
+            />
+          </div>
 
           <label>Tournament Dates</label>
-          <input
-            type="date"
-            value={tournamentStartDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            disabled={isSaving}
-          /> 
-          to
-          <input
-            type="date"
-            value={tournamentEndDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            disabled={isSaving}
-          />
+          <div className="date-range">
+            <input
+              type="date"
+              value={tournamentStartDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              disabled={isSaving}
+              aria-required="true"
+            /> 
+            to
+            <input
+              type="date"
+              value={tournamentEndDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              disabled={isSaving}
+              aria-required="true"
+            />
+          </div>
 
-          <label>Venue</label>
+          <label htmlFor="venue">Venue</label>
           <input
+            id="venue"
             type="text"
             value={venue}
             onChange={(e) => setVenue(e.target.value)}
             disabled={isSaving}
+            aria-required="true"
           />
         </div>
+        
         <div className="modal-actions">
-          <button onClick={onClose} disabled={isSaving}>Cancel</button>
+          <button onClick={onClose} disabled={isSaving} className="cancel-button">Cancel</button>
           <button
             onClick={handleAdd}
             disabled={
@@ -117,6 +127,7 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
               !registrationEndDate ||
               isSaving
             }
+            className="add-button"
           >
             {isSaving ? 'Adding...' : 'Add'}
           </button>

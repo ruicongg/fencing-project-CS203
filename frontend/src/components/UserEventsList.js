@@ -5,17 +5,19 @@ import '../styles/UserEventsList.css';
 axios.defaults.baseURL = 'http://localhost:8080';
 
 const EventsList = ({ events, showWithdrawButton, onWithdraw }) => {
-  
   const [withdrawing, setWithdrawing] = useState(null); // Track which event is being withdrawn
+  const [error, setError] = useState(null); // Error state for handling withdraw errors
 
   const handleWithdraw = async (eventId) => {
     setWithdrawing(eventId); // Set the event being withdrawn
+    setError(null); // Reset error state before attempting withdrawal
     try {
       await axios.post(`/events/${eventId}/withdraw`);
       onWithdraw(eventId); // Inform the parent component that the event was withdrawn
     } catch (error) {
       console.error('Error withdrawing from event:', error);
-      alert('Failed to withdraw from the event.');
+      const errorMessage = error.response?.data?.message || 'Failed to withdraw from the event.';
+      setError(errorMessage);
     } finally {
       setWithdrawing(null); // Reset after action completes
     }
@@ -24,8 +26,10 @@ const EventsList = ({ events, showWithdrawButton, onWithdraw }) => {
   // Helper function to check if the event is upcoming and within the registration period
   const isUpcomingAndWithinRegistrationPeriod = (event) => {
     const now = new Date();
-    const startDate = new Date(event.startDateTime);
-    const registrationEndDate = new Date(event.registrationEndDate);
+    const startDate = new Date(event.startDate);
+    const registrationEndDate = new Date(event.tournament.registrationEndDate);
+
+    registrationEndDate.setHours(23, 59, 59, 999);
 
     return now < startDate && now < registrationEndDate;
   };
@@ -36,10 +40,11 @@ const EventsList = ({ events, showWithdrawButton, onWithdraw }) => {
 
   return (
     <div className="events-list">
+      {error && <p className="error-message">{error}</p>}
       {events.map(event => (
         <div key={event.id} className="event-item">
           <h4>{event.name}</h4>
-          <p>{new Date(event.startDateTime).toLocaleString()} - {new Date(event.endDateTime).toLocaleString()}</p>
+          <p>{new Date(event.startDate).toLocaleString()} - {new Date(event.endDate).toLocaleString()}</p>
           <p><strong>Weapon:</strong> {event.weapon}</p>
 
           {/* Show "Withdraw" button for upcoming events within the registration period */}
@@ -48,6 +53,8 @@ const EventsList = ({ events, showWithdrawButton, onWithdraw }) => {
               className="withdraw-button"
               onClick={() => handleWithdraw(event.id)}
               disabled={withdrawing === event.id} // Disable the button while withdrawing
+              aria-live="polite"
+              aria-disabled={withdrawing === event.id}
             >
               {withdrawing === event.id ? 'Withdrawing...' : 'Withdraw'}
             </button>
@@ -59,6 +66,62 @@ const EventsList = ({ events, showWithdrawButton, onWithdraw }) => {
 };
 
 export default EventsList;
+
+// const EventsList = ({ events, showWithdrawButton, onWithdraw }) => {
+  
+//   const [withdrawing, setWithdrawing] = useState(null); // Track which event is being withdrawn
+
+//   const handleWithdraw = async (eventId) => {
+//     setWithdrawing(eventId); // Set the event being withdrawn
+//     try {
+//       await axios.post(`/events/${eventId}/withdraw`);
+//       onWithdraw(eventId); // Inform the parent component that the event was withdrawn
+//     } catch (error) {
+//       console.error('Error withdrawing from event:', error);
+//       alert('Failed to withdraw from the event.');
+//     } finally {
+//       setWithdrawing(null); // Reset after action completes
+//     }
+//   };
+
+//   // Helper function to check if the event is upcoming and within the registration period
+//   const isUpcomingAndWithinRegistrationPeriod = (event) => {
+//     const now = new Date();
+//     const startDate = new Date(event.startDateTime);
+//     const registrationEndDate = new Date(event.registrationEndDate);
+
+//     return now < startDate && now < registrationEndDate;
+//   };
+
+//   if (!events || events.length === 0) {
+//     return <p>No events found.</p>;
+//   }
+
+//   return (
+//     <div className="events-list">
+//       {events.map(event => (
+//         <div key={event.id} className="event-item">
+//           <h4>{event.name}</h4>
+//           <p>{new Date(event.startDateTime).toLocaleString()} - {new Date(event.endDateTime).toLocaleString()}</p>
+//           <p><strong>Weapon:</strong> {event.weapon}</p>
+
+//           {/* Show "Withdraw" button for upcoming events within the registration period */}
+//           {showWithdrawButton && isUpcomingAndWithinRegistrationPeriod(event) && (
+//             <button
+//               className="withdraw-button"
+//               onClick={() => handleWithdraw(event.id)}
+//               disabled={withdrawing === event.id} // Disable the button while withdrawing
+//             >
+//               {withdrawing === event.id ? 'Withdrawing...' : 'Withdraw'}
+//             </button>
+//           )}
+//         </div>
+//       ))}
+//     </div>
+//   );
+// };
+
+// export default EventsList;
 
 
 

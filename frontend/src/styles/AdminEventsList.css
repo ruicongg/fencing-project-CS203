@@ -1,64 +1,82 @@
+/* Main container for the events list */
+.events-list {
+  padding: 20px;
+  background-color: #141414;
+  color: #ffffff;
+  border-radius: 8px;
+}
+
+/* Styling for each individual event item */
 .event-item {
-  background-color: #f4f4f4;
-  border: 1px solid #d1e7fd;
-  border-radius: 10px;
   padding: 15px;
+  background-color: #1f1f1f;
+  border-radius: 8px;
+  border: 1px solid #00BFFF;
   margin-bottom: 15px;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
 }
 
-.event-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-weight: bold;
+.event-item:hover {
+  background-color: #2e2e2e;
+  transform: translateY(-2px);
 }
 
-.event-id {
-  color: #007bff;
+.event-item h4 {
+  font-size: 18px;
+  color: #00BFFF;
+  margin-bottom: 8px;
 }
 
-.event-details {
-  color: #555;
+.event-item p {
+  font-size: 14px;
+  color: #cccccc;
+  margin: 4px 0;
 }
 
-.event-date {
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.event-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.edit-button,
-.delete-button {
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+/* Button styling */
+.event-item .edit-button,
+.event-item .delete-button {
+  padding: 8px 12px;
+  margin-top: 10px;
+  margin-right: 5px;
   color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+/* Edit button specific styles */
+.event-item .edit-button {
   background-color: #007bff;
-  transition: background-color 0.2s;
 }
 
-.delete-button {
-  background-color: #dc3545;
-}
-
-.edit-button:hover {
+.event-item .edit-button:hover {
   background-color: #0056b3;
 }
 
-.delete-button:hover {
+/* Delete button specific styles */
+.event-item .delete-button {
+  background-color: #dc3545;
+}
+
+.event-item .delete-button:hover {
   background-color: #c82333;
 }
+
+/* Loading and error message styles */
+.loading,
+.error {
+  font-size: 16px;
+  color: #cccccc;
+  text-align: center;
+  margin-top: 20px;
+}
+
 
 
 /* .events-list {

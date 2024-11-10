@@ -1,4 +1,80 @@
+/* General Page Styles */
 .stage-details-page {
+  padding: 20px;
+  background-color: #141414;
+  color: #ffffff;
+}
+
+/* Breadcrumb Styles */
+.breadcrumb {
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #00BFFF;
+}
+
+.breadcrumb span {
+  cursor: pointer;
+  color: #00BFFF;
+}
+
+.breadcrumb span:hover {
+  text-decoration: underline;
+}
+
+/* Heading Styles */
+.stage-details-page h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+/* Error Message */
+.error-message {
+  color: #ff4d4f;
+  margin-bottom: 10px;
+}
+
+/* Match List Styles */
+.match-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.match-list li {
+  background-color: #1f1f1f;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.match-list li:hover {
+  background-color: #2e2e2e;
+}
+
+/* Generate Button */
+.generate-button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.generate-button:hover {
+  background-color: #218838;
+}
+
+.generate-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+
+/* .stage-details-page {
     padding: 20px;
   }
   
@@ -59,5 +135,5 @@
   
   ul li button:hover {
     background-color: #0056b3;
-  }
+  } */
   

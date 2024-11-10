@@ -7,19 +7,23 @@ import '../styles/AdminEventDetailsPage.css';
 axios.defaults.baseURL = 'http://localhost:8080';
 
 const AdminEventDetailsPage = () => {
-  const { tournamentId, eventId } = useParams(); 
+  const { tournamentId, eventId } = useParams();
   const navigate = useNavigate();
 
   const [event, setEvent] = useState(null);
-  const [loading, setLoading] = useState(true); // To handle loading state
-  const [error, setError] = useState(null); // Error state for failed API requests
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isPlayersModalOpen, setIsPlayersModalOpen] = useState(false);
+
+  // Track if group stages have been generated
+  const [groupStagesGenerated, setGroupStagesGenerated] = useState(false);
 
   useEffect(() => {
     const fetchEventData = async () => {
       try {
         const eventResponse = await axios.get(`/tournaments/${tournamentId}/events/${eventId}`);
         setEvent(eventResponse.data);
+        setGroupStagesGenerated(eventResponse.data.groupStages && eventResponse.data.groupStages.length > 0);
       } catch (error) {
         setError('Failed to load event details. Please try again.');
         console.error('Error fetching event details:', error);
@@ -47,6 +51,7 @@ const AdminEventDetailsPage = () => {
       await axios.post(`/tournaments/${tournamentId}/events/${eventId}/groupStage`);
       const updatedEvent = await axios.get(`/tournaments/${tournamentId}/events/${eventId}`);
       setEvent(updatedEvent.data); // Update event data to reflect new group stages
+      setGroupStagesGenerated(true); // Set to true after generating group stages
     } catch (error) {
       setError('Error generating group stages.');
       console.error('Error generating group stages:', error);
@@ -61,7 +66,7 @@ const AdminEventDetailsPage = () => {
   }
 
   if (error) {
-    return <p>{error}</p>; // Show error message if API calls fail
+    return <p>{error}</p>;
   }
 
   if (!event) {
@@ -70,22 +75,19 @@ const AdminEventDetailsPage = () => {
 
   return (
     <div className="event-details-page">
-      {/* Breadcrumb Navigation */}
       <nav className="breadcrumb">
         <Link to="/admin/dashboard">Tournaments</Link> &gt; <span>Event</span>
       </nav>
 
-      {/* Event Details */}
       <h1>Event Details</h1>
       <div className="event-info">
         <p><strong>Event Name:</strong> {event.name}</p>
-        <p><strong>Date:</strong> {new Date(event.startDate).toLocaleString()} to {new Date(event.endDate).toLocaleString()}</p> {/* Formatted dates */}
+        <p><strong>Date:</strong> {new Date(event.startDate).toLocaleString()} to {new Date(event.endDate).toLocaleString()}</p>
         <p><strong>Gender:</strong> {event.gender}</p>
         <p><strong>Weapon:</strong> {event.weapon}</p>
         <button onClick={openPlayersModal}>View Players</button>
       </div>
 
-      {/* Group Stages Tab */}
       <div className="group-stages-section">
         <h2>Group Stages</h2>
         {event.groupStages && event.groupStages.length > 0 ? (
@@ -102,12 +104,13 @@ const AdminEventDetailsPage = () => {
         ) : (
           <div>
             <p>No Group Stages have been generated yet. Click below to create them.</p>
-            <button onClick={handleGenerateGroupStages}>Generate Group Stages</button>
+            {!groupStagesGenerated && (
+              <button onClick={handleGenerateGroupStages}>Generate Group Stages</button>
+            )}
           </div>
         )}
       </div>
 
-      {/* Knockout Stages Tab */}
       <div className="knockout-stages-section">
         <h2>Knockout Stages</h2>
         {event.knockoutStages && event.knockoutStages.length > 0 ? (
@@ -124,18 +127,20 @@ const AdminEventDetailsPage = () => {
         ) : (
           <div>
             <p>No Knockout Stages have been generated yet. Click below to create them.</p>
-            <button onClick={handleGenerateKnockoutStages}>+ New Knockout Stage</button>
           </div>
         )}
+        <button onClick={handleGenerateKnockoutStages}>+ New Knockout Stage</button>
       </div>
 
-      {/* View Players Modal */}
       {isPlayersModalOpen && (
         <ViewPlayersModal onClose={closePlayersModal} eventId={eventId} tournamentId={tournamentId} />
       )}
     </div>
   );
 };
+
+export default AdminEventDetailsPage;
+
 
 
 //   const [event, setEvent] = useState(null);
@@ -274,7 +279,7 @@ const AdminEventDetailsPage = () => {
 //   );
 // };
 
-export default AdminEventDetailsPage;
+// export default AdminEventDetailsPage;
 
 
 // import React, { useState, useEffect } from 'react';

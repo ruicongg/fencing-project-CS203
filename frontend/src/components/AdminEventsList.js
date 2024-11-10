@@ -85,9 +85,9 @@ const AdminEventsList = ({ tournamentId, onEditEvent, onDeleteEvent }) => {
 };
 
 AdminEventsList.propTypes = {
-  tournamentId: PropTypes.string.isRequired,
+  tournamentId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   onEditEvent: PropTypes.func.isRequired,
-  onDeleteEvent: PropTypes.func, // Prop validation for delete functionality
+  onDeleteEvent: PropTypes.func, 
 };
 
 export default AdminEventsList;

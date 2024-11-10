@@ -6,12 +6,13 @@ import '../styles/AdminStageDetailsPage.css'; // Import the relevant CSS
 axios.defaults.baseURL = 'http://localhost:8080';
 
 const AdminStageDetailsPage = () => {
-  const { tournamentId, eventId, stageType, stageId } = useParams(); // Use stageType and stageId from the URL
+  const { tournamentId, eventId, stageType, stageId } = useParams();
   const navigate = useNavigate();
+
   const [matches, setMatches] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state to indicate data fetching
-  const [generating, setGenerating] = useState(false); // State to disable button while generating matches
-  const [error, setError] = useState(null); // Error state for handling issues
+  const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchMatches = async () => {
@@ -32,7 +33,8 @@ const AdminStageDetailsPage = () => {
   }, [tournamentId, eventId, stageType, stageId]);
 
   const handleGenerateMatches = async () => {
-    setGenerating(true); // Disable the button while generating
+    setGenerating(true);
+    setError(null); // Clear previous error
     try {
       await axios.post(
         `/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/matches`
@@ -40,49 +42,46 @@ const AdminStageDetailsPage = () => {
       const response = await axios.get(
         `/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/matches`
       );
-      setMatches(response.data); // Refresh the match list after generation
+      setMatches(response.data);
     } catch (error) {
       setError('Error generating matches.');
       console.error('Error generating matches:', error);
     } finally {
-      setGenerating(false); // Re-enable the button
+      setGenerating(false);
     }
   };
 
+  const renderMatches = () => (
+    <ul className="match-list">
+      {matches.map((match) => (
+        <li key={match.id} onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/match/${match.id}`)}>
+          Match {match.id}: @{match.player1.username} vs @{match.player2.username}
+        </li>
+      ))}
+    </ul>
+  );
+
   return (
     <div className={`${stageType}-details-page`}>
+      {/* Breadcrumb Navigation */}
       <nav className="breadcrumb">
         <span onClick={() => navigate(`/admin/tournaments/${tournamentId}`)}>Tournaments</span> &gt;
         <span onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}`)}>Event</span> &gt;
         <span>{stageType === 'groupStage' ? 'GroupStage' : 'KnockoutStage'}</span>
       </nav>
 
-      <h1>{stageType === 'groupStage' ? `GroupStage ${stageId}` : `KnockoutStage ${stageId}`}</h1>
+      <h1>{stageType === 'groupStage' ? `Group Stage ${stageId}` : `Knockout Stage ${stageId}`}</h1>
 
-      {/* Show a loading message while data is being fetched */}
+      {/* Display loading, error, or content based on state */}
       {loading && <p>Loading matches...</p>}
-      {error && <p>{error}</p>}
-
-      {/* Show button to generate matches when no matches are available */}
-      {matches.length === 0 && !loading && (
-        <button onClick={handleGenerateMatches} disabled={generating}>
+      {error && <p className="error-message">{error}</p>}
+      {!loading && matches.length === 0 && !error && (
+        <button onClick={handleGenerateMatches} disabled={generating} className="generate-button">
           {generating ? 'Generating matches...' : 'Generate matches'}
         </button>
       )}
-
-      {/* Display the list of matches */}
-      {matches.length > 0 && (
-        <ul>
-          {matches.map((match) => (
-            <li key={match.id} onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/match/${match.id}`)}>
-              Match {match.id}: @{match.player1.username} vs @{match.player2.username}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {/* Show a message if no matches are available */}
-      {!loading && matches.length === 0 && <p>No matches available</p>}
+      {matches.length > 0 && renderMatches()}
+      {!loading && matches.length === 0 && !error && <p>No matches available</p>}
     </div>
   );
 };

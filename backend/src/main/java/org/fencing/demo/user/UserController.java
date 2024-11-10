@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import jakarta.validation.Valid;
 @RestController
@@ -33,6 +35,14 @@ public class UserController {
             throw new UserNotFoundException(id);  
         }
         return user;
+    }
+
+    // Search for user ID by username, else throw UserNotFoundException
+    @GetMapping("/users/id")
+    public Long getUserId() {  
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return userService.getUserId(username); 
     }
 
     // Add user - not needed for now 

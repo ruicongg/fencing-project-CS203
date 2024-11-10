@@ -1,4 +1,95 @@
 .user-dashboard {
+  padding: 20px;
+  background-color: #141414;
+  color: #ffffff;
+}
+
+/* Navigation Buttons */
+.button-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.button-container button {
+  background-color: transparent;
+  border: none;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  color: #aaaaaa;
+  transition: color 0.3s ease, border-bottom 0.3s ease;
+}
+
+.button-container button.active {
+  color: #ffffff;
+  border-bottom: 2px solid #00BFFF;
+}
+
+.button-container button:hover {
+  color: #00BFFF;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+/* Filters */
+.filter-by {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.filter-by h4 {
+  margin-right: 20px;
+  color: #aaaaaa;
+}
+
+.filter-by select {
+  background-color: #2e2e2e;
+  color: white;
+  border: none;
+  padding: 8px;
+  margin-right: 10px;
+}
+
+/* Tournament Cards */
+.tournament-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* Horizontal scrolling */
+.tournaments-list {
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.tournaments-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* Events Section */
+.events-section {
+  margin-top: 30px;
+}
+
+.events-section h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #00BFFF;
+}
+
+
+
+/* .user-dashboard {
     padding: 20px;
     background-color: #141414;
     color: #ffffff;
@@ -67,7 +158,7 @@
     margin-bottom: 20px;
     font-size: 24px;
     color: #00BFFF;
-  }
+  } */
   
 
 /* .user-dashboard {

@@ -244,6 +244,45 @@ public class MatchServiceTest {
         verify(knockoutStageRepository, times(1)).findById(knockoutStageId);
     }
 
+    @Test
+    public void getAllMatches_ReturnsMatchesList() {
+        Event event = createValidEvent();
+        Player player1 = createValidPlayer(1);
+        Player player2 = createValidPlayer(2);
+        Player player3 = createValidPlayer(3);
+        Player player4 = createValidPlayer(4);
+
+        // Arrange: Create a list of matches
+        Match match1 = createValidMatch(event, player1, player2); 
+        Match match2 = createValidMatch(event, player3, player4);
+        List<Match> matches = Arrays.asList(match1, match2);
+
+        // Mock repository response
+        when(matchRepository.findAll()).thenReturn(matches);
+
+        // Act
+        List<Match> result = matchService.getAllMatches();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(matchRepository, times(1)).findAll();
+    }
+
+    @Test
+    public void getAllMatches_ReturnsEmptyList_WhenNoMatchesFound() {
+        // Arrange: Mock repository to return an empty list
+        when(matchRepository.findAll()).thenReturn(Collections.emptyList());
+
+        // Act
+        List<Match> result = matchService.getAllMatches();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(0, result.size());
+        verify(matchRepository, times(1)).findAll();
+    }
+
     @Test // ERROR IllegalArgument Player is not registered in this event
     public void updateMatch_ValidIds_ReturnsUpdatedMatch() {
         Long eventId = 1L;

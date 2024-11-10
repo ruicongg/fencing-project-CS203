@@ -73,6 +73,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/tournaments/**").hasRole("ADMIN") // Only admins can POST
                         .requestMatchers(HttpMethod.PUT, "/tournaments", "/tournaments/**").hasRole("ADMIN") // Only admins can PUT
                         .requestMatchers(HttpMethod.DELETE, "/tournaments", "/tournaments/**").hasRole("ADMIN") // Only admins can
+                        .requestMatchers(HttpMethod.GET, "/matches").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users/id").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/users", "/users/**").hasRole("ADMIN") // Only admins can GET users
                         .requestMatchers(HttpMethod.PUT, "/users/*").hasRole("ADMIN") // Only admins can PUT users (next time users should be able to update their own stuff)
                         .requestMatchers(HttpMethod.DELETE, "/users/*").hasRole("ADMIN") // Only admins can DELETE users

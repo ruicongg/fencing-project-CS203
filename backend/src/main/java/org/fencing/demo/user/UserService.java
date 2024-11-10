@@ -9,6 +9,8 @@ public interface UserService {
 
     User getUser(Long id);
 
+    Long getUserId(String username);
+
     // Add a new user - not needed for now
     // User addUser(User user);
 
