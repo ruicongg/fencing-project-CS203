@@ -104,9 +104,7 @@ public class MatchMakingServiceImpl implements MatchMakingService {
         Map<Integer, List<Match>> groupMatches = groupMatchGenerator.generateGroupMatches(groups, event);
 
         for (int i = 0; i < groupStages.size(); i++) {
-            GroupStage stage = groupStages.get(i);
             List<Match> matches = groupMatches.get(i);
-            matches.forEach(match -> match.setGroupStage(stage));
             allMatches.addAll(matches);
         }
 

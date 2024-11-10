@@ -30,24 +30,26 @@ public class GroupMatchGeneratorTest {
         event = new Event();
         groups = new TreeMap<>();
         
-        // Create 4 players for one group
-        List<PlayerRank> group0 = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            Player player = new Player();
-            player.setId((long) i);
-            
-            PlayerRank rank = new PlayerRank();
-            rank.setPlayer(player);
-            group0.add(rank);
+        int numberOfGroups = 1;
+        int groupSize = 4;
+        for (int i = 0; i < numberOfGroups; i++) { 
+            List<PlayerRank> group = new ArrayList<>();
+            for (int j = 0; j < groupSize; j++) {
+                Player player = new Player();
+                player.setId((long) (i * groupSize + j));
+                PlayerRank rank = new PlayerRank();
+                rank.setPlayer(player);
+                group.add(rank);
+            }
+            groups.put(i, group);
         }
-        groups.put(0, group0);
-         
-        // Set up group stages in event
-        List<GroupStage> groupStages = new ArrayList<>();
-        GroupStage stage = new GroupStage();
-        stage.setEvent(event);
-        groupStages.add(stage);
-        event.setGroupStages(groupStages);
+
+        for (int i = 0; i < numberOfGroups; i++) {
+            GroupStage stage = new GroupStage();
+            stage.setEvent(event);
+            event.getGroupStages().add(stage);
+        }
+
     }
 
     @Test

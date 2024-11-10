@@ -12,7 +12,6 @@ import org.fencing.demo.events.Event;
 import org.fencing.demo.stages.GroupStage;
 import org.springframework.stereotype.Component;
 
-// note that groupstage is not a refactor, it is a bug fix
 @Component
 public class GroupMatchGenerator {
     
@@ -26,16 +25,16 @@ public class GroupMatchGenerator {
             Integer groupNumber = entry.getKey();
             List<PlayerRank> players = entry.getValue();
             GroupStage groupStage = event.getGroupStages().get(groupNumber);
-            List<Match> matches = generateMatchesForGroup(players, event);
+            List<Match> matches = generateMatchesForGroup(players, event, groupStage);
             resultMap.put(groupNumber, matches);
         }
         
         return resultMap;
     }
 
-    private List<Match> generateMatchesForGroup(List<PlayerRank> players, Event event) {
+    private List<Match> generateMatchesForGroup(List<PlayerRank> players, Event event, GroupStage groupStage) {
         return generateAllPossiblePairings(players).stream()
-            .map(pair -> createMatch(pair, event))
+            .map(pair -> createMatch(pair, event, groupStage))
             .toList();
     }
 
@@ -50,12 +49,12 @@ public class GroupMatchGenerator {
         return pairings;
     }
 
-    private Match createMatch(Pair pair, Event event) {
+    private Match createMatch(Pair pair, Event event, GroupStage groupStage) {
         Match match = new Match();
         match.setPlayer1(pair.getPlayerRank1().getPlayer());
         match.setPlayer2(pair.getPlayerRank2().getPlayer());
         match.setEvent(event);
-        // match.setGroupStage(groupStage);
+        match.setGroupStage(groupStage);
         return match;
     }
 }
