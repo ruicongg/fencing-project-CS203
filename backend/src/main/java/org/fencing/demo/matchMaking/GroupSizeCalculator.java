@@ -35,8 +35,8 @@ class GroupSizeCalculator {
 
     /**
      * Finds the optimal group size by:
-     * 1. Finding the smallest remainder
-     * 2. If multiple sizes have the same smallest remainder, picks the smallest
+     * 1. Finding the largest remainder
+     * 2. If multiple sizes have the same largest remainder, picks the smallest
      * size
      * 3. Throws an error if there are no players in the event
      *
@@ -46,7 +46,7 @@ class GroupSizeCalculator {
      */
     private int findOptimalGroupSizeByMap(Map<Integer, Integer> mapSizeToRemainder) {
         return mapSizeToRemainder.entrySet().stream()
-                .min(Comparator.<Map.Entry<Integer, Integer>, Integer>comparing(Map.Entry::getValue)
+                .max(Comparator.<Map.Entry<Integer, Integer>, Integer>comparing(Map.Entry::getValue)
                         .thenComparing(Map.Entry::getKey))
                 .map(Map.Entry::getKey)
                 .orElseThrow(() -> new IllegalArgumentException("No players in event"));

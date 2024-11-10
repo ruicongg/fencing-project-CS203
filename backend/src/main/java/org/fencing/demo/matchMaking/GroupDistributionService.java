@@ -33,22 +33,19 @@ public class GroupDistributionService {
     private static Map<Integer, List<PlayerRank>> distributePlayersRoundRobin(
             Set<PlayerRank> sortedPlayers, 
             int numberOfGroups) {
-        Map<Integer, List<PlayerRank>> groups = initializeGroups(numberOfGroups);   
+        Map<Integer, List<PlayerRank>> groups = new TreeMap<>();
+        for (int i = 0; i < numberOfGroups; i++) {
+            groups.put(i, new ArrayList<>());
+        }
         Iterator<PlayerRank> iterator = sortedPlayers.iterator();
         int index = 0;
         while (iterator.hasNext()) {
             groups.get(index % numberOfGroups).add(iterator.next());
             index++;
         }
-        return groups;
+        return groups; 
     }
 
-    private static Map<Integer, List<PlayerRank>> initializeGroups(int numberOfGroups) {
-        Map<Integer, List<PlayerRank>> groups = new TreeMap<>();
-        for (int i = 0; i < numberOfGroups; i++) {
-            groups.put(i, new ArrayList<>());
-        }
-        return groups;
-    }
+    
 
 }
