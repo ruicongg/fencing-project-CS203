@@ -5,17 +5,14 @@ import java.util.*;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
-import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.knockoutstage.KnockoutStageRepository;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.match.MatchRepository;
-import org.fencing.demo.player.Player;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
-
 
 @Service
 @Transactional

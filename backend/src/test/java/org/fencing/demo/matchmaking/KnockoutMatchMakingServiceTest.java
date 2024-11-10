@@ -3,7 +3,6 @@ package org.fencing.demo.matchmaking;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.*;
 
 import java.util.*;
@@ -12,7 +11,6 @@ import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.PlayerRank;
-import org.fencing.demo.knockoutmatchmaking.KnockoutMatchGenerator;
 import org.fencing.demo.knockoutmatchmaking.KnockoutMatchMakingService;
 import org.fencing.demo.knockoutmatchmaking.KnockoutMatchMakingServiceImpl;
 import org.fencing.demo.knockoutstage.KnockoutStage;
@@ -37,10 +35,7 @@ public class KnockoutMatchMakingServiceTest {
     
     @Mock
     private MatchRepository matchRepository;
-    
-    @Mock
-    private KnockoutMatchGenerator knockoutMatchGenerator;
-    
+
     private KnockoutMatchMakingService knockoutMatchMakingService;
     
     @BeforeEach
@@ -48,8 +43,7 @@ public class KnockoutMatchMakingServiceTest {
         knockoutMatchMakingService = new KnockoutMatchMakingServiceImpl(
             eventRepository, 
             knockoutStageRepository, 
-            matchRepository,
-            knockoutMatchGenerator
+            matchRepository
         );
     }
     
@@ -103,9 +97,6 @@ public class KnockoutMatchMakingServiceTest {
         }
         
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
-        when(knockoutMatchGenerator.generateMatchesForKnockoutStage(
-            any(KnockoutStage.class), anyList(), anySet()))
-            .thenReturn(expectedMatches);
         when(matchRepository.saveAll(anyList())).thenReturn(expectedMatches);
         
         List<Match> result = knockoutMatchMakingService.createMatchesInKnockoutStage(eventId);
