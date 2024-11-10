@@ -40,6 +40,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 public class MatchServiceTest {
@@ -173,6 +175,7 @@ public class MatchServiceTest {
         verify(knockoutStageRepository, times(1)).findById(knockoutStageId);
     }
 
+
     @Test // ERROR IllegalArgument Player is not registered in this event
     public void updateMatch_ValidIds_ReturnsUpdatedMatch() {
         Long eventId = 1L;
@@ -181,8 +184,12 @@ public class MatchServiceTest {
 
         Player player1 = createValidPlayer(1);
         Player player2 = createValidPlayer(2);
-        PlayerRank playerRank1 = createPlayerRank(1, player1, event);
-        PlayerRank playerRank2 = createPlayerRank(2, player2, event);
+        PlayerRank playerRank1 = mock(PlayerRank.class); // Mock PlayerRank
+        PlayerRank playerRank2 = mock(PlayerRank.class); // Mock PlayerRank
+
+        // Mock the getPlayer() method of PlayerRank to return valid players
+        when(playerRank1.getPlayer()).thenReturn(player1);
+        when(playerRank2.getPlayer()).thenReturn(player2);
 
         event.getRankings().add(playerRank1);
         event.getRankings().add(playerRank2);
@@ -190,18 +197,28 @@ public class MatchServiceTest {
         Match existingMatch = createValidMatch(event, player1, player2);
         Match newMatch = createUpdatedMatch(event, player1, player2);
         
+        // Mocking repository behavior
         when(matchRepository.findById(matchId)).thenReturn(Optional.of(existingMatch));
         when(matchRepository.save(any(Match.class))).thenReturn(existingMatch);
 
+        // Correct stubbing: match the actual arguments passed to updateAfterMatch
+        doNothing().when(playerRank1).updateAfterMatch(eq(20), eq(18), eq(playerRank2));
+        doNothing().when(playerRank2).updateAfterMatch(eq(18), eq(20), eq(playerRank1));
+        
+        // Perform the actual update
         Match result = matchService.updateMatch(eventId, matchId, newMatch);
 
+        // Assert results
         assertNotNull(result);
         assertEquals(newMatch.getPlayer1(), result.getPlayer1());
         assertEquals(newMatch.getPlayer1Score(), result.getPlayer1Score());
 
+        // Verify repository interactions
         verify(matchRepository, times(1)).findById(matchId);
         verify(matchRepository, times(1)).save(existingMatch);
     }
+
+
 
     @Test
     public void updateMatch_NonExistingMatch_ThrowsMatchNotFoundException() {

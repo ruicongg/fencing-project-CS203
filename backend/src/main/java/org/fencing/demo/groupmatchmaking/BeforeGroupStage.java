@@ -18,9 +18,11 @@ public class BeforeGroupStage {
         if (rankings == null) {
             return null;
         }
-    
+        
+        //stores the group number and the playerRanks inside
         TreeMap<Integer, List<PlayerRank>> resultMatches = new TreeMap<>();
 
+        //sort players according to Elo
         Set<PlayerRank> players = new TreeSet<>(new PlayerRankEloComparator());
 
 
@@ -28,10 +30,6 @@ public class BeforeGroupStage {
         for (PlayerRank pr : rankings) {
             players.add(pr);
         }
-
-        // //bebugging line
-        // System.out.println("1)in Before Group sort how many players: " + players.size());
-        // System.out.println();
 
         int playerNum = players.size();
         if (playerNum == 0) {
@@ -47,40 +45,23 @@ public class BeforeGroupStage {
             factorRemainder.put(i, remainder);
         }
 
-        int bestFactor = 4;
-        int grpSize = 0;
+        int grpSize = 4;
 
         // Find the best group size with the smallest remainder
         for (Integer factor : factorRemainder.keySet()) {
+            //if it is perfect division then break the loop
             if (factorRemainder.get(factor) == 0) {
                 grpSize = factor;
                 break;
             }
             // Otherwise, pick the factor with the smallest remainder
-            if (factorRemainder.get(factor) > factorRemainder.get(bestFactor)) {
-                bestFactor = factor;
+            if (factorRemainder.get(factor) < factorRemainder.get(grpSize) && grpSize != 7) {
+                grpSize = factor;
             }
         }
 
-        if (grpSize == 0) {
-            grpSize = bestFactor; // Use the best factor if no perfect division
-        }
-
         int numGroups = playerNum / grpSize;
-        int remainder = playerNum % grpSize;
-
-        // //bebugging line
-        // System.out.println("2)in Before Group sort groups: " + numGroups);
-        // System.out.println();
-
-        // //bebugging line
-        // System.out.println("3)in Before Group sort remainder: " + remainder);
-        // System.out.println();
-
-        // If there's a remainder, we need one more group
-        if (remainder != 0) {
-            numGroups++;
-        }
+        
 
         // Initialize the groups
         for (int i = 1; i <= numGroups; i++) {

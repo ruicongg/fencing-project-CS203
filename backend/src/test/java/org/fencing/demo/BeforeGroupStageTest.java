@@ -290,4 +290,36 @@ public class BeforeGroupStageTest {
     }
 
 
+    @Test
+    public void testSortByELO_WithRemainder17() {
+        // Test with a number of players that does not perfectly divide into groups
+        Set<PlayerRank> rankings = new TreeSet<>(new PlayerRankEloComparator());
+
+        // Create 9 mock players with different ELOs
+        for(int i = 1; i < 18; i++){
+            Player tempPlayer = new Player();
+            tempPlayer.setElo(1200);
+            tempPlayer.setUsername("player" + i + "@gmail.com");
+            PlayerRank tempPr = new PlayerRank();
+            tempPr.setPlayer(tempPlayer);
+            tempPr.setId(i);
+            rankings.add(tempPr);
+        }
+
+        TreeMap<Integer, List<PlayerRank>> result = BeforeGroupStage.sortByELO(rankings);
+
+        // Test the number of groups (should be 2 groups of 5 players each)
+        assertEquals(4, result.size(), "There should be 3 groups for 17 players");
+
+        //Check if the groups have the correct number of players
+        // for (Integer group : result.keySet()) {
+        //     assertTrue(result.get(group).size() >= 4 && result.get(group).size() <= 5, 
+        //                "Groups should be balanced, 4-5 players per group");
+        // }
+                assertTrue(result.get(1).size() == 5 && result.get(2).size() == 4 && result.get(3).size() == 4
+                && result.get(4).size() == 4, 
+                           "Groups should be balanced, 5-6 players per group");
+    }
+
+
 }

@@ -2,9 +2,7 @@ package org.fencing.demo.events;
 
 import java.util.List;
 
-import org.fencing.demo.exception.MatchesNotCompleteException;
-import org.fencing.demo.groupstage.GroupStage;
-import org.fencing.demo.knockoutstage.KnockoutStage;
+import org.fencing.demo.player.Player;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerNotFoundException;
@@ -12,6 +10,8 @@ import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.tournament.TournamentNotFoundException;
 import org.fencing.demo.tournament.TournamentRepository;
 import org.springframework.stereotype.Service;
+import org.fencing.demo.groupstage.GroupStage;
+import org.fencing.demo.knockoutstage.KnockoutStage;
 
 import jakarta.transaction.Transactional;
 

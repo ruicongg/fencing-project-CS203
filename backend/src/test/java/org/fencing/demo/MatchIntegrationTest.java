@@ -38,7 +38,11 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.annotation.DirtiesContext;
 
+
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class MatchIntegrationTest {
     @LocalServerPort
@@ -119,6 +123,15 @@ public class MatchIntegrationTest {
 
     @BeforeEach
     void setUp() {
+
+        eventRepository.deleteAll();
+        tournamentRepository.deleteAll();
+        groupStageRepository.deleteAll();
+        knockoutStageRepository.deleteAll();
+        userRepository.deleteAll();
+        playerRepository.deleteAll();
+        matchRepository.deleteAll();
+
         userRepository.deleteAll();
         adminUser = new User("admin", passwordEncoder.encode("adminPass"), "admin@example.com", Role.ADMIN);
         userRepository.save(adminUser);
