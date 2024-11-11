@@ -1,6 +1,7 @@
 package org.fencing.demo.events;
 
 import java.util.List;
+
 import org.fencing.demo.player.Player;
 
 public interface EventService {

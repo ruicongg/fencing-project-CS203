@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
@@ -14,37 +13,33 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.TreeSet;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
+import java.util.TreeSet;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.EventServiceImpl;
 import org.fencing.demo.events.Gender;
-import org.fencing.demo.events.PlayerRank;
-import org.fencing.demo.events.PlayerRankComparator;
 import org.fencing.demo.events.WeaponType;
+import org.fencing.demo.groupstage.GroupStage;
+import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.player.Player;
-import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.player.PlayerNotFoundException;
+import org.fencing.demo.player.PlayerRepository;
+import org.fencing.demo.playerrank.PlayerRank;
 import org.fencing.demo.tournament.Tournament;
 import org.fencing.demo.tournament.TournamentNotFoundException;
 import org.fencing.demo.tournament.TournamentRepository;
-import org.fencing.demo.stages.GroupStage;
-import org.fencing.demo.stages.KnockoutStage;
+import org.fencing.demo.user.Role;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.access.AccessDeniedException;
-
-import org.fencing.demo.events.Gender;
-import org.fencing.demo.user.Role;
 
 @ExtendWith(MockitoExtension.class)
 public class EventServiceTest {
@@ -395,7 +390,7 @@ public class EventServiceTest {
         playerRank.setPlayer(player);
         playerRank.setEvent(event);
         playerRank.setTempElo(2500);
-        event.setRankings(new HashSet<>(List.of(playerRank)));
+        event.setRankings(new TreeSet<>(List.of(playerRank)));
 
         when(eventRepository.findById(1L)).thenReturn(Optional.of(event));
         when(playerRepository.findAll()).thenReturn(List.of(player));
@@ -472,7 +467,7 @@ public class EventServiceTest {
                 .weapon(WeaponType.FOIL)
                 .startDate(LocalDateTime.now().plusDays(25))
                 .endDate(LocalDateTime.now().plusDays(26))
-                .rankings(new TreeSet<>(new PlayerRankComparator()))
+                .rankings(new TreeSet<>())
                 .groupStages(new ArrayList<>())
                 .knockoutStages(new ArrayList<>())
                 .build();

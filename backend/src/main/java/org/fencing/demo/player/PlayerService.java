@@ -6,7 +6,6 @@ import org.fencing.demo.events.Event;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.tournament.Tournament;
 
-
 public interface PlayerService {
     List<Player> listPlayers();
     Player getPlayer(Long id);

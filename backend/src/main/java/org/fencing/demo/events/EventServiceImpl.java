@@ -1,23 +1,18 @@
 package org.fencing.demo.events;
 
-import java.util.List;
 import java.time.LocalDate;
+import java.util.List;
 
-import org.fencing.demo.player.Player;
-import org.fencing.demo.exception.MatchesNotCompleteException;
+import org.fencing.demo.groupstage.GroupStage;
+import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.match.Match;
-import org.fencing.demo.stages.GroupStage;
-import org.fencing.demo.stages.KnockoutStage;
+import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerNotFoundException;
 import org.fencing.demo.player.PlayerRepository;
-import org.fencing.demo.tournament.Tournament;
+import org.fencing.demo.playerrank.PlayerRank;
 import org.fencing.demo.tournament.TournamentNotFoundException;
 import org.fencing.demo.tournament.TournamentRepository;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import jakarta.transaction.Transactional;
 
