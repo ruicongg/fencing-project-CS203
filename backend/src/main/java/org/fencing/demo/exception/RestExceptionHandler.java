@@ -46,4 +46,13 @@ public class RestExceptionHandler {
         body.put("error", "Invalid argument: " + e.getMessage());
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Object> handleIllegalStateException(IllegalStateException e) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("error", "Illegal state: " + e.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+
 }

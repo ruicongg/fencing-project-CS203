@@ -13,7 +13,9 @@ import org.fencing.demo.playerrank.PlayerRank;
 import org.fencing.demo.tournament.Tournament;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -39,6 +41,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "events")
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id"
+)
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,8 +55,8 @@ public class Event {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDateTime startDate;
 
-    @NotNull(message = "Event start date cannot be null")
-    @Future(message = "Event start date must be in the future")
+    @NotNull(message = "Event end date cannot be null")
+    @Future(message = "Event end date must be in the future")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDateTime endDate;
 

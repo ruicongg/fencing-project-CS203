@@ -3,8 +3,6 @@ package org.fencing.demo.match;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 //import java.util.Set;
@@ -37,12 +35,12 @@ public class MatchController {
         return matchService.getMatch(matchId);
     }
 
-    @GetMapping("/upcoming-matches")
-    public List<Match> getUpcomingMatches() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        return matchService.getMatchesScheduledForToday(username);
-    }
+    // @GetMapping("/upcoming-matches")
+    // public List<Match> getUpcomingMatches() {
+    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    //     String username = authentication.getName();
+    //     return matchService.getMatchesScheduledForToday(username);
+    // }
 
     @PutMapping("/tournaments/{tournamentId}/events/{eventId}/match/{matchId}")
     @ResponseStatus(HttpStatus.OK)

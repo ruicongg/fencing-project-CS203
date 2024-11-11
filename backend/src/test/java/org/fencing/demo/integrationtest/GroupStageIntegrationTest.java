@@ -31,7 +31,7 @@ class GroupStageIntegrationTest extends BaseIntegrationTest{
 
         //add 8 player into database
         for(int i = 1; i <= 8; i++){
-                Player tempPlayer = new Player("player" + i, passwordEncoder.encode("password" + i), "player" + i + "@example.com", Role.USER);
+                Player tempPlayer = new Player("player" + i, passwordEncoder.encode("password" + i), "player" + i + "@example.com", Role.USER, Gender.MALE);
                 tempPlayer.setElo(1700);
                 playerRepository.save(tempPlayer);
                 players.add(tempPlayer);

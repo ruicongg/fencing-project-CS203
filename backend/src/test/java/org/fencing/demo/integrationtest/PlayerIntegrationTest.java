@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.net.URI;
 import java.util.Optional;
 
+import org.fencing.demo.events.Gender;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.user.Role;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,7 +51,7 @@ public class PlayerIntegrationTest extends BaseIntegrationTest {
 
     @Test
     public void addPlayer_Success() throws Exception {
-        Player player = new Player("user69", "password", "user69@example.com", Role.USER);
+        Player player = new Player("user69", "password", "user69@example.com", Role.USER, Gender.MALE);
         URI uri = createUrl("/players");
 
         ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass").postForEntity(uri, player,
@@ -63,7 +64,7 @@ public class PlayerIntegrationTest extends BaseIntegrationTest {
 
     @Test
     public void addPlayer_Failure_Same_Username() throws Exception {
-        Player player = new Player("user", "password", "user@example.com", Role.USER);
+        Player player = new Player("user", "password", "user@example.com", Role.USER, Gender.MALE);
         URI uri = createUrl("/players");
 
         HttpEntity<Player> request = new HttpEntity<>(player, createHeaders(adminToken));
@@ -78,7 +79,7 @@ public class PlayerIntegrationTest extends BaseIntegrationTest {
 
         Long id = playerUser.getId();
         URI uri = createUrl("/players/" + id);
-        Player newPlayer = new Player("user3", "password3", "user3@example.com", Role.USER);
+        Player newPlayer = new Player("user3", "password3", "user3@example.com", Role.USER, Gender.MALE);
 
         ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(newPlayer), Player.class);
@@ -90,7 +91,7 @@ public class PlayerIntegrationTest extends BaseIntegrationTest {
     @Test
     public void updatePlayer_Failure_InvalidId() throws Exception {
         URI uri = createUrl("/players/999");
-        Player newPlayer = new Player("user2", "password", "user@example.com", Role.USER);
+        Player newPlayer = new Player("user2", "password", "user@example.com", Role.USER, Gender.MALE);
         ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(newPlayer), Player.class);
         assertEquals(404, result.getStatusCode().value());
