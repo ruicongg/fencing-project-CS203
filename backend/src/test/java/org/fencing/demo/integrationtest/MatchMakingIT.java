@@ -9,6 +9,7 @@ import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class MatchMakingIT extends BaseIntegrationTest {
@@ -24,5 +25,17 @@ public class MatchMakingIT extends BaseIntegrationTest {
 
         assertEquals(201, result.getStatusCode().value());
         assertNotNull(result.getBody().getId());
+    }
+
+    @Test // passed
+    public void addInitialMatchForGroupStage_EventNotFound_Failure() throws Exception {
+        long nonExistentEventId = 999L;
+
+        URI uri = createUrl("/tournaments/1/events/" + nonExistentEventId + "/groupStage/matches");
+
+        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
+                .postForEntity(uri, null, String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 }

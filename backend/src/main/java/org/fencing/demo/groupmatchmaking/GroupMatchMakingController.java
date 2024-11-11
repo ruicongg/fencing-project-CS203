@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.fencing.demo.groupstage.GroupStage;
 import org.fencing.demo.match.Match;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,8 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GroupMatchMakingController {
 
-    @Autowired
-    private GroupMatchMakingService matchMakingService;
+    private final GroupMatchMakingService matchMakingService;
+
+    public GroupMatchMakingController(GroupMatchMakingService matchMakingService) {
+        this.matchMakingService = matchMakingService;
+    }
 
     @PostMapping("/tournaments/{tournamentId}/events/{eventId}/groupStage")
     @ResponseStatus(HttpStatus.CREATED)

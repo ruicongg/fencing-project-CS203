@@ -25,8 +25,6 @@ public class PlayerIntegrationTest extends BaseIntegrationTest {
         super.setUp();
     }
 
-    
-
     @Test
     public void getPlayers_Success() throws Exception {
 

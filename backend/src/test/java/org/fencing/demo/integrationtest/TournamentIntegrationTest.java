@@ -16,26 +16,6 @@ import org.springframework.http.ResponseEntity;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class TournamentIntegrationTest extends BaseIntegrationTest {
 
-    // @LocalServerPort
-    // private int port;
-
-    // private final String baseUrl = "http://localhost:";
-
-    // @Autowired
-    // private TestRestTemplate restTemplate;
-
-    // @Autowired
-    // private TournamentRepository tournamentRepository;
-
-    // @Autowired
-    // private UserRepository userRepository;
-
-    // @Autowired
-    // private PasswordEncoder passwordEncoder;
-
-    // private User adminUser;
-    // private User regularUser;
-
     @BeforeEach
     void setUp() {
         super.setUp();

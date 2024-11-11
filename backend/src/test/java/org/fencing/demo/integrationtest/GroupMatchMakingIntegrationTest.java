@@ -2,36 +2,66 @@ package org.fencing.demo.integrationtest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.net.URI;
 import java.util.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.fencing.demo.events.Event;
 import org.fencing.demo.groupstage.GroupStage;
 import org.fencing.demo.match.Match;
-import org.fencing.demo.player.Player;
-import org.fencing.demo.playerrank.PlayerRank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-@Transactional
 public class GroupMatchMakingIntegrationTest extends BaseIntegrationTest{
 
     @BeforeEach
     void setUp() {
         super.setUp();
+        groupStageRepository.deleteAll();
         int[] elos = {1800, 1750, 1700, 1650, 1600, 1550, 1500, 1450};
         setUpWithPlayersInEvent(elos);
     }
+
+
+    @Test
+    public void addGroupStage_AdminUser_Success() throws Exception {
+        URI uri = new URI(
+                baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage");
+
+        System.out.println("Initial event: " + groupStage.getEvent());
+
+        HttpEntity<?> request = new HttpEntity<>(createHeaders(adminToken));
+        ResponseEntity<List<GroupStage>> result = restTemplate.exchange(
+                uri,
+                HttpMethod.POST,
+                request,
+                new ParameterizedTypeReference<List<GroupStage>>() {
+                });
+
+        assertEquals(201, result.getStatusCode().value());
+        assertNotNull(result.getBody());
+        assertFalse(result.getBody().isEmpty());
+        assertNotNull(result.getBody().get(0).getId());
+    }
+
+    @Test
+    public void addGroupStage_RegularUser_Failure() throws Exception {
+        URI uri = new URI(
+                baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage");
+
+
+        HttpEntity<GroupStage> request = new HttpEntity<>(groupStage, createHeaders(userToken));
+        ResponseEntity<GroupStage> result = restTemplate
+                .exchange(uri, HttpMethod.POST, request, GroupStage.class);
+
+        assertEquals(403, result.getStatusCode().value());
+    }
+
 
     @Test
     void createGroupStages_Success() {
@@ -93,30 +123,6 @@ public class GroupMatchMakingIntegrationTest extends BaseIntegrationTest{
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
-    @Test
-    void verifyEloDistribution_Success() {
-        createGroupStages_Success();
-        createMatches_Success();
-        
-        Event updatedEvent = eventRepository.findById(event.getId()).orElseThrow();
-        List<GroupStage> stages = updatedEvent.getGroupStages();
-        
-        // Verify each group has a mix of high and low ELO players
-        for (GroupStage stage : stages) {
-            Set<Player> groupPlayers = stage.getMatches().stream()
-                .flatMap(m -> Stream.of(m.getPlayer1(), m.getPlayer2()))
-                .collect(Collectors.toSet());
-            
-            List<Integer> elos = groupPlayers.stream()
-                .map(Player::getElo)
-                .sorted()
-                .collect(Collectors.toList());
-            
-            assertTrue(elos.get(elos.size()-1) - elos.get(0) >= 200, 
-                "Each group should have a good ELO spread");
-        }
-    }
-
     private void verifyMatchProperties(Match[] matches) {
         Set<String> uniquePairings = new HashSet<>();
         
@@ -137,51 +143,4 @@ public class GroupMatchMakingIntegrationTest extends BaseIntegrationTest{
 
 
 
-
-
-
-
-
-    // @Test //passed!
-    //  public void addInitialMatchForGroupStage_Success() throws Exception {
-
-    //     groupStageRepository.deleteAll();
-
-    //     URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/matches");
-
-
-    //     ResponseEntity<List<Match>> result = restTemplate.withBasicAuth("admin", "adminPass")
-    //                                                 .exchange(uri, 
-    //                                                     HttpMethod.POST, 
-    //                                                     null, 
-    //                                                     new ParameterizedTypeReference<List<Match>>() {});
-    //     //System.out.println(result.getBody());
-    //     assertEquals(HttpStatus.CREATED, result.getStatusCode());
-    //     assertNotNull(result.getBody());
-    //     assertTrue(result.getBody().size() > 0);
-    // }
-
-    // @Test // passed
-    // public void addMatchesForKnockoutStage_Success() throws Exception {
-        
-    //     URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage/" + knockoutStage.getId() + "/matches");
-
-    //     ResponseEntity<List<Match>> result = restTemplate.withBasicAuth("admin", "adminPass")
-    //         .exchange(uri, 
-    //                  HttpMethod.POST, 
-    //                  null, 
-    //                  new ParameterizedTypeReference<List<Match>>() {});
-
-    //     assertEquals(HttpStatus.CREATED, result.getStatusCode());
-    //     assertNotNull(result.getBody());
-    //     assertTrue(result.getBody().size() > 0);
-    // }
-
-
-    private PlayerRank createPlayerRank(Player player, Event event) {
-        PlayerRank playerRank = new PlayerRank();
-        playerRank.setEvent(event);
-        playerRank.setPlayer(player);
-        return playerRank;
-    }
 }

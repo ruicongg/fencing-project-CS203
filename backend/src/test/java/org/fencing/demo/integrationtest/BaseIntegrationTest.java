@@ -91,7 +91,6 @@ public abstract class BaseIntegrationTest {
 
     protected List<Player> setUpWithPlayersInEvent(int[] uniqueElos) {
         List<Player> players = new ArrayList<>();
-        this.setUp();
         SortedSet<PlayerRank> rankings = event.getRankings();
         for (int elo : uniqueElos) {
             Player player = new Player("player" + elo, passwordEncoder.encode("playerPass"),
@@ -103,7 +102,7 @@ public abstract class BaseIntegrationTest {
             rankings.add(rank);
         }
         event.setRankings(rankings);
-        eventRepository.save(event);
+        event = eventRepository.save(event);
         return players;
     }
 

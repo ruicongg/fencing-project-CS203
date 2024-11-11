@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -66,26 +65,6 @@ class GroupStageIntegrationTest extends BaseIntegrationTest{
         assertEquals(404, result.getStatusCode().value());
     }
 
-    @Test
-    public void addGroupStage_AdminUser_Success() throws Exception {
-        URI uri = new URI(
-                baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage");
-
-        System.out.println("Initial event: " + groupStage.getEvent());
-
-        HttpEntity<GroupStage> request = new HttpEntity<>(groupStage, createHeaders(adminToken));
-        ResponseEntity<List<GroupStage>> result = restTemplate.exchange(
-                uri,
-                HttpMethod.POST,
-                request,
-                new ParameterizedTypeReference<List<GroupStage>>() {
-                });
-
-        assertEquals(201, result.getStatusCode().value());
-        assertNotNull(result.getBody());
-        assertFalse(result.getBody().isEmpty());
-        assertNotNull(result.getBody().get(0).getId());
-    }
 
     @Test
     public void addGroupStage_RegularUser_Failure() throws Exception {

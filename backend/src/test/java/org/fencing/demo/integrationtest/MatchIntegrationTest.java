@@ -29,58 +29,12 @@ public class MatchIntegrationTest extends BaseIntegrationTest {
 
     }
 
-    // @Test
-    // public void addInitialMatchForGroupStage_NullGroupStageFound_Failure() throws
-    // Exception {
-
-    // URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() +
-    // "/events/" + event.getId() + "/groupStage/matches");
-
-    // // When: Sending a POST request to add matches for a non-existent group stage
-    // ResponseEntity<String> result = restTemplate.withBasicAuth("admin",
-    // "adminPass")
-    // .postForEntity(uri, null, String.class);
-
-    // // Then: Assert that the request fails with an appropriate error message
-    // assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-    // assertTrue(result.getBody().contains("No groupStage found for event"));
-    // }
-
-    // @Test
-    // public void addMatchesForKnockoutStage_NullKnockoutStage_Failure() throws
-    // Exception {
-
-    // URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() +
-    // "/events/" + event.getId() + "/knockoutStage/null/matches");
-
-    // // When: Sending a POST request to add matches for a non-existent knockout
-    // stage
-    // ResponseEntity<String> result = restTemplate.withBasicAuth("admin",
-    // "adminPass")
-    // .postForEntity(uri, null, String.class);
-
-    // // Then: Assert that the request fails with an appropriate error message
-    // assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-    // assertTrue(result.getBody().contains("No KnockoutStage found for event"));
-    // }
-
-    @Test // passed
-    public void addInitialMatchForGroupStage_EventNotFound_Failure() throws Exception {
-        long nonExistentEventId = 999L;
-
-        URI uri = createUrl("/tournaments/1/events/" + nonExistentEventId + "/groupStage/matches");
-
-        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
-                .postForEntity(uri, null, String.class);
-
-        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
-    }
-
     @Test // passed
     public void addMatchesForKnockoutStage_EventNotFound_Failure() throws Exception {
         long nonExistentEventId = 999L;
-
-        URI uri = createUrl("/tournaments/1/events/" + nonExistentEventId + "/knockoutStage/1/matches");
+        long tournamentId = tournament.getId();
+        long knockoutStageId = knockoutStage.getId();
+        URI uri = createUrl("/tournaments/" + tournamentId + "/events/" + nonExistentEventId + "/knockoutStage/" + knockoutStageId + "/matches");
 
         ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .postForEntity(uri, null, String.class);
