@@ -25,7 +25,7 @@ public class KnockoutMatchMakingServiceImpl implements KnockoutMatchMakingServic
 
     public KnockoutMatchMakingServiceImpl(EventRepository eventRepository,
             KnockoutStageRepository knockoutStageRepository,
-                MatchRepository matchRepository,
+            MatchRepository matchRepository,
             KnockoutStageGenerator knockoutStageGenerator) {
         this.eventRepository = eventRepository;
         this.knockoutStageRepository = knockoutStageRepository;
@@ -50,17 +50,34 @@ public class KnockoutMatchMakingServiceImpl implements KnockoutMatchMakingServic
             throw new IllegalArgumentException("No KnockoutStage found for event " + eventId);
         }
 
-        List<Match> matches = new ArrayList<>();
-        KnockoutStage knockoutStage = generateKnockoutStage(event);
+        // Get the current stage (last one created)
+        KnockoutStage currentStage = knockoutStages.get(knockoutStages.size() - 1);
+        List<Match> matches;
 
-        if (knockoutStages.size() == 0) {
-            matches = knockoutStageGenerator.generateInitialKnockoutMatches(knockoutStage, event);
+        // Check if there are any existing stages with matches
+        boolean hasExistingStagesWithMatches = knockoutStages.stream()
+                .limit(knockoutStages.size() - 1) // Exclude current stage
+                .anyMatch(stage -> stage.getMatches() != null && !stage.getMatches().isEmpty());
+
+        // If no existing stages with matches, this is the initial stage
+        if (!hasExistingStagesWithMatches) {
+            matches = knockoutStageGenerator.generateInitialKnockoutMatches(currentStage, event);
         } else {
-            KnockoutStage previousStage = knockoutStages.get(knockoutStages.size() - 1);
-            matches = knockoutStageGenerator.generateNextKnockoutMatches(previousStage, knockoutStage, event);
+            // Get the previous stage and generate matches based on winners
+            KnockoutStage previousStage = knockoutStages.get(knockoutStages.size() - 2);
+            matches = knockoutStageGenerator.generateNextKnockoutMatches(previousStage, currentStage, event);
         }
-        return matchRepository.saveAll(matches);
 
+        // Maintain bidirectional relationship
+        matches.forEach(match -> {
+            match.setKnockoutStage(currentStage);
+        });
+        currentStage.getMatches().clear(); // Clear existing matches
+        currentStage.getMatches().addAll(matches); // Add new matches
+
+        // Save everything
+        knockoutStageRepository.save(currentStage);
+        return matchRepository.saveAll(matches);
     }
 
     private KnockoutStage generateKnockoutStage(Event event) {
@@ -68,6 +85,5 @@ public class KnockoutMatchMakingServiceImpl implements KnockoutMatchMakingServic
         knockoutStage.setEvent(event);
         return knockoutStageRepository.save(knockoutStage);
     }
-
 
 }

@@ -15,18 +15,29 @@ import org.springframework.stereotype.Component;
 @Component
 public class KnockoutStageGenerator {
 
+    private final KnockoutAdvancementCalculator calculator;
 
-    public List<Match> generateInitialKnockoutMatches(KnockoutStage knockoutStage, Event event) {
-        
-        Set<PlayerRank> rankings = event.getRankings();
-        int numberOfPlayers = rankings.size();
-        int numberOfPlayersAdvancing = largestPowerOf2LessThan(numberOfPlayers);
-        List<Player> playersAdvancing = getPlayersAdvancing(numberOfPlayersAdvancing, event);
-        return createMatches(playersAdvancing, knockoutStage, event);
-
+    public KnockoutStageGenerator() {
+        this.calculator = new KnockoutAdvancementCalculator();
     }
 
-    public List<Match> generateNextKnockoutMatches(KnockoutStage previousStage, KnockoutStage currentStage, Event event) {
+    public List<Match> generateInitialKnockoutMatches(KnockoutStage knockoutStage, Event event) {
+        Set<PlayerRank> rankings = event.getRankings();
+        int totalPlayers = rankings.size();
+
+        // Calculate how many players should advance
+        int playersAdvancing = calculator.calculateNumberOfPlayersAdvancing(totalPlayers);
+        int numberOfByes = calculator.calculateNumberOfByes(playersAdvancing);
+
+        // Get the top ranked players
+        List<Player> qualifiedPlayers = getPlayersAdvancing(playersAdvancing, event);
+
+        // Create matches, accounting for byes
+        return createMatchesWithByes(qualifiedPlayers, numberOfByes, knockoutStage, event);
+    }
+
+    public List<Match> generateNextKnockoutMatches(KnockoutStage previousStage, KnockoutStage currentStage,
+            Event event) {
         List<Match> matches = previousStage.getMatches();
         List<Player> winners = getPreviousRoundWinners(matches);
         return createMatches(winners, currentStage, event);
@@ -41,15 +52,15 @@ public class KnockoutStageGenerator {
     }
 
     private List<Player> getPlayersAdvancing(int numberOfPlayersAdvancing, Event event) {
-        
+
         SortedSet<PlayerRank> rankings = event.getRankings();
         return rankings.stream()
-            .sorted()
-            .limit(numberOfPlayersAdvancing)
-            .map(PlayerRank::getPlayer)
-            .collect(Collectors.toList());
+                .sorted()
+                .limit(numberOfPlayersAdvancing)
+                .map(PlayerRank::getPlayer)
+                .collect(Collectors.toList());
     }
-    
+
     // Create matches pairing highest ranked with lowest ranked
     private List<Match> createMatches(List<Player> players, KnockoutStage knockoutStage, Event event) {
         List<Match> matches = new ArrayList<>();
@@ -75,5 +86,23 @@ public class KnockoutStageGenerator {
         }
         return winners;
     }
-}
 
+    private List<Match> createMatchesWithByes(List<Player> players, int numberOfByes, KnockoutStage knockoutStage, Event event) {
+        List<Match> matches = new ArrayList<>();
+        int totalPlayers = players.size();
+        int matchesNeeded = (totalPlayers - numberOfByes) / 2;
+
+        // Top ranked players get byes
+        List<Player> playersWithMatches = players.subList(numberOfByes, totalPlayers);
+
+        // Create matches for remaining players
+        for (int i = 0; i < matchesNeeded; i++) {
+            Player topSeed = playersWithMatches.get(i);
+            Player bottomSeed = playersWithMatches.get(playersWithMatches.size() - 1 - i);
+            matches.add(createMatch(topSeed, bottomSeed, knockoutStage, event));
+        }
+
+        return matches;
+    }
+
+}
