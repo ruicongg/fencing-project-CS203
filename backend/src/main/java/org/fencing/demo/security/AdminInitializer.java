@@ -1,7 +1,7 @@
 package org.fencing.demo.security;
 
-import org.fencing.demo.user.User;
 import org.fencing.demo.user.Role;
+import org.fencing.demo.user.User;
 import org.fencing.demo.user.UserRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

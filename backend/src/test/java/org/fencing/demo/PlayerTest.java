@@ -1,6 +1,14 @@
 package org.fencing.demo;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+
+import org.fencing.demo.events.Gender;
 import org.fencing.demo.player.Player;
+import org.fencing.demo.player.PlayerNotFoundException;
 import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.player.PlayerServiceImpl;
 import org.fencing.demo.user.Role;
@@ -11,12 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.fencing.demo.player.PlayerNotFoundException;
-
-import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PlayerTest {
@@ -34,7 +36,7 @@ public class PlayerTest {
 
     @Test
     public void testCreatePlayer() {
-        Player player = new Player("testUser", "password123", "test@example.com", Role.USER);
+        Player player = new Player("testUser", "password123", "test@example.com", Role.USER, Gender.MALE);
         when(playerRepository.save(any(Player.class))).thenReturn(player);
 
         Player createdPlayer = playerService.addPlayer(player);
@@ -46,7 +48,7 @@ public class PlayerTest {
 
     @Test
     public void testGetPlayer_Success() {
-        Player player = new Player("testUser", "password123", "test@example.com", Role.USER);
+        Player player = new Player("testUser", "password123", "test@example.com", Role.USER, Gender.MALE);
         player.setId(1L);
         when(playerRepository.findById(1L)).thenReturn(Optional.of(player));
 
@@ -69,7 +71,7 @@ public class PlayerTest {
 
     @Test
     public void testUpdatePlayer() {
-        Player player = new Player("testUser", "password123", "test@example.com", Role.USER);
+        Player player = new Player("testUser", "password123", "test@example.com", Role.USER, Gender.MALE);
         player.setId(1L);
         when(playerRepository.findById(1L)).thenReturn(Optional.of(player));
         when(playerRepository.save(any(Player.class))).thenReturn(player);
@@ -86,7 +88,7 @@ public class PlayerTest {
     @Test
     public void testDeletePlayer_Success() {
         // Arrange
-        Player player = new Player("testUser", "password123", "test@example.com", Role.USER);
+        Player player = new Player("testUser", "password123", "test@example.com", Role.USER, Gender.MALE);
         player.setId(1L);
         when(playerRepository.findById(1L)).thenReturn(Optional.of(player));
         doNothing().when(playerRepository).delete(player);

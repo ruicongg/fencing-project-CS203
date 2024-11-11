@@ -3,6 +3,7 @@ package org.fencing.demo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
@@ -23,14 +24,17 @@ import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.EventServiceImpl;
 import org.fencing.demo.events.Gender;
-import org.fencing.demo.events.PlayerRankComparator;
 import org.fencing.demo.events.WeaponType;
+import org.fencing.demo.groupstage.GroupStage;
+import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.player.Player;
+import org.fencing.demo.player.PlayerNotFoundException;
 import org.fencing.demo.player.PlayerRepository;
+import org.fencing.demo.playerrank.PlayerRank;
 import org.fencing.demo.tournament.Tournament;
 import org.fencing.demo.tournament.TournamentNotFoundException;
 import org.fencing.demo.tournament.TournamentRepository;
-import org.junit.jupiter.api.BeforeEach;
+import org.fencing.demo.user.Role;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,7 +43,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class EventServiceTest {
-    
+
     @Mock
     private EventRepository eventRepository;
 
@@ -94,7 +98,7 @@ public class EventServiceTest {
         Long eventId = 1L;
         Event validEvent = createValidEvent(validTournament);
         validEvent.setId(eventId);
-        
+
         when(tournamentRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(TournamentNotFoundException.class, () -> eventService.addEvent(1L, validEvent));
@@ -208,7 +212,7 @@ public class EventServiceTest {
 
         Event newEvent = createValidEvent(validTournament);
         newEvent.setTournament(newTournament);
-        //System.out.println(validEvent);
+        // System.out.println(validEvent);
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(validEvent));
 
         assertThrows(IllegalArgumentException.class, () -> eventService.updateEvent(1L, 1L, newEvent));
@@ -225,9 +229,9 @@ public class EventServiceTest {
         validEvent.setId(eventId);
 
         when(eventRepository.findById(1L)).thenReturn(Optional.of(validEvent));
-    
+
         eventService.deleteEvent(1L, 1L);
-    
+
         verify(eventRepository, times(1)).deleteByTournamentIdAndId(1L, 1L);
     }
 
@@ -240,40 +244,214 @@ public class EventServiceTest {
         verify(eventRepository, never()).deleteByTournamentIdAndId(anyLong(), anyLong());
     }
 
+    @Test
+    public void addPlayerToEvent_ValidUsernameAndEvent_ReturnsUpdatedEvent() {
+        Long eventId = 1L;
+        Event event = createValidEvent(createValidTournament());
+        Player player = createValidPlayer();
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(playerRepository.findByUsername(player.getUsername())).thenReturn(List.of(player));
+        when(eventRepository.save(any(Event.class))).thenReturn(event);
+
+        Event updatedEvent = eventService.addPlayerToEvent(eventId, player.getUsername());
+
+        assertNotNull(updatedEvent);
+        assertEquals(1, updatedEvent.getRankings().size());
+        verify(eventRepository).save(event);
+    }
 
     @Test
-    public void addPlayerToEvent_ValidIds_ReturnsUpdatedEvent() {
-        Long tournamentId = 1L;
-        Tournament validTournament = createValidTournament();
-        validTournament.setId(tournamentId);
-
+    public void addPlayerToEvent_PlayerNotFound_ThrowsPlayerNotFoundException() {
         Long eventId = 1L;
-        Event validEvent = createValidEvent(validTournament);
-        validEvent.setId(eventId);
+        String username = "nonexistentUser";
+        Event event = createValidEvent(createValidTournament());
 
-        Player player = createValidPlayer();
-        
-        when(eventRepository.findById(1L)).thenReturn(Optional.of(validEvent));
-        when(playerRepository.findById(1L)).thenReturn(Optional.of(player));
-        when(eventRepository.save(any(Event.class))).thenReturn(validEvent);
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(playerRepository.findByUsername(username)).thenReturn(List.of());
 
-        Event updatedEvent = eventService.addPlayerToEvent(1L, 1L);
-
-        assertEquals(1, updatedEvent.getRankings().size());
-        verify(eventRepository, times(1)).save(validEvent);
+        assertThrows(PlayerNotFoundException.class, () -> eventService.addPlayerToEvent(eventId, username));
     }
 
     @Test
     public void addPlayerToEvent_InvalidEvent_ThrowsEventNotFoundException() {
+        Player player = createValidPlayer();
         when(eventRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(EventNotFoundException.class, () -> eventService.addPlayerToEvent(1L, 1L));
+        assertThrows(EventNotFoundException.class, () -> eventService.addPlayerToEvent(1L, "Player1"));
+    }
+
+    @Test
+    public void removePlayerFromEvent_Success() {
+        Long eventId = 1L;
+        Tournament tournament = createValidTournament();
+        Event event = createValidEvent(tournament);
+        Player player = createValidPlayer();
+        PlayerRank playerRank = new PlayerRank();
+        playerRank.setPlayer(player);
+        playerRank.setEvent(event);
+        event.getRankings().add(playerRank);
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(eventRepository.save(any(Event.class))).thenReturn(event);
+
+        Event updatedEvent = eventService.removePlayerFromEvent(eventId, player.getUsername());
+
+        assertTrue(updatedEvent.getRankings().isEmpty());
+        verify(eventRepository).save(event);
+    }
+
+    @Test
+    public void removePlayerFromEvent_OutsideRegistrationPeriod_ThrowsIllegalStateException() {
+        Long eventId = 1L;
+        Tournament tournament = createValidTournament();
+        tournament.setRegistrationEndDate(LocalDate.now().minusDays(1));
+        Event event = createValidEvent(tournament);
+        Player player = createValidPlayer();
+        PlayerRank playerRank = new PlayerRank();
+        playerRank.setPlayer(player);
+        playerRank.setEvent(event);
+        event.getRankings().add(playerRank);
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+
+        assertThrows(IllegalStateException.class,
+                () -> eventService.removePlayerFromEvent(eventId, player.getUsername()));
+
+        verify(eventRepository, never()).save(any(Event.class));
+    }
+
+    @Test
+    public void removePlayerFromEvent_PlayerNotInEvent_ThrowsIllegalStateException() {
+        Long eventId = 1L;
+        Tournament tournament = createValidTournament();
+        Event event = createValidEvent(tournament);
+        Player player = createValidPlayer();
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+
+        assertThrows(PlayerNotFoundException.class,
+                () -> eventService.removePlayerFromEvent(eventId, player.getUsername()));
+
+        verify(eventRepository, never()).save(any(Event.class));
+    }
+
+    @Test
+    public void adminRemovesPlayerFromEvent_Success() {
+        Long eventId = 1L;
+        Tournament tournament = createValidTournament();
+        Event event = createValidEvent(tournament);
+        Player player = createValidPlayer();
+        PlayerRank playerRank = new PlayerRank();
+        playerRank.setPlayer(player);
+        playerRank.setEvent(event);
+        event.getRankings().add(playerRank);
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(eventRepository.save(any(Event.class))).thenReturn(event);
+
+        Event updatedEvent = eventService.adminRemovesPlayerFromEvent(eventId, player.getUsername());
+
+        assertTrue(updatedEvent.getRankings().isEmpty());
+        verify(eventRepository).save(event);
+    }
+
+    @Test
+    public void adminRemovesPlayerFromEvent_PlayerNotInEvent_ThrowsPlayerNotFoundException() {
+        Long eventId = 1L;
+        Tournament tournament = createValidTournament();
+        Event event = createValidEvent(tournament);
+        Player player = createValidPlayer();
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+
+        assertThrows(PlayerNotFoundException.class,
+                () -> eventService.adminRemovesPlayerFromEvent(eventId, player.getUsername()));
+
+        verify(eventRepository, never()).save(any(Event.class));
+    }
+
+    @Test
+    public void updatePlayerEloAfterEvent_Success() {
+        Event event = createValidEvent(createValidTournament());
+        Player player = createValidPlayer();
+
+        // Initialize stages
+        GroupStage groupStage = new GroupStage();
+        groupStage.setMatches(new ArrayList<>());
+        KnockoutStage knockoutStage = new KnockoutStage();
+        knockoutStage.setMatches(new ArrayList<>());
+
+        event.setGroupStages(new ArrayList<>(List.of(groupStage)));
+        event.setKnockoutStages(new ArrayList<>(List.of(knockoutStage)));
+
+        // Set up player ranking
+        PlayerRank playerRank = new PlayerRank();
+        playerRank.setPlayer(player);
+        playerRank.setEvent(event);
+        playerRank.setTempElo(2500);
+        event.setRankings(new TreeSet<>(List.of(playerRank)));
+
+        when(eventRepository.findById(1L)).thenReturn(Optional.of(event));
+        when(playerRepository.findAll()).thenReturn(List.of(player));
+
+        List<Player> result = eventService.updatePlayerEloAfterEvent(1L);
+
+        assertEquals(2500, player.getElo());
+        assertTrue(player.isReached2400());
+    }
+
+    @Test
+    public void addEvent_StartDateBeforeTournamentStart_ThrowsIllegalArgumentException() {
+        Tournament tournament = createValidTournament();
+        tournament.setId(1L);
+
+        Event event = createValidEvent(tournament);
+        event.setStartDate(LocalDateTime.now()); // Set to current time which is before tournament start
+
+        when(tournamentRepository.findById(1L)).thenReturn(Optional.of(tournament));
+
+        assertThrows(IllegalArgumentException.class, () -> eventService.addEvent(1L, event));
+    }
+
+    @Test
+    public void allMatchesComplete_Success() {
+        Event event = createValidEvent(createValidTournament());
+
+        // Initialize GroupStage with matches
+        GroupStage groupStage = new GroupStage();
+        groupStage.setMatches(new ArrayList<>());
+
+        // Initialize KnockoutStage with matches
+        KnockoutStage knockoutStage = new KnockoutStage();
+        knockoutStage.setMatches(new ArrayList<>());
+
+        event.setGroupStages(new ArrayList<>());
+        event.setKnockoutStages(new ArrayList<>());
+        event.getGroupStages().add(groupStage);
+        event.getKnockoutStages().add(knockoutStage);
+
+        when(eventRepository.findById(1L)).thenReturn(Optional.of(event));
+
+        boolean result = eventService.allMatchesComplete(1L);
+        assertTrue(result);
+    }
+
+    @Test
+    public void allMatchesComplete_NoStages_ThrowsIllegalArgumentException() {
+        Event event = createValidEvent(createValidTournament());
+        event.setGroupStages(new ArrayList<>());
+        event.setKnockoutStages(new ArrayList<>());
+
+        when(eventRepository.findById(1L)).thenReturn(Optional.of(event));
+
+        assertThrows(IllegalArgumentException.class, () -> eventService.allMatchesComplete(1L));
     }
 
     private Tournament createValidTournament() {
         return Tournament.builder()
                 .name("Spring Championship")
-                .registrationStartDate(LocalDate.now().plusDays(1))
+                .registrationStartDate(LocalDate.now())
                 .registrationEndDate(LocalDate.now().plusDays(20))
                 .tournamentStartDate(LocalDate.now().plusDays(25))
                 .tournamentEndDate(LocalDate.now().plusDays(30))
@@ -284,12 +462,15 @@ public class EventServiceTest {
 
     private Event createValidEvent(Tournament tournament) {
         return Event.builder()
-        .tournament(tournament)
-        .gender(Gender.MALE)
-        .weapon(WeaponType.FOIL)  
-        .startDate(LocalDateTime.now().plusDays(25))  
-        .endDate(LocalDateTime.now().plusDays(26))
-        .build();
+                .tournament(tournament)
+                .gender(Gender.MALE)
+                .weapon(WeaponType.FOIL)
+                .startDate(LocalDateTime.now().plusDays(25))
+                .endDate(LocalDateTime.now().plusDays(26))
+                .rankings(new TreeSet<>())
+                .groupStages(new ArrayList<>())
+                .knockoutStages(new ArrayList<>())
+                .build();
     }
 
     private Player createValidPlayer() {
@@ -298,10 +479,11 @@ public class EventServiceTest {
         player.setUsername("Player1");
         player.setEmail("player1@example.com");
         player.setPassword("securePassword1");
+        player.setRole(Role.USER);
+        player.setGender(Gender.MALE);
         player.setElo(1700);
         player.setMatchesAsPlayer1(new HashSet<>());
         player.setMatchesAsPlayer2(new HashSet<>());
         return player;
     }
 }
-

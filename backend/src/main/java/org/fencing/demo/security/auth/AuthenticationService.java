@@ -1,15 +1,16 @@
 package org.fencing.demo.security.auth;
 
-import org.fencing.demo.security.JwtService;
-import org.fencing.demo.user.User;
+import org.fencing.demo.events.Gender;
 import org.fencing.demo.player.Player;
-import org.fencing.demo.user.Role;
-import org.fencing.demo.user.UserRepository;
 import org.fencing.demo.player.PlayerRepository;
+import org.fencing.demo.security.JwtService;
+import org.fencing.demo.user.Role;
+import org.fencing.demo.user.User;
+import org.fencing.demo.user.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
         Role userRole = Role.valueOf(request.getRole().toUpperCase());
+        Gender gender = Gender.valueOf(request.getGender().toUpperCase());
         // User user = User.builder()
         //     .username(request.getUsername())
         //     .email(request.getEmail())
@@ -38,7 +40,8 @@ public class AuthenticationService {
             request.getUsername(),
             passwordEncoder.encode(request.getPassword()),
             request.getEmail().trim(),
-            userRole
+            userRole,
+            gender
         );
         playerRepository.save(player);
 

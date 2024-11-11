@@ -4,9 +4,7 @@ import java.util.List;
 
 public interface MatchService {
 
-    List<Match> addMatchesforGroupStages(Long eventId);
 
-    List<Match> addMatchesforKnockoutStage(Long eventId);
 
     List<Match> getAllMatches();
 
@@ -16,7 +14,7 @@ public interface MatchService {
 
     Match getMatch(Long id);
 
-    // List<Match> getMatchesScheduledForToday(String username);
+    //List<Match> getMatchesScheduledForToday(String username);
 
     Match updateMatch(Long eventId, Long matchId, Match newMatch);
 

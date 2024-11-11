@@ -4,9 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -14,33 +13,27 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.fencing.demo.events.Event;
-import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.EventServiceImpl;
 import org.fencing.demo.events.Gender;
-import org.fencing.demo.events.PlayerRank;
-import org.fencing.demo.events.PlayerRankComparator;
 import org.fencing.demo.events.WeaponType;
+import org.fencing.demo.groupstage.GroupStageRepository;
+import org.fencing.demo.knockoutstage.KnockoutStage;
+import org.fencing.demo.knockoutstage.KnockoutStageNotFoundException;
+import org.fencing.demo.knockoutstage.KnockoutStageRepository;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.match.MatchNotFoundException;
 import org.fencing.demo.match.MatchRepository;
 import org.fencing.demo.match.MatchServiceImpl;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
-import org.fencing.demo.stages.GroupStage;
-import org.fencing.demo.stages.GroupStageRepository;
-import org.fencing.demo.stages.KnockoutStage;
-import org.fencing.demo.stages.KnockoutStageNotFoundException;
-import org.fencing.demo.stages.KnockoutStageRepository;
+import org.fencing.demo.playerrank.PlayerRank;
 import org.fencing.demo.tournament.Tournament;
 import org.fencing.demo.tournament.TournamentRepository;
 import org.junit.jupiter.api.Test;
@@ -76,87 +69,6 @@ public class MatchServiceTest {
     @InjectMocks
     private MatchServiceImpl matchService;
 
-    // @Test
-    // public void addMatchesForAllGroupStages_ValidEvent_ReturnsSavedMatches() {
-       
-    // }
-
-    // @Test
-    // public void addMatchesForAllGroupStages_NonExistingEvent_ThrowsEventNotFoundException() {
-    //     Long eventId = 1L;
-
-    //     when(eventRepository.existsById(eventId)).thenReturn(false);
-
-    //     assertThrows(EventNotFoundException.class, () -> {
-    //         matchService.addMatchesforAllGroupStages(eventId);
-    //     });
-
-    //     verify(eventRepository, times(1)).existsById(eventId);
-    // }
-
-    @Test
-    public void addMatchesForKnockoutStage_ValidEvent_ReturnsSavedMatches() {
-        Long eventId = 1L;
-        Event event = createValidEvent();
-        KnockoutStage knockoutStage = createValidKnockoutStage(event);
-        event.getKnockoutStages().add(knockoutStage);
-        
-        // Add 8 players to the event
-        // wait...need player repo?
-        Set<PlayerRank> players = createPlayers(event);
-        event.getRankings().addAll(players);
-
-        // Mock the event repository behavior
-        when(eventRepository.existsById(eventId)).thenReturn(true);
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
-
-        // Create the expected matches for the knockout stage
-        List<Match> expectedMatches = event.getMatchesForKnockoutStage(knockoutStage);
-        when(matchRepository.saveAll(anyList())).thenReturn(expectedMatches);
-
-        List<Match> result = matchService.addMatchesforKnockoutStage(eventId);
-
-        assertNotNull(result);
-        assertEquals(expectedMatches.size(), result.size());
-        verify(matchRepository, times(1)).saveAll(anyList());
-        verify(eventRepository, times(1)).existsById(eventId);
-        verify(eventRepository, times(1)).findById(eventId);
-    }
-
-    @Test
-    public void addMatchesForKnockoutStage_NonExistingEvent_ThrowsEventNotFoundException() {
-        Long eventId = 1L;
-
-        when(eventRepository.existsById(eventId)).thenReturn(false);
-
-        assertThrows(EventNotFoundException.class, () -> {
-            matchService.addMatchesforKnockoutStage(eventId);
-        });
-
-        verify(eventRepository, times(1)).existsById(eventId);
-    }
-
-    @Test
-    public void addMatchesForKnockoutStage_NoKnockoutStage_ThrowsIllegalStateException() {
-        Long eventId = 1L;
-
-        // Create an event without knockout stages
-        Event event = createValidEvent();
-        event.setKnockoutStages(new ArrayList<>()); // Empty knockout stages
-
-        // Mock the event repository
-        when(eventRepository.existsById(eventId)).thenReturn(true);
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
-
-        // Verify that IllegalStateException is thrown when there are no knockout stages
-        assertThrows(IllegalStateException.class, () -> {
-            matchService.addMatchesforKnockoutStage(eventId);
-        });
-
-        // Verify that repository methods were called correctly
-        verify(eventRepository, times(1)).existsById(eventId);
-        verify(eventRepository, times(1)).findById(eventId);
-    }
 
     @Test
     public void getMatch_ValidId_ReturnsMatch() {
@@ -291,8 +203,12 @@ public class MatchServiceTest {
 
         Player player1 = createValidPlayer(1);
         Player player2 = createValidPlayer(2);
-        PlayerRank playerRank1 = createPlayerRank(1, player1, event);
-        PlayerRank playerRank2 = createPlayerRank(2, player2, event);
+        PlayerRank playerRank1 = mock(PlayerRank.class); // Mock PlayerRank
+        PlayerRank playerRank2 = mock(PlayerRank.class); // Mock PlayerRank
+
+        // Mock the getPlayer() method of PlayerRank to return valid players
+        when(playerRank1.getPlayer()).thenReturn(player1);
+        when(playerRank2.getPlayer()).thenReturn(player2);
 
         event.getRankings().add(playerRank1);
         event.getRankings().add(playerRank2);
@@ -300,18 +216,28 @@ public class MatchServiceTest {
         Match existingMatch = createValidMatch(event, player1, player2);
         Match newMatch = createUpdatedMatch(event, player1, player2);
         
+        // Mocking repository behavior
         when(matchRepository.findById(matchId)).thenReturn(Optional.of(existingMatch));
         when(matchRepository.save(any(Match.class))).thenReturn(existingMatch);
 
+        // Correct stubbing: match the actual arguments passed to updateAfterMatch
+        doNothing().when(playerRank1).updateAfterMatch(eq(20), eq(18), eq(playerRank2));
+        doNothing().when(playerRank2).updateAfterMatch(eq(18), eq(20), eq(playerRank1));
+        
+        // Perform the actual update
         Match result = matchService.updateMatch(eventId, matchId, newMatch);
 
+        // Assert results
         assertNotNull(result);
         assertEquals(newMatch.getPlayer1(), result.getPlayer1());
         assertEquals(newMatch.getPlayer1Score(), result.getPlayer1Score());
 
+        // Verify repository interactions
         verify(matchRepository, times(1)).findById(matchId);
         verify(matchRepository, times(1)).save(existingMatch);
     }
+
+
 
     @Test
     public void updateMatch_NonExistingMatch_ThrowsMatchNotFoundException() {
@@ -429,7 +355,7 @@ public class MatchServiceTest {
     }
 
     private Set<PlayerRank> createPlayers(Event event) {
-        Set<PlayerRank> players = new TreeSet<>(new PlayerRankComparator());
+        Set<PlayerRank> players = new TreeSet<>();
         for (int i = 1; i <= 8; i++) {
             Player player = createValidPlayer(i); 
             PlayerRank playerRank = createPlayerRank(i, player, event);

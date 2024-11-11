@@ -1,20 +1,20 @@
 package org.fencing.demo.player;
 
-// import org.fencing.demo.tournaments.Tournament;
-
-import jakarta.persistence.*;
-import lombok.*;
-
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import org.fencing.demo.events.PlayerRank;
+import org.fencing.demo.events.Gender;
 import org.fencing.demo.match.Match;
+import org.fencing.demo.playerrank.PlayerRank;
 import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+// import org.fencing.demo.tournaments.Tournament;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "players")
@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NoArgsConstructor
 public class Player extends User implements Comparable<Player>{
     private int elo;
-
+    private Gender gender;
     private static int STARTING_ELO = 1700;  
 
     @OneToMany(mappedBy = "player1")
@@ -36,20 +36,25 @@ public class Player extends User implements Comparable<Player>{
 
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    Set<PlayerRank> playerRanks;
+    private Set<PlayerRank> playerRanks = new HashSet<>();
 
     private boolean reached2400;
 
 
-    public Player(String username, String password, String email, Role role) {
+    public Player(String username, String password, String email, Role role, Gender gender) {
         super(username, password, email, role);
+        this.gender = gender;
         this.elo = STARTING_ELO;
     }
 
     @Override
     public int compareTo(Player otherPlayer) {
         // Sort in descending order of ELO
-        return Integer.compare(otherPlayer.elo, this.elo); // Higher ELO comes first
+        if (this.elo != otherPlayer.elo) {
+            return Integer.compare(otherPlayer.elo, this.elo); // Higher ELO comes first
+        }
+        return Long.compare(this.getId(), otherPlayer.getId()); // If ELO is the same, compare by ID
+        
     }
 
     @Override

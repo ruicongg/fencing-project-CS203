@@ -1,11 +1,10 @@
 package org.fencing.demo.match;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.List;
 //import java.util.Set;
 
 @RestController
@@ -15,24 +14,6 @@ public class MatchController {
 
     public MatchController(MatchService matchService) {
         this.matchService = matchService;
-    }
-
-    // @PostMapping("/tournaments/{tournamentId}/events/{eventId}/group/*/matches")
-    // @ResponseStatus(HttpStatus.CREATED)
-    // public Match addMatchforGroupStage(@PathVariable Long eventId, @RequestBody Match match) {
-    //     return matchService.addMatchesforAllGroupStages(eventId);
-    // }
-
-    @PostMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/{knockoutStageId}/matches")
-    @ResponseStatus(HttpStatus.CREATED)
-    public List<Match> addMatchesforKnockoutStage(@PathVariable Long eventId) {
-        return matchService.addMatchesforKnockoutStage(eventId);
-    }
-
-    @PostMapping("/tournaments/{tournamentId}/events/{eventId}/groupStage/matches")
-    @ResponseStatus(HttpStatus.CREATED)
-    public List<Match> addInitialMatchforGroupStage(@PathVariable Long eventId) {
-        return matchService.addMatchesforGroupStages(eventId);
     }
 
 
@@ -59,6 +40,12 @@ public class MatchController {
     public List<Match> getAllMatches() {
         return matchService.getAllMatches();
     }
+    // @GetMapping("/upcoming-matches")
+    // public List<Match> getUpcomingMatches() {
+    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    //     String username = authentication.getName();
+    //     return matchService.getMatchesScheduledForToday(username);
+    // }
 
     // @GetMapping("/upcoming-matches")
     // public List<Match> getUpcomingMatches() {
