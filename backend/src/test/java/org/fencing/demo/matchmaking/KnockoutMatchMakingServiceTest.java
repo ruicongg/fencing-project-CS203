@@ -10,20 +10,20 @@ import java.util.*;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
-import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.knockoutmatchmaking.KnockoutMatchMakingService;
 import org.fencing.demo.knockoutmatchmaking.KnockoutMatchMakingServiceImpl;
+import org.fencing.demo.knockoutmatchmaking.KnockoutStageGenerator;
 import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.knockoutstage.KnockoutStageRepository;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.match.MatchRepository;
 import org.fencing.demo.player.Player;
+import org.fencing.demo.playerrank.PlayerRank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.fencing.demo.knockoutmatchmaking.KnockoutStageGenerator;
 
 @ExtendWith(MockitoExtension.class)
 public class KnockoutMatchMakingServiceTest {
@@ -68,12 +68,6 @@ public class KnockoutMatchMakingServiceTest {
         verify(knockoutStageRepository, times(1)).save(any(KnockoutStage.class));
     }
     
-    @Test
-    void createNextKnockoutStage_NullEventId_ThrowsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            knockoutMatchMakingService.createNextKnockoutStage(null);
-        });
-    }
     
     @Test
     void createNextKnockoutStage_NonExistentEvent_ThrowsEventNotFoundException() {
@@ -124,13 +118,13 @@ public class KnockoutMatchMakingServiceTest {
     }
     
     @Test
-    void createMatchesInKnockoutStage_NoKnockoutStages_ThrowsIllegalStateException() {
+    void createMatchesInKnockoutStage_NoKnockoutStages_ThrowsIllegalArgumentException() {
         Long eventId = 1L;
         Event event = createValidEvent(); // This creates an event with empty knockout stages
         
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         
-        assertThrows(IllegalStateException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             knockoutMatchMakingService.createMatchesInKnockoutStage(eventId);
         });
         

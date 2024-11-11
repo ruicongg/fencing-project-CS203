@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
 import org.fencing.demo.events.Event;
-import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.groupmatchmaking.GroupMatchGenerator;
 import org.fencing.demo.groupstage.GroupStage;
 import org.fencing.demo.match.Match;

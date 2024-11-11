@@ -1,15 +1,15 @@
 package org.fencing.demo.events;
 
 import java.time.LocalDateTime;
+import java.util.*;
 import java.util.ArrayList;
 // import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.fencing.demo.groupstage.GroupStage;
 import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.match.Match;
+import org.fencing.demo.playerrank.PlayerRank;
 import org.fencing.demo.tournament.Tournament;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -66,7 +66,7 @@ public class Event {
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private TreeSet<PlayerRank> rankings = new TreeSet<>();
+    private SortedSet<PlayerRank> rankings = new TreeSet<>();
 
     // public TreeSet<Player> EloRank;
     // for sorting first when go to group stage

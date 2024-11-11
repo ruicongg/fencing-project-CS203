@@ -18,12 +18,6 @@ public class MatchController {
         this.matchService = matchService;
     }
 
-    // @PostMapping("/tournaments/{tournamentId}/events/{eventId}/group/*/matches")
-    // @ResponseStatus(HttpStatus.CREATED)
-    // public Match addMatchforGroupStage(@PathVariable Long eventId, @RequestBody Match match) {
-    //     return matchService.addMatchesforAllGroupStages(eventId);
-    // }
-
 
     @GetMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/{knockoutStageId}/matches")
     @ResponseStatus(HttpStatus.OK)

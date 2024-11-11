@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
-import org.fencing.demo.events.PlayerRank;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional

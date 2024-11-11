@@ -1,22 +1,18 @@
 package org.fencing.demo.groupmatchmaking;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
-import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.player.Player;
+import org.fencing.demo.playerrank.PlayerRank;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.constraints.NotNull;
 
 @Component
+@Validated
 public class GroupDistributionService {
-    public Map<Integer, List<Player>> distributePlayersIntoGroups(@NotNull TreeSet<PlayerRank> rankings) {
+    public Map<Integer, List<Player>> distributePlayersIntoGroups(@NotNull SortedSet<PlayerRank> rankings) {
 
         Set<Player> players = new TreeSet<>();
         rankings.forEach(pr -> players.add(pr.getPlayer()));

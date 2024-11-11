@@ -1,19 +1,15 @@
 package org.fencing.demo.knockoutmatchmaking;
 
+import java.util.*;
 import java.util.ArrayList;
-import java.util.TreeSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.fencing.demo.events.Event;
-import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.match.Match;
-import java.util.List;
-import java.util.Set;
-import java.util.Comparator;
 import org.fencing.demo.player.Player;
-
-
+import org.fencing.demo.playerrank.PlayerRank;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -46,7 +42,7 @@ public class KnockoutStageGenerator {
 
     private List<Player> getPlayersAdvancing(int numberOfPlayersAdvancing, Event event) {
         
-        TreeSet<PlayerRank> rankings = event.getRankings();
+        SortedSet<PlayerRank> rankings = event.getRankings();
         return rankings.stream()
             .sorted()
             .limit(numberOfPlayersAdvancing)

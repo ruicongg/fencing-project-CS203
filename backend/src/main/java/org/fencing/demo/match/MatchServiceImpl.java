@@ -6,17 +6,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.fencing.demo.events.Event;
-import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
-import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.groupstage.GroupStageNotFoundException;
 import org.fencing.demo.groupstage.GroupStageRepository;
-import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.knockoutstage.KnockoutStageNotFoundException;
 import org.fencing.demo.knockoutstage.KnockoutStageRepository;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerNotFoundException;
 import org.fencing.demo.player.PlayerRepository;
+import org.fencing.demo.playerrank.PlayerRank;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,29 +35,8 @@ public class MatchServiceImpl implements MatchService {
         this.playerRepository = playerRepository;
     }
 
-    // public Match addMatch(Long eventId, Match match){
-    //     if (eventId == null || match == null) {
-    //         throw new IllegalArgumentException("Event ID and Match cannot be null");
-    //     }
-    //     return eventRepository.findById(eventId).map(event -> {
-    //         match.setEvent(event);
-    //         return matchRepository.save(match);
-    //     }).orElseThrow(() -> new EventNotFoundException(eventId));
-    // }
 
 
-
-
-    // @Override
-    // public List<Match> getAllMatchesByEventId(Long eventId) {
-    //     if (eventId == null) {
-    //         throw new IllegalArgumentException("Event ID cannot be null");
-    //     }
-    //     if (!eventRepository.existsById(eventId)) {
-    //         throw new EventNotFoundException(eventId);
-    //     }
-    //     return matchRepository.findByEventId(eventId);
-    // }
 
     public List<Match> getAllMatchesForKnockoutStageByKnockoutStageId(Long knockoutStageId) {
         if (knockoutStageId == null) {

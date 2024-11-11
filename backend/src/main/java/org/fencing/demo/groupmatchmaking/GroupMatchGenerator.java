@@ -8,8 +8,9 @@ import java.util.TreeMap;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.groupstage.GroupStage;
 import org.fencing.demo.match.Match;
-import org.springframework.stereotype.Component;
 import org.fencing.demo.player.Player;
+import org.springframework.stereotype.Component;
+
 @Component
 public class GroupMatchGenerator {
     

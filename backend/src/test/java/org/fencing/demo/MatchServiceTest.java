@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,8 +22,6 @@ import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.EventServiceImpl;
 import org.fencing.demo.events.Gender;
-import org.fencing.demo.events.PlayerRank;
-
 import org.fencing.demo.events.WeaponType;
 import org.fencing.demo.groupstage.GroupStageRepository;
 import org.fencing.demo.knockoutstage.KnockoutStage;
@@ -33,6 +33,7 @@ import org.fencing.demo.match.MatchRepository;
 import org.fencing.demo.match.MatchServiceImpl;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
+import org.fencing.demo.playerrank.PlayerRank;
 import org.fencing.demo.tournament.Tournament;
 import org.fencing.demo.tournament.TournamentRepository;
 import org.junit.jupiter.api.Test;
@@ -40,8 +41,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 public class MatchServiceTest {
@@ -69,24 +68,6 @@ public class MatchServiceTest {
 
     @InjectMocks
     private MatchServiceImpl matchService;
-
-    // @Test
-    // public void addMatchesForAllGroupStages_ValidEvent_ReturnsSavedMatches() {
-       
-    // }
-
-    // @Test
-    // public void addMatchesForAllGroupStages_NonExistingEvent_ThrowsEventNotFoundException() {
-    //     Long eventId = 1L;
-
-    //     when(eventRepository.existsById(eventId)).thenReturn(false);
-
-    //     assertThrows(EventNotFoundException.class, () -> {
-    //         matchService.addMatchesforAllGroupStages(eventId);
-    //     });
-
-    //     verify(eventRepository, times(1)).existsById(eventId);
-    // }
 
 
     @Test

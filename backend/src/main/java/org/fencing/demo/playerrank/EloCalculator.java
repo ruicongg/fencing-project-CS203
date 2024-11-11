@@ -1,6 +1,5 @@
-package org.fencing.demo.groupmatchmaking;
+package org.fencing.demo.playerrank;
 
-import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.player.Player;
 
 public class EloCalculator {

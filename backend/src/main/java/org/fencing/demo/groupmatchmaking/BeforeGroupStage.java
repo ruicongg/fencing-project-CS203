@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.fencing.demo.events.PlayerRank;
+import org.fencing.demo.playerrank.PlayerRank;
 
 //ELO sort
 public class BeforeGroupStage {

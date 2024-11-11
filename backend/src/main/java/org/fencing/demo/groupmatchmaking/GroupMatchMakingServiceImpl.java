@@ -8,16 +8,15 @@ import java.util.stream.Collectors;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
-import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.groupstage.GroupStage;
 import org.fencing.demo.groupstage.GroupStageRepository;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.match.MatchRepository;
+import org.fencing.demo.player.Player;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
-import org.fencing.demo.player.Player;
 
 @Service
 @Transactional
@@ -42,6 +41,9 @@ public class GroupMatchMakingServiceImpl implements GroupMatchMakingService {
     @Override
     public List<GroupStage> createGroupStages(@NotNull Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
+        if (event.getGroupStages() != null && !event.getGroupStages().isEmpty()) {
+            throw new IllegalArgumentException("GroupStages already exist for event " + eventId);
+        }
         Map<Integer, List<Player>> groups = groupDistributionService
                 .distributePlayersIntoGroups(event.getRankings());
 

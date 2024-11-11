@@ -1,8 +1,8 @@
-package org.fencing.demo.events;
+package org.fencing.demo.playerrank;
 
 import java.util.Objects;
 
-import org.fencing.demo.groupmatchmaking.EloCalculator;
+import org.fencing.demo.events.Event;
 import org.fencing.demo.player.Player;
 
 import jakarta.persistence.Entity;

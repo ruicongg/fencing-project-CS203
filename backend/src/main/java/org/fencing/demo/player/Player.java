@@ -1,10 +1,11 @@
 package org.fencing.demo.player;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.match.Match;
+import org.fencing.demo.playerrank.PlayerRank;
 import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
 
@@ -34,7 +35,7 @@ public class Player extends User implements Comparable<Player>{
 
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    Set<PlayerRank> playerRanks;
+    private Set<PlayerRank> playerRanks = new HashSet<>();
 
     private boolean reached2400;
 

@@ -5,15 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.time.*;
+import java.util.*;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.Gender;
-import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.events.WeaponType;
 import org.fencing.demo.groupstage.GroupStage;
 import org.fencing.demo.groupstage.GroupStageRepository;
@@ -23,6 +20,7 @@ import org.fencing.demo.match.Match;
 import org.fencing.demo.match.MatchRepository;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
+import org.fencing.demo.playerrank.PlayerRank;
 import org.fencing.demo.tournament.Tournament;
 import org.fencing.demo.tournament.TournamentRepository;
 import org.fencing.demo.user.Role;
@@ -35,13 +33,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.test.annotation.DirtiesContext;
-import java.util.TreeSet;
-
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -177,15 +174,20 @@ public class MatchIntegrationTest {
     @Test //passed!
      public void addInitialMatchForGroupStage_Success() throws Exception {
 
+        groupStageRepository.deleteAll();
+
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/matches");
 
 
-        ResponseEntity<Match[]> result = restTemplate.withBasicAuth("admin", "adminPass")
-                                                    .postForEntity(uri, null, Match[].class);
+        ResponseEntity<List<Match>> result = restTemplate.withBasicAuth("admin", "adminPass")
+                                                    .exchange(uri, 
+                                                        HttpMethod.POST, 
+                                                        null, 
+                                                        new ParameterizedTypeReference<List<Match>>() {});
         //System.out.println(result.getBody());
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertNotNull(result.getBody());
-        assertTrue(result.getBody().length > 0);
+        assertTrue(result.getBody().size() > 0);
     }
 
     @Test // passed
@@ -193,12 +195,15 @@ public class MatchIntegrationTest {
         
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage/" + knockoutStage.getId() + "/matches");
 
-        ResponseEntity<Match[]> result = restTemplate.withBasicAuth("admin", "adminPass")
-                                                    .postForEntity(uri, null, Match[].class);
+        ResponseEntity<List<Match>> result = restTemplate.withBasicAuth("admin", "adminPass")
+            .exchange(uri, 
+                     HttpMethod.POST, 
+                     null, 
+                     new ParameterizedTypeReference<List<Match>>() {});
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertNotNull(result.getBody());
-        assertTrue(result.getBody().length > 0);
+        assertTrue(result.getBody().size() > 0);
     }
 
     // @Test
@@ -293,12 +298,14 @@ public class MatchIntegrationTest {
     }
 
     private Event addPlayersToEvent(Event event, GroupStage groupStage) {
+        SortedSet<PlayerRank> playerRanks = event.getRankings();
         for (int i = 1; i <= 8; i++) {
             Player player = createValidPlayer(i); 
+            playerRepository.save(player);
             PlayerRank playerRank = createPlayerRank(player, event);
-            event.getRankings().add(playerRank);
+            playerRanks.add(playerRank);
         }
-
+        event.setRankings(playerRanks);
         return eventRepository.save(event);
     }
 
@@ -306,15 +313,19 @@ public class MatchIntegrationTest {
         PlayerRank playerRank = new PlayerRank();
         playerRank.setEvent(event);
         playerRank.setPlayer(player);
+        player.getPlayerRanks().add(playerRank);
         return playerRank;
     }
 
     private Player createValidPlayer(int id) {
         Player player = new Player();
+        player.setId((long) id);
+        player.setElo(1200 + (id * 100));
         player.setEmail("player"+id+"@email.com");
         player.setUsername("player"+id);
         player.setPassword(passwordEncoder.encode("playerPass"));
         player.setRole(Role.USER);
+        
         return playerRepository.save(player);
     }
 

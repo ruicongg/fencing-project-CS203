@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.constraints.NotNull;
+
 @RestController
 public class KnockoutMatchMakingController {
 
@@ -20,7 +22,7 @@ public class KnockoutMatchMakingController {
 
     @PostMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage/{knockoutStageId}/matches")
     @ResponseStatus(HttpStatus.CREATED)
-    public List<Match> addMatchesForKnockoutStage(@PathVariable Long eventId) {
+    public List<Match> addMatchesForKnockoutStage(@NotNull@PathVariable Long eventId) {
         return knockoutMatchMakingService.createMatchesInKnockoutStage(eventId);
     }
 
@@ -28,7 +30,7 @@ public class KnockoutMatchMakingController {
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
-    public KnockoutStage addKnockoutStage(@PathVariable Long eventId) {
+    public KnockoutStage addKnockoutStage(@NotNull@PathVariable Long eventId) {
         return knockoutMatchMakingService.createNextKnockoutStage(eventId);
     }
 }

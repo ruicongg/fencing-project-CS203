@@ -15,6 +15,7 @@ import org.fencing.demo.match.Match;
 import org.fencing.demo.match.MatchRepository;
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
+import org.fencing.demo.playerrank.PlayerRank;
 import org.fencing.demo.tournament.Tournament;
 import org.fencing.demo.tournament.TournamentRepository;
 import org.fencing.demo.user.Role;
