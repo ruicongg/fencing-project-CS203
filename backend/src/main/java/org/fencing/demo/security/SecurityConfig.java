@@ -34,15 +34,18 @@ public class SecurityConfig {
 
     // @Bean
     // public CorsFilter corsFilter() {
-    //     CorsConfiguration config = new CorsConfiguration();
-    //     config.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Allow frontend origin
-    //     config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-    //     config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-    //     config.setAllowCredentials(true);
+    // CorsConfiguration config = new CorsConfiguration();
+    // config.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Allow
+    // frontend origin
+    // config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE",
+    // "OPTIONS"));
+    // config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+    // config.setAllowCredentials(true);
 
-    //     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    //     source.registerCorsConfiguration("/**", config);
-    //     return new CorsFilter(source);
+    // UrlBasedCorsConfigurationSource source = new
+    // UrlBasedCorsConfigurationSource();
+    // source.registerCorsConfiguration("/**", config);
+    // return new CorsFilter(source);
     // }
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -51,7 +54,7 @@ public class SecurityConfig {
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setAllowCredentials(true);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
@@ -63,24 +66,30 @@ public class SecurityConfig {
                 .cors((cors -> cors.configurationSource(corsConfigurationSource())))
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests((authz) -> authz
-                        // .requestMatchers(HttpMethod.POST, "/tournaments/{tournamentId}/events/{eventId}/addPlayer/{playerId}").hasAnyRole("ADMIN", "USER")
-                        .requestMatchers("/api/v1/auth/**").permitAll() // Allow all requests to /api/v1/auth
-                        .requestMatchers("/error").permitAll() // Allow all requests to /error
-                        .requestMatchers(HttpMethod.GET, "/tournaments").permitAll() // Allow all GET requests to tournaments
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        // Specific event endpoints first
+                        .requestMatchers(HttpMethod.POST, "/tournaments/{tournamentId}/events/{eventId}/players/{username}").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/tournaments/{tournamentId}/events/{eventId}/players").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/tournaments/{tournamentId}/events/{eventId}/players/{username}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/tournaments/{tournamentId}/events").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/tournaments/{tournamentId}/events/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/tournaments/{tournamentId}/events/**").hasRole("ADMIN")
+                        // Then more general tournament endpoints
                         .requestMatchers(HttpMethod.GET, "/tournaments/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/tournaments", "/tournaments/**").permitAll() // Allow all GET requests to tournaments
-                        .requestMatchers(HttpMethod.POST, "/tournaments").hasRole("ADMIN") // Only admins can POST
-                        .requestMatchers(HttpMethod.POST, "/tournaments/**").hasRole("ADMIN") // Only admins can POST
-                        .requestMatchers(HttpMethod.PUT, "/tournaments", "/tournaments/**").hasRole("ADMIN") // Only admins can PUT
-                        .requestMatchers(HttpMethod.DELETE, "/tournaments", "/tournaments/**").hasRole("ADMIN") // Only admins can
-                        .requestMatchers(HttpMethod.GET, "/users", "/users/**").hasRole("ADMIN") // Only admins can GET users
-                        .requestMatchers(HttpMethod.PUT, "/users/*").hasRole("ADMIN") // Only admins can PUT users (next time users should be able to update their own stuff)
-                        .requestMatchers(HttpMethod.DELETE, "/users/*").hasRole("ADMIN") // Only admins can DELETE users
-                        .requestMatchers(HttpMethod.GET, "/players", "/players/**").permitAll() // Allow all GET requests to players
-                        .requestMatchers(HttpMethod.POST, "/players", "/players/**").hasRole("ADMIN") // Only admins can POST players
-                        .requestMatchers(HttpMethod.PUT, "/players/*").hasRole("ADMIN") // Only admins can PUT players
-                        .requestMatchers(HttpMethod.DELETE, "/players/*").hasRole("ADMIN") // Only admins can DELETE players
-                        .anyRequest().authenticated() // All other requests require authentication
+                        .requestMatchers(HttpMethod.POST, "/tournaments/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/tournaments/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/tournaments/**").hasRole("ADMIN")
+                        // Then user and player endpoints
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/users/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/users/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/players/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/players/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/players/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/players/*").hasRole("ADMIN")
+                        // Finally, the catch-all rule
+                        .anyRequest().authenticated()
 
                 )
 

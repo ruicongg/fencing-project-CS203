@@ -3,7 +3,6 @@ package org.fencing.demo.events;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
-// import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -48,6 +47,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "events")
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id"
+)
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

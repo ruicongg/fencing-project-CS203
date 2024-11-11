@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.fencing.demo.player.Player;
 import org.fencing.demo.player.PlayerRepository;
+import org.fencing.demo.events.Gender;
 import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
 import org.fencing.demo.user.UserRepository;
@@ -75,7 +76,7 @@ public class PlayerIntegrationTest {
 
     @Test
     public void getPlayers_Success() throws Exception {
-        players.save(new Player("user2", "password", "user@example.com", Role.USER));
+        players.save(new Player("user2", "password", "user@example.com", Role.USER, Gender.MALE));
         URI uri = new URI(baseUrl + port + "/players");
 
         ResponseEntity<Player[]> response = restTemplate.getForEntity(uri, Player[].class);
@@ -88,7 +89,7 @@ public class PlayerIntegrationTest {
 
     @Test
     public void getPlayer_Success() throws Exception {
-        Player player = new Player("user2", "password", "user@example.com", Role.USER);
+        Player player = new Player("user2", "password", "user@example.com", Role.USER, Gender.MALE);
         Long id = players.save(player).getId();
         URI uri = new URI(baseUrl + port + "/players/" + id);
 
@@ -110,7 +111,7 @@ public class PlayerIntegrationTest {
 
     @Test
     public void addPlayer_Success() throws Exception {
-        Player player = new Player("user69", "password", "user69@example.com", Role.USER);
+        Player player = new Player("user69", "password", "user69@example.com", Role.USER, Gender.MALE);
         URI uri = new URI(baseUrl + port + "/players");
 
         ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass").postForEntity(uri, player, Player.class);
@@ -122,9 +123,9 @@ public class PlayerIntegrationTest {
 
     @Test
     public void addPlayer_Failure_Same_Username() throws Exception {
-        Player player = new Player("user69", "password", "user69@example.com", Role.USER);
+        Player player = new Player("user69", "password", "user69@example.com", Role.USER, Gender.MALE);
         players.save(player);
-        Player player2 = new Player("user69", "password", "user70@example.com", Role.USER);
+        Player player2 = new Player("user69", "password", "user70@example.com", Role.USER, Gender.MALE);
         URI uri = new URI(baseUrl + port + "/players");
 
         HttpEntity<Player> request = new HttpEntity<>(player2, createHeaders(adminToken));
@@ -136,10 +137,10 @@ public class PlayerIntegrationTest {
 
     @Test
     public void updatePlayer_Success() throws Exception {
-        Player player =  players.save(new Player("user2", "password", "user@example.com", Role.USER));
+        Player player =  players.save(new Player("user2", "password", "user@example.com", Role.USER, Gender.MALE));
         Long id = player.getId().longValue();
         URI uri = new URI(baseUrl + port + "/players/" + id);
-        Player newPlayer = new Player("user3", "password3", "user3@example.com", Role.USER);
+        Player newPlayer = new Player("user3", "password3", "user3@example.com", Role.USER, Gender.MALE);
         
 
         ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass")
@@ -152,7 +153,7 @@ public class PlayerIntegrationTest {
     @Test
     public void updatePlayer_Failure_InvalidId() throws Exception {
         URI uri = new URI(baseUrl + port + "/players/1");
-        Player newPlayer = new Player("user2", "password", "user@example.com", Role.USER);
+        Player newPlayer = new Player("user2", "password", "user@example.com", Role.USER, Gender.MALE);
         ResponseEntity<Player> result = restTemplate.withBasicAuth("admin", "adminPass")
         .exchange(uri, HttpMethod.PUT, new HttpEntity<>(newPlayer), Player.class);
         assertEquals(404, result.getStatusCode().value());
@@ -160,7 +161,7 @@ public class PlayerIntegrationTest {
 
     @Test
     public void deletePlayer_Success() throws Exception {
-        Player player = new Player("user2", "password", "user@example.com", Role.USER);
+        Player player = new Player("user2", "password", "user@example.com", Role.USER, Gender.MALE);
         players.save(player);
         Long id = player.getId();
         URI uri = new URI(baseUrl + port + "/players/" + id);

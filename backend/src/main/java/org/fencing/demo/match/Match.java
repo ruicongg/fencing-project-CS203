@@ -57,7 +57,7 @@ public class Match {
     private int player2Score;
 
     // added - tbc
-    // private boolean matchFinished;
+    private boolean finished;
 
     public Player getWinner() {
         return player1Score > player2Score ? player1 : player2;

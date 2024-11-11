@@ -12,6 +12,7 @@ import org.fencing.demo.events.PlayerRank;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.user.Role;
 import org.fencing.demo.user.User;
+import org.fencing.demo.events.Gender;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -23,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NoArgsConstructor
 public class Player extends User implements Comparable<Player>{
     private int elo;
-
+    private Gender gender;
     private static int STARTING_ELO = 1700;  
 
     @OneToMany(mappedBy = "player1")
@@ -41,8 +42,9 @@ public class Player extends User implements Comparable<Player>{
     private boolean reached2400;
 
 
-    public Player(String username, String password, String email, Role role) {
+    public Player(String username, String password, String email, Role role, Gender gender) {
         super(username, password, email, role);
+        this.gender = gender;
         this.elo = STARTING_ELO;
     }
 

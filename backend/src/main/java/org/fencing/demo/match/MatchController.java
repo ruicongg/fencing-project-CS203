@@ -54,12 +54,12 @@ public class MatchController {
         return matchService.getMatch(matchId);
     }
 
-    @GetMapping("/upcoming-matches")
-    public List<Match> getUpcomingMatches() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        return matchService.getMatchesScheduledForToday(username);
-    }
+    // @GetMapping("/upcoming-matches")
+    // public List<Match> getUpcomingMatches() {
+    //     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    //     String username = authentication.getName();
+    //     return matchService.getMatchesScheduledForToday(username);
+    // }
 
     @PutMapping("/tournaments/{tournamentId}/events/{eventId}/match/{matchId}")
     @ResponseStatus(HttpStatus.OK)

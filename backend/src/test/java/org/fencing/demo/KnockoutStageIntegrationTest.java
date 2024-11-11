@@ -99,11 +99,11 @@ class KnockoutStageIntegrationTest {
         userToken = "Bearer " + generateToken(regularUser);
 
         // Initialize players for the matches
-        player1 = new Player("player1", passwordEncoder.encode("password1"), "player1@example.com", Role.USER);
+        player1 = new Player("player1", passwordEncoder.encode("password1"), "player1@example.com", Role.USER, Gender.MALE);
         player1.setElo(1700);
         playerRepository.save(player1);
 
-        player2 = new Player("player2", passwordEncoder.encode("password2"), "player2@example.com", Role.USER);
+        player2 = new Player("player2", passwordEncoder.encode("password2"), "player2@example.com", Role.USER, Gender.MALE);
         player2.setElo(1700);
         playerRepository.save(player2);
 
