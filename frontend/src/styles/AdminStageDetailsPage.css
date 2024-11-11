@@ -1,0 +1,189 @@
+/* Main Container */
+.stage-details-page, .groupStage-details-page, .knockoutStage-details-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #141414;
+  color: #ffffff;
+  font-family: Arial, sans-serif;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb {
+  font-size: 0.9rem;
+  color: #00BFFF;
+  margin-bottom: 20px;
+}
+
+.breadcrumb span {
+  cursor: pointer;
+}
+
+.breadcrumb span:hover {
+  text-decoration: underline;
+}
+
+/* Page Title */
+h1 {
+  font-size: 2rem;
+  color: #00BFFF;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Error Message */
+.error-message {
+  background-color: #d9534f;
+  color: #ffffff;
+  padding: 12px;
+  margin-top: 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* Generate Button */
+.generate-button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.generate-button:hover {
+  background-color: #218838;
+}
+
+.generate-button:disabled {
+  background-color: #666666;
+  cursor: not-allowed;
+}
+
+/* Match List */
+.match-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.match-list li {
+  background-color: #1f1f1f;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #333;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.match-list li:hover {
+  background-color: #333333;
+}
+
+.match-list li .match-info {
+  font-size: 1rem;
+  color: #cccccc;
+}
+
+.match-list li .match-info strong {
+  color: #ffffff;
+}
+
+/* View Button in Match List */
+.view-button {
+  background-color: #00BFFF;
+  color: #ffffff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.view-button:hover {
+  background-color: #0096d6;
+}
+
+
+/* .stage-details-page {
+    padding: 20px;
+  }
+  
+  .breadcrumb {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  
+  .breadcrumb span {
+    cursor: pointer;
+    color: #007bff;
+  }
+  
+  .breadcrumb span:hover {
+    text-decoration: underline;
+  }
+  
+  h1 {
+    margin-bottom: 20px;
+  }
+  
+  button {
+    padding: 8px 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #218838;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  ul li {
+    padding: 10px;
+    background-color: #f0f0f0;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  ul li button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  
+  ul li button:hover {
+    background-color: #0056b3;
+  } */
+  

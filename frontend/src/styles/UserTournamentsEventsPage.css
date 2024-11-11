@@ -1,0 +1,77 @@
+/* TournamentEventsPage.css */
+
+.tournament-events-page {
+  padding: 16px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.filter-section {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.filter-section label {
+  font-weight: bold;
+}
+
+.event-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.event-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  width: 250px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.event-card:hover {
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.event-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+.join-button {
+  padding: 8px 16px;
+  margin-top: 10px;
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #28a745;
+  color: white;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.join-button:hover {
+  background-color: #218838;
+}
+
+.join-button.joined {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.loading-message,
+.error-message,
+.no-events-message {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-top: 20px;
+}
