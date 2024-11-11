@@ -6,8 +6,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,18 +28,8 @@ public class KnockoutStageController {
         return knockoutStageService.getKnockoutStage(knockoutStageId);
     }
 
-    // PUT: Update an existing KnockoutStage for a specific event (Admin Only)
-    @PutMapping("/{knockoutStageId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<KnockoutStage> updateKnockoutStage(@PathVariable Long eventId, @PathVariable Long knockoutStageId, @RequestBody KnockoutStage knockoutStage) {
-        if (knockoutStageService.getKnockoutStage(knockoutStageId).getEvent().getId() != eventId) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Event mismatch check
-        }
-
-        KnockoutStage updatedKnockoutStage = knockoutStageService.updateKnockoutStage(eventId, knockoutStageId, knockoutStage);
-        return ResponseEntity.ok(updatedKnockoutStage);
-    }
-
+    // there isn't a put method for knockout stage because you can't change the event and you can't change the matches
+    
     // DELETE: Remove a KnockoutStage from a specific event (Admin Only)
     @DeleteMapping("/{knockoutStageId}")
     @PreAuthorize("hasRole('ADMIN')")

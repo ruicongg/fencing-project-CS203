@@ -1,4 +1,4 @@
-package org.fencing.demo;
+package org.fencing.demo.integrationtest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -7,95 +7,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.contains;
 
 import java.net.URI;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 
 import org.fencing.demo.events.Event;
-import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.Gender;
 import org.fencing.demo.events.WeaponType;
-import org.fencing.demo.player.PlayerRepository;
-import org.fencing.demo.tournament.Tournament;
-import org.fencing.demo.tournament.TournamentRepository;
-import org.fencing.demo.user.Role;
-import org.fencing.demo.user.User;
-import org.fencing.demo.user.UserRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class EventIntegrationTest {
-
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
-    @Autowired
-    private TournamentRepository tournamentRepository;
-
-    @Autowired
-    private EventRepository eventRepository;
-
-    @Autowired
-    private PlayerRepository playerRepository;
-
-    @Autowired
-    private UserRepository userRepository; // Assuming this is your user repository
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    private Tournament tournament;
-
-    private User adminUser;
-
-    private User regularUser;
-
-    private final String baseUrl = "http://localhost:";
+public class EventIntegrationTest extends BaseIntegrationTest{
 
     @BeforeEach
     void setUp() {
-
-        // Create an admin user
-        userRepository.deleteAll();
-        adminUser = new User("admin", passwordEncoder.encode("adminPass"), "admin@example.com", Role.ADMIN);
-        userRepository.save(adminUser);
-        // Create a regular user
-        regularUser = new User("user", passwordEncoder.encode("userPass"), "user@example.com", Role.USER);
-        userRepository.save(regularUser);
-        
-        tournamentRepository.deleteAll();
-        tournament = createValidTournament();
-        tournamentRepository.save(tournament);
+        super.setUp();
     }
 
-    @AfterEach
-    void tearDown() {
-        eventRepository.deleteAll();
-        tournamentRepository.deleteAll();
-        playerRepository.deleteAll();
-        userRepository.deleteAll();
-    }
 
     // Add Event - Success
     @Test
     public void addEvent_Success() throws Exception {
-        Event event = createValidEvent(tournament);
-        
-        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
+                
+        URI uri = createUrl("/tournaments/" + tournament.getId() + "/events");
 
         ResponseEntity<Event> result = restTemplate.withBasicAuth("admin", "adminPass")
                                         .postForEntity(uri, event, Event.class);
@@ -107,8 +45,7 @@ public class EventIntegrationTest {
 
     @Test
     public void addEvent_ForbiddenForRegularUser_Failure() throws Exception {
-        Event event = createValidEvent(tournament);
-
+        
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
 
         ResponseEntity<Event> result = restTemplate.withBasicAuth("user", "userPass")
@@ -119,7 +56,7 @@ public class EventIntegrationTest {
 
     @Test
     public void addEvent_NullTournamentId_Failure() throws Exception {
-        Event event = createValidEvent(tournament);
+
         
         URI uri = new URI(baseUrl + port + "/tournaments/null/events");
 
@@ -154,8 +91,7 @@ public class EventIntegrationTest {
 
     @Test
     public void addEvent_NonExistentTournamentId_Failure() throws Exception {
-        Event event = createValidEvent(tournament);
-
+        
         Long nonExistentTournamentId = 999L;  
         URI uri = new URI(baseUrl + port + "/tournaments/" + nonExistentTournamentId + "/events");
         
@@ -168,8 +104,6 @@ public class EventIntegrationTest {
     // Get All Events by Tournament ID - Success
     @Test
     public void getAllEventsByTournamentId_Success() throws Exception {
-        Event event = createValidEvent(tournament);
-        eventRepository.save(event);
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
 
@@ -178,14 +112,13 @@ public class EventIntegrationTest {
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertNotNull(result.getBody());
+        // 1 event created in BaseIntegrationTest setUp
         assertEquals(1, result.getBody().length);
     }
 
     // Get Event by ID - Success
     @Test
     public void getEventById_Success() throws Exception {
-        Event event = createValidEvent(tournament);
-        eventRepository.save(event);
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId());
 
@@ -199,14 +132,12 @@ public class EventIntegrationTest {
 
     @Test
     public void getAllEventsByTournamentId_RegularUser_Success() throws Exception {
-        Event event = createValidEvent(tournament);
-        eventRepository.save(event);
-
+        
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
 
         ResponseEntity<Event[]> result = restTemplate.withBasicAuth("user", "userPass")
                                                 .getForEntity(uri, Event[].class);
-            // assertEquals("smth", result.getBody());
+        // 1 event created in BaseIntegrationTest setUp
         assertEquals(HttpStatus.OK, result.getStatusCode());  
         assertNotNull(result.getBody());
         assertEquals(1, result.getBody().length);
@@ -216,8 +147,7 @@ public class EventIntegrationTest {
     public void addEvent_StartDateBeforeTournamentStartDate_Failure() throws Exception {
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
 
-        Event event = createValidEvent(tournament);
-        event.setStartDate(LocalDateTime.now().plusDays(24));
+                event.setStartDate(LocalDateTime.now().plusDays(24));
 
         ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .postForEntity(uri, event, String.class);
@@ -230,24 +160,22 @@ public class EventIntegrationTest {
     public void addEvent_EndDateBeforeStartDate_Failure() throws Exception {
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
 
-        Event event = createValidEvent(tournament);
-        event.setEndDate(LocalDateTime.now().plusDays(24));
+        event.setEndDate(LocalDateTime.now().minusDays(24));
 
         ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .postForEntity(uri, event, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-        assertTrue(result.getBody().contains("Event end date must be after start date"));
+        assertTrue(result.getBody().contains("Event start date must be in the future"));
     }
 
     // Update Event - Success
     @Test // event successfully created and persisted, but when updating, everything becomes null? eg. id=0, startDate=null
     public void updateEvent_Success() throws Exception {
-        Event event = createValidEvent(tournament);
+
         long id = eventRepository.save(event).getId();
         
-        tournament.getEvents().add(event);
-        tournamentRepository.save(tournament);
+        
         
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
 
@@ -266,11 +194,9 @@ public class EventIntegrationTest {
 
     @Test
     public void updateEvent_ForbiddenForRegularUser_Failure() throws Exception {
-        Event event = createValidEvent(tournament);
-        long id = eventRepository.save(event).getId();
+                long id = eventRepository.save(event).getId();
 
-        tournament.getEvents().add(event);
-        tournamentRepository.save(tournament);
+        
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
         
@@ -294,14 +220,14 @@ public class EventIntegrationTest {
     }
 
 
-    @Test // internal server error 500
+    @Test 
     public void updateEvent_EndDateBeforeStartDate_Failure() throws Exception {
-        Event event = createValidEvent(tournament);
-        long id = eventRepository.save(event).getId();
+
+        long id = event.getId();
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
         
         event.setEndDate(LocalDateTime.now().plusDays(24));  // End date before start date
-        // System.out.println("in repository "+tournamentRepository.findById(tournament_id));
+
         ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
                 .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), String.class);
 
@@ -312,10 +238,8 @@ public class EventIntegrationTest {
 
     @Test
     public void updateEvent_NonExistentEvent_Failure() throws Exception {
-        Event event = createValidEvent(tournament);
-
-        tournament.getEvents().add(event);
-        tournamentRepository.save(tournament);
+        
+        
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/9999");
 
@@ -329,11 +253,9 @@ public class EventIntegrationTest {
     // Delete Event - Success
     @Test
     public void deleteEvent_Success() throws Exception {
-        Event event = createValidEvent(tournament);
-        long id = eventRepository.save(event).getId();
+                long id = eventRepository.save(event).getId();
 
-        tournament.getEvents().add(event);
-        tournamentRepository.save(tournament);
+        
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
 
@@ -346,11 +268,9 @@ public class EventIntegrationTest {
 
     @Test
     public void deleteEvent_ForbiddenForRegularUser_Failure() throws Exception {
-        Event event = createValidEvent(tournament);
-        long id = eventRepository.save(event).getId();
+                long id = eventRepository.save(event).getId();
 
-        tournament.getEvents().add(event);
-        tournamentRepository.save(tournament);
+        
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
 
@@ -360,28 +280,6 @@ public class EventIntegrationTest {
         assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());  // Expecting 403 Forbidden
     }
 
-    // Helper methods for creating valid entities
-    private Tournament createValidTournament() {
-        return Tournament.builder()
-                .name("Spring Championship")
-                .registrationStartDate(LocalDate.now().plusDays(1))
-                .registrationEndDate(LocalDate.now().plusDays(20))
-                .tournamentStartDate(LocalDate.now().plusDays(25))
-                .tournamentEndDate(LocalDate.now().plusDays(30))
-                .venue("Sports Arena")
-                .events(new HashSet<>())
-                .build();
-    }
-
-    private Event createValidEvent(Tournament tournament) {
-        return Event.builder()
-        .tournament(tournament)
-        .gender(Gender.MALE)
-        .weapon(WeaponType.FOIL)  
-        .startDate(LocalDateTime.now().plusDays(25))  
-        .endDate(LocalDateTime.now().plusDays(26))
-        .build();
-    }
 
 }
 

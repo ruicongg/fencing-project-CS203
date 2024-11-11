@@ -1,6 +1,7 @@
 package org.fencing.demo.tournament;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -64,7 +65,8 @@ public class Tournament {
 
     @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private Set<Event> events;
+    @Builder.Default
+    private Set<Event> events = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
