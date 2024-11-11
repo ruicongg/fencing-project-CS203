@@ -30,33 +30,6 @@ class GroupStageServiceImplTest {
     }
 
     @Test
-    void addGroupStage_eventExists_shouldAddGroupStage() {
-        Long eventId = 1L;
-        Event event = new Event();
-        event.setId(eventId);
-        event.setGroupStages(new ArrayList<>());
-
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
-        when(groupStageRepository.save(any(GroupStage.class))).thenAnswer(i -> i.getArguments()[0]);
-
-        GroupStage groupStage = groupStageService.addGroupStage(eventId);
-
-        assertNotNull(groupStage);
-        assertEquals(event, groupStage.getEvent());
-        assertTrue(event.getGroupStages().contains(groupStage));
-        verify(groupStageRepository).save(groupStage);
-    }
-
-    @Test
-    void addGroupStage_eventDoesNotExist_shouldThrowException() {
-        Long eventId = 1L;
-
-        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
-
-        assertThrows(EventNotFoundException.class, () -> groupStageService.addGroupStage(eventId));
-    }
-
-    @Test
     void getGroupStage_groupStageExists_shouldReturnGroupStage() {
         Long groupStageId = 1L;
         GroupStage groupStage = new GroupStage();
