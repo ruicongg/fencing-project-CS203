@@ -13,9 +13,13 @@ public interface EventService {
 
     Event updateEvent(Long tournamentId, Long eventId, Event event);
 
-    Event addPlayerToEvent(Long eventId, Long playerId);
+    Event addPlayerToEvent(Long eventId, String username);
 
     void deleteEvent(Long tournamentId, Long eventId);
 
+    Event removePlayerFromEvent(Long eventId, String username);
+
+    Event adminRemovesPlayerFromEvent(Long eventId, String username);
+    
     List<Player> updatePlayerEloAfterEvent(Long eventId);
 }

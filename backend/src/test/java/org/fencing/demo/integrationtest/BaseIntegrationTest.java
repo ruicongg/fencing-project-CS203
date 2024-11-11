@@ -66,8 +66,10 @@ public abstract class BaseIntegrationTest {
     protected User adminUser;
     protected User regularUser;
     protected Player playerUser;
+
     protected String adminToken;
     protected String userToken;
+    protected String playerToken;
 
     protected Event event;
     protected Tournament tournament;
@@ -86,6 +88,7 @@ public abstract class BaseIntegrationTest {
         knockoutStage = knockoutStageRepository.save(createValidEmptyKnockoutStage(event));
         adminToken = "Bearer " + generateToken(adminUser);
         userToken = "Bearer " + generateToken(regularUser);
+        playerToken = "Bearer " + generateToken(playerUser);
     }
 
 
@@ -94,7 +97,7 @@ public abstract class BaseIntegrationTest {
         SortedSet<PlayerRank> rankings = event.getRankings();
         for (int elo : uniqueElos) {
             Player player = new Player("player" + elo, passwordEncoder.encode("playerPass"),
-                    "player" + elo + "@example.com", Role.USER);
+                    "player" + elo + "@example.com", Role.USER, Gender.MALE);
             player.setElo(elo);
             playerRepository.save(player);
             players.add(player);
@@ -170,13 +173,13 @@ public abstract class BaseIntegrationTest {
     }
 
     private Player createValidPlayer() {
-        return new Player("player", passwordEncoder.encode("playerPass"), "player@example.com", Role.USER);
+        return new Player("player", passwordEncoder.encode("playerPass"), "player@example.com", Role.USER, Gender.MALE);
     }
 
     private Tournament createValidTournament() {
         return Tournament.builder()
                 .name("Spring Championship")
-                .registrationStartDate(LocalDate.now().plusDays(1))
+                .registrationStartDate(LocalDate.now())
                 .registrationEndDate(LocalDate.now().plusDays(30))
                 .tournamentStartDate(LocalDate.now().plusDays(60))
                 .tournamentEndDate(LocalDate.now().plusDays(90))
@@ -185,7 +188,7 @@ public abstract class BaseIntegrationTest {
                 .build();
     }
 
-    private Event createValidEvent(Tournament tournament) {
+    protected Event createValidEvent(Tournament tournament) {
         return Event.builder()
                 .tournament(tournament)
                 .gender(Gender.MALE)

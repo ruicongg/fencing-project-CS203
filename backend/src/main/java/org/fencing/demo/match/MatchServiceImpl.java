@@ -1,9 +1,6 @@
 package org.fencing.demo.match;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventRepository;
@@ -11,8 +8,6 @@ import org.fencing.demo.groupstage.GroupStageNotFoundException;
 import org.fencing.demo.groupstage.GroupStageRepository;
 import org.fencing.demo.knockoutstage.KnockoutStageNotFoundException;
 import org.fencing.demo.knockoutstage.KnockoutStageRepository;
-import org.fencing.demo.player.Player;
-import org.fencing.demo.player.PlayerNotFoundException;
 import org.fencing.demo.player.PlayerRepository;
 import org.fencing.demo.playerrank.PlayerRank;
 import org.springframework.stereotype.Service;
@@ -67,25 +62,25 @@ public class MatchServiceImpl implements MatchService {
                 .orElseThrow(() -> new MatchNotFoundException(matchId));
     }
 
-    @Override
-    public List<Match> getMatchesScheduledForToday(String username) {
-        // Retrieve the player by username
-        // Player player = playerRepository.findByUsername(username)
-        //         .orElseThrow(() -> new PlayerNotFoundException(username));
-        Optional<Player> playerOpt = playerRepository.findByUsername(username);
-        Player player = playerOpt.orElseThrow(() -> new PlayerNotFoundException(username));
+    // @Override
+    // public List<Match> getMatchesScheduledForToday(String username) {
+    //     // Retrieve the player by username
+    //     // Player player = playerRepository.findByUsername(username)
+    //     //         .orElseThrow(() -> new PlayerNotFoundException(username));
+    //     Optional<Player> playerOpt = playerRepository.findByUsername(username);
+    //     Player player = playerOpt.orElseThrow(() -> new PlayerNotFoundException(username));
 
-        LocalDate today = LocalDate.now();
+    //     LocalDate today = LocalDate.now();
 
-        // Retrieve all matches involving the player by their ID
-        List<Match> matches = matchRepository.findMatchesByPlayerId(player.getId());
+    //     // Retrieve all matches involving the player by their ID
+    //     List<Match> matches = matchRepository.findMatchesByPlayerId(player.getId());
 
-        // Filter matches based on the date of the associated event
-        return matches.stream()
-                .filter(match -> match.getEvent() != null && match.getEvent().getStartDate() != null)
-                .filter(match -> match.getEvent().getStartDate().toLocalDate().isEqual(today)) // Only matches for today
-                .collect(Collectors.toList());
-    }
+    //     // Filter matches based on the date of the associated event
+    //     return matches.stream()
+    //             .filter(match -> match.getEvent() != null && match.getEvent().getStartDate() != null)
+    //             .filter(match -> match.getEvent().getStartDate().toLocalDate().isEqual(today)) // Only matches for today
+    //             .collect(Collectors.toList());
+    // }
 
     @Override
     @Transactional
