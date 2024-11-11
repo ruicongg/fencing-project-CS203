@@ -1,27 +1,19 @@
 package org.fencing.demo.events;
 
 import java.time.LocalDateTime;
+import java.util.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 // import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.TreeMap;
 
+import org.fencing.demo.groupstage.GroupStage;
+import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.match.Match;
-import org.fencing.demo.matchMaking.BeforeGroupStage;
-import org.fencing.demo.matchMaking.WithinGroupSort;
-import org.fencing.demo.player.Player;
-import org.fencing.demo.stages.GroupStage;
-import org.fencing.demo.stages.KnockoutStage;
+import org.fencing.demo.playerrank.PlayerRank;
 import org.fencing.demo.tournament.Tournament;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -39,7 +31,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
@@ -75,7 +66,7 @@ public class Event {
     @Builder.Default
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private Set<PlayerRank> rankings = new TreeSet<>(new PlayerRankComparator());
+    private SortedSet<PlayerRank> rankings = new TreeSet<>();
 
     // public TreeSet<Player> EloRank;
     // for sorting first when go to group stage
@@ -98,75 +89,6 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Match> matches = new ArrayList<>();
-
-    //includes creating matches
-    public List<Match> createRoundsForGroupStages(GroupStage currGrpStage) {
-        //debugging line
-        //System.out.println("number of players after in Event class" + rankings.size());
-        //List<Match> allMatchesForGroup = new ArrayList<>();
-        //sort by elo ranks return grp num to playerRanks
-        TreeMap<Integer, List<PlayerRank>> groups = BeforeGroupStage.sortByELO(rankings);
-        
-        //within groups to sort
-        TreeMap<Integer, List<Match>> groupMatches = WithinGroupSort.groupMatchMakingAlgorithm(groups, this);
-
-        return groupMatches.get((int)currGrpStage.getId());
-    }
-
-    public List<Match> getMatchesForKnockoutStage(KnockoutStage knockoutStage) {
-
-        List<Player> players = new ArrayList<>();
-        int roundNum = knockoutStages.indexOf(knockoutStage);
-
-        if (roundNum == 0) {
-            // For the first round, convert PlayerRank set to a list of Players
-            players = convertToPlayerList(rankings);
-
-        } else {
-            KnockoutStage previousRound = knockoutStages.get(roundNum - 1);
-            List<Match> previousMatches = previousRound.getMatches();
-            for (Match match : previousMatches) {
-                players.add(match.getWinner()); // Get the winner of each match
-
-            }
-        }
-
-        List<Match> nextRound = createMatches(players, knockoutStage);
-        return nextRound; // Create matches for the next round
-    }
-
-    // Method to create matches for both first and subsequent rounds
-    private List<Match> createMatches(List<Player> players, KnockoutStage knockoutStage) {
-        List<Match> matches = new ArrayList<>();
-        int n = players.size();
-
-        for (int i = 0; i < n / 2; i++) {
-            Player player1 = players.get(i);
-            Player player2 = players.get(n - 1 - i);
-            // System.out.println(player1);
-            // System.out.println(player2);
-
-            // Create a match between the two players
-            Match match = new Match();
-            match.setPlayer1(player1);
-            match.setPlayer2(player2);
-            match.setEvent(this);
-            match.setKnockoutStage(knockoutStage);
-            matches.add(match);
-        }
-        return matches;
-    }
-
-    public List<Player> convertToPlayerList(Set<PlayerRank> rankings) {
-        List<PlayerRank> playerRankList = new ArrayList<>(rankings);
-        playerRankList.sort(Comparator.comparing(PlayerRank::getScore));
-
-        List<Player> players = new ArrayList<>();
-        for (PlayerRank playerRank : playerRankList) {
-            players.add(playerRank.getPlayer()); // Extract the Player object from PlayerRank
-        }
-        return players;
-    }
 
     @Override
     public String toString() {

@@ -1,21 +1,20 @@
 package org.fencing.demo;
 
-import org.fencing.demo.events.Event;
-import org.fencing.demo.events.EventNotFoundException;
-import org.fencing.demo.events.EventRepository;
-import org.fencing.demo.match.Match;
-import org.fencing.demo.stages.GroupStage;
-import org.fencing.demo.stages.GroupStageNotFoundException;
-import org.fencing.demo.stages.GroupStageRepository;
-import org.fencing.demo.stages.GroupStageServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import org.fencing.demo.events.Event;
+import org.fencing.demo.events.EventNotFoundException;
+import org.fencing.demo.events.EventRepository;
+import org.fencing.demo.groupstage.GroupStage;
+import org.fencing.demo.groupstage.GroupStageNotFoundException;
+import org.fencing.demo.groupstage.GroupStageRepository;
+import org.fencing.demo.groupstage.GroupStageServiceImpl;
+import org.fencing.demo.match.Match;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class GroupStageServiceImplTest {
 
@@ -28,33 +27,6 @@ class GroupStageServiceImplTest {
         groupStageRepository = mock(GroupStageRepository.class);
         eventRepository = mock(EventRepository.class);
         groupStageService = new GroupStageServiceImpl(groupStageRepository, eventRepository);
-    }
-
-    @Test
-    void addGroupStage_eventExists_shouldAddGroupStage() {
-        Long eventId = 1L;
-        Event event = new Event();
-        event.setId(eventId);
-        event.setGroupStages(new ArrayList<>());
-
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
-        when(groupStageRepository.save(any(GroupStage.class))).thenAnswer(i -> i.getArguments()[0]);
-
-        GroupStage groupStage = groupStageService.addGroupStage(eventId);
-
-        assertNotNull(groupStage);
-        assertEquals(event, groupStage.getEvent());
-        assertTrue(event.getGroupStages().contains(groupStage));
-        verify(groupStageRepository).save(groupStage);
-    }
-
-    @Test
-    void addGroupStage_eventDoesNotExist_shouldThrowException() {
-        Long eventId = 1L;
-
-        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
-
-        assertThrows(EventNotFoundException.class, () -> groupStageService.addGroupStage(eventId));
     }
 
     @Test

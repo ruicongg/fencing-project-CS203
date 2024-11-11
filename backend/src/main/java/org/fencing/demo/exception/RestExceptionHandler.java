@@ -46,6 +46,4 @@ public class RestExceptionHandler {
         body.put("error", "Invalid argument: " + e.getMessage());
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
-
-
 }
