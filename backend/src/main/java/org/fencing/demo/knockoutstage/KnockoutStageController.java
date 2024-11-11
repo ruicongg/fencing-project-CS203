@@ -36,18 +36,6 @@ public class KnockoutStageController {
         return knockoutStageService.getAllKnockoutStagesByEventId(eventId);
     }
 
-    // PUT: Update an existing KnockoutStage for a specific event (Admin Only)
-    @PutMapping("/{knockoutStageId}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<KnockoutStage> updateKnockoutStage(@PathVariable Long eventId, @PathVariable Long knockoutStageId, @RequestBody KnockoutStage knockoutStage) {
-        if (knockoutStageService.getKnockoutStage(knockoutStageId).getEvent().getId() != eventId) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);  // Event mismatch check
-        }
-
-        KnockoutStage updatedKnockoutStage = knockoutStageService.updateKnockoutStage(eventId, knockoutStageId, knockoutStage);
-        return ResponseEntity.ok(updatedKnockoutStage);
-    }
-
     // there isn't a put method for knockout stage because you can't change the event and you can't change the matches
     
     // DELETE: Remove a KnockoutStage from a specific event (Admin Only)

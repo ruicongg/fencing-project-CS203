@@ -3,6 +3,7 @@ package org.fencing.demo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.TreeSet;
 
 import org.fencing.demo.events.Event;
+import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
 import org.fencing.demo.events.Gender;
 import org.fencing.demo.events.WeaponType;
@@ -123,38 +125,6 @@ public class KnockoutStageServiceTest {
         // Verify the event repository call
         verify(eventRepository, times(1)).findById(eventId);
         verify(knockoutStageRepository, never()).findAllByEventId(eventId);
-    }
-
-    @Test
-    public void updateKnockoutStage_ValidInput_UpdatesAndReturnsKnockoutStage() {
-        Long eventId = 1L;
-        Long knockoutStageId = 1L;
-        Event event = createValidEvent();
-        KnockoutStage existingKnockoutStage = createValidKnockoutStage(event);
-        KnockoutStage newKnockoutStage = new KnockoutStage();
-        newKnockoutStage.setEvent(event);
-        newKnockoutStage.setMatches(new ArrayList<>());
-
-        when(knockoutStageRepository.findById(knockoutStageId)).thenReturn(Optional.of(existingKnockoutStage));
-        when(knockoutStageRepository.save(existingKnockoutStage)).thenReturn(existingKnockoutStage);
-
-        KnockoutStage updatedKnockoutStage = knockoutStageService.updateKnockoutStage(eventId, knockoutStageId, newKnockoutStage);
-
-        assertNotNull(updatedKnockoutStage);
-        verify(knockoutStageRepository, times(1)).save(existingKnockoutStage);
-    }
-
-    @Test
-    public void updateKnockoutStage_NonExistentId_ThrowsKnockoutStageNotFoundException() {
-        Long eventId = 1L;
-        Long knockoutStageId = 1L;
-        KnockoutStage newKnockoutStage = new KnockoutStage();
-
-        when(knockoutStageRepository.findById(knockoutStageId)).thenReturn(Optional.empty());
-
-        assertThrows(KnockoutStageNotFoundException.class, () -> {
-            knockoutStageService.updateKnockoutStage(eventId, knockoutStageId, newKnockoutStage);
-        });
     }
 
     @Test

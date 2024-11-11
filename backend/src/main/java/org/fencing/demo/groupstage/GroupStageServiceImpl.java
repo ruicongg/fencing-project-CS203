@@ -1,5 +1,7 @@
 package org.fencing.demo.groupstage;
 
+import java.util.List;
+
 import org.fencing.demo.events.*;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
@@ -18,44 +20,6 @@ public class GroupStageServiceImpl implements GroupStageService{
         this.eventRepository = eventRepository;
     }
 
-<<<<<<< HEAD:backend/src/main/java/org/fencing/demo/stages/GroupStageServiceImpl.java
-    @Override
-    public List<GroupStage> addInitialGroupStages(Long eventId){
-        if (eventId == null) {
-            throw new IllegalArgumentException("Event ID and Group Stage cannot be null");
-        }
-        return eventRepository.findById(eventId).map(event -> {
-            System.out.println("Event found");
-            System.out.println("Event: " + event);
-            List<GroupStage> grpStages = new ArrayList<>();
-            Map<Integer, List<PlayerRank>> groups = BeforeGroupStage.sortByELO(event.getRankings());
-            System.out.println("Print groups map: " + groups);
-            for(Integer i : groups.keySet()){
-                GroupStage grpStage = new GroupStage();
-                grpStage.setEvent(event);
-                grpStages.add(grpStage);
-            }
-            return groupStageRepository.saveAll(grpStages);
-        }).orElseThrow(() -> new EventNotFoundException(eventId));
-        
-    }
-
-    @Override
-    public GroupStage addGroupStage(Long eventId){
-        if (eventId == null) {
-            throw new IllegalArgumentException("Event ID and Group Stage cannot be null");
-        }
-        GroupStage grpStage = new GroupStage();
-        return eventRepository.findById(eventId).map(event -> {
-            grpStage.setEvent(event);
-            event.getGroupStages().add(grpStage);
-            return groupStageRepository.save(grpStage);
-        }).orElseThrow(() -> new EventNotFoundException(eventId));
-    }
-    
-    @Override
-=======
->>>>>>> f216da0ed79be91e3584c0a1a621baa34ab802c7:backend/src/main/java/org/fencing/demo/groupstage/GroupStageServiceImpl.java
     public GroupStage getGroupStage(Long groupStageId){
         if (groupStageId == null) {
             throw new IllegalArgumentException("Event ID and GroupStage cannot be null");

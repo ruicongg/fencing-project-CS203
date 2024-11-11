@@ -1,5 +1,7 @@
 package org.fencing.demo.knockoutstage;
 
+import java.util.List;
+
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
@@ -15,7 +17,6 @@ public class KnockoutStageServiceImpl implements KnockoutStageService{
         this.eventRepository = eventRepository;
     }
 
-
     public KnockoutStage getKnockoutStage(Long knockoutStageId){
         if (knockoutStageId == null) {
             throw new IllegalArgumentException("Event ID and KnockoutStage cannot be null");
@@ -23,6 +24,15 @@ public class KnockoutStageServiceImpl implements KnockoutStageService{
         
         return knockoutStageRepository.findById(knockoutStageId)
                 .orElseThrow(() -> new KnockoutStageNotFoundException(knockoutStageId));
+    }
+
+    public List<KnockoutStage> getAllKnockoutStagesByEventId(Long eventId){
+        if (eventId == null) {
+            throw new IllegalArgumentException("Event ID cannot be null");
+        }
+        Event event = eventRepository.findById(eventId)
+            .orElseThrow(() -> new EventNotFoundException(eventId));
+        return knockoutStageRepository.findAllByEventId(eventId);
     }
 
     public void deleteKnockoutStage(Long eventId, Long knockoutStageId){

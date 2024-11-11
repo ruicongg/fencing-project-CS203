@@ -1,5 +1,7 @@
 package org.fencing.demo.groupstage;
 
+import java.util.List;
+
 public interface GroupStageService {
 
     GroupStage getGroupStage(Long GroupStageId);
