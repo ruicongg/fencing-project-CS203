@@ -92,6 +92,57 @@ public class KnockoutMatchMakingIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
+    void createKnockoutStageAndMatches_NearPowerOf2() {
+        // Setup 130 players (should cut to 128 as it's only 1.5% cut)
+        int[] elos = new int[130];
+        for (int i = 0; i < 130; i++) {
+            elos[i] = 1000 + i;
+        }
+        List<Player> players = setUpWithPlayersInEvent(elos);
+
+        KnockoutStage stage = knockoutMatchMakingService.createNextKnockoutStage(event.getId());
+        List<Match> matches = knockoutMatchMakingService.createMatchesInKnockoutStage(event.getId());
+
+        // 130 -> 128 players (1.5% cut), no byes needed
+        assertEquals(64, matches.size());
+    }
+
+    @Test
+    void createKnockoutStageAndMatches_FarFromPowerOf2() {
+        // Setup 150 players (should cut to 128 as it only requires 14.7% cut)
+        int[] elos = new int[150];
+        for (int i = 0; i < 150; i++) {
+            elos[i] = 1000 + i;
+        }
+        List<Player> players = setUpWithPlayersInEvent(elos);
+
+        KnockoutStage stage = knockoutMatchMakingService.createNextKnockoutStage(event.getId());
+        List<Match> matches = knockoutMatchMakingService.createMatchesInKnockoutStage(event.getId());
+
+        // 150 -> 128 players (14.7% cut), exactly power of 2 so 64 matches
+        assertEquals(64, matches.size());
+    }
+
+    @Test
+    void createKnockoutStageAndMatches_NeedMaxCut() {
+        // Setup 200 players (next power of 2 is 128, which would require 36% cut)
+        int[] elos = new int[200];
+        for (int i = 0; i < 200; i++) {
+            elos[i] = 1000 + i;
+        }
+        List<Player> players = setUpWithPlayersInEvent(elos);
+
+        KnockoutStage stage = knockoutMatchMakingService.createNextKnockoutStage(event.getId());
+        List<Match> matches = knockoutMatchMakingService.createMatchesInKnockoutStage(event.getId());
+
+        // 200 -> 160 players (20% cut)
+        // To reach 128 players in next round:
+        // - 32 matches (64 players)
+        // - 96 byes
+        assertEquals(32, matches.size());
+    }
+
+    @Test
     void throwsExceptionWhenNoStageExists() {
         // Setup players but don't create stage
         int[] elos = new int[8];

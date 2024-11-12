@@ -88,7 +88,7 @@ public class KnockoutMatchMakingServiceTest {
         Event event = createValidEvent();
         Set<PlayerRank> players = createPlayers(event, 45);
         event.getRankings().addAll(players);
-        
+
         // Create initial knockout stage
         KnockoutStage knockoutStage = createValidKnockoutStage(event);
         event.getKnockoutStages().add(knockoutStage);
@@ -118,7 +118,7 @@ public class KnockoutMatchMakingServiceTest {
         Event event = createValidEvent();
         Set<PlayerRank> players = createPlayers(event, 240);
         event.getRankings().addAll(players);
-        
+
         // Create initial knockout stage
         KnockoutStage knockoutStage = createValidKnockoutStage(event);
         event.getKnockoutStages().add(knockoutStage);
@@ -138,6 +138,61 @@ public class KnockoutMatchMakingServiceTest {
         List<Match> result = knockoutMatchMakingService.createMatchesInKnockoutStage(eventId);
 
         assertEquals(64, result.size());
+        verify(knockoutStageGenerator).generateInitialKnockoutMatches(any(), eq(event));
+    }
+
+    @Test
+    void createMatchesInKnockoutStage_NearPowerOf2_PrefersCut() {
+        // Setup 130 players (should cut to 128 as it's only 1.5% cut)
+        Long eventId = 1L;
+        Event event = createValidEvent();
+        Set<PlayerRank> players = createPlayers(event, 130);
+        event.getRankings().addAll(players);
+
+        KnockoutStage knockoutStage = createValidKnockoutStage(event);
+        event.getKnockoutStages().add(knockoutStage);
+
+        List<Match> expectedMatches = new ArrayList<>();
+        // 130 -> 128 players (1.5% cut), exactly power of 2 so 64 matches
+        for (int i = 0; i < 64; i++) {
+            expectedMatches.add(new Match());
+        }
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(knockoutStageGenerator.generateInitialKnockoutMatches(any(), any())).thenReturn(expectedMatches);
+        when(matchRepository.saveAll(anyList())).thenReturn(expectedMatches);
+
+        List<Match> result = knockoutMatchMakingService.createMatchesInKnockoutStage(eventId);
+
+        assertEquals(64, result.size());
+        verify(knockoutStageGenerator).generateInitialKnockoutMatches(any(), eq(event));
+    }
+
+    @Test
+    void createMatchesInKnockoutStage_FarFromPowerOf2_UsesMaxCut() {
+        // Setup 200 players (next power of 2 is 128, which would require 36% cut)
+        Long eventId = 1L;
+        Event event = createValidEvent();
+        Set<PlayerRank> players = createPlayers(event, 200);
+        event.getRankings().addAll(players);
+
+        KnockoutStage knockoutStage = createValidKnockoutStage(event);
+        event.getKnockoutStages().add(knockoutStage);
+
+        List<Match> expectedMatches = new ArrayList<>();
+        // 200 -> 160 players (20% cut), then matches to reach 128
+        // (160 - 128) / 2 = 16 matches needed, rest get byes
+        for (int i = 0; i < 16; i++) {
+            expectedMatches.add(new Match());
+        }
+
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(knockoutStageGenerator.generateInitialKnockoutMatches(any(), any())).thenReturn(expectedMatches);
+        when(matchRepository.saveAll(anyList())).thenReturn(expectedMatches);
+
+        List<Match> result = knockoutMatchMakingService.createMatchesInKnockoutStage(eventId);
+
+        assertEquals(16, result.size());
         verify(knockoutStageGenerator).generateInitialKnockoutMatches(any(), eq(event));
     }
 

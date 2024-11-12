@@ -12,15 +12,22 @@ public class KnockoutAdvancementCalculator {
     public int calculateNumberOfPlayersAdvancing(int totalPlayers) {
         if (totalPlayers <= SMALL_EVENT_THRESHOLD) {
             return totalPlayers;
-        } else if (totalPlayers <= MEDIUM_EVENT_THRESHOLD) {
-            if (totalPlayers < MINIMUM_CUT_THRESHOLD) {
-                return totalPlayers;
-            } else {
-                return (int) (totalPlayers * (1 - MAX_ELIMINATION_PERCENTAGE));
-            }
-        } else {
-            return (int) (totalPlayers * (1 - MAX_ELIMINATION_PERCENTAGE));
         }
+
+        // Find the next power of 2 below the total players
+        int nextPowerOf2 = getLargestPowerOf2LessThan(totalPlayers);
+
+        // Calculate minimum players needed to reach next power of 2
+        double minCutPercentage = 1.0 - ((double) nextPowerOf2 / totalPlayers);
+
+        // If the cut percentage to reach power of 2 is less than max elimination,
+        // use that instead
+        if (minCutPercentage <= MAX_ELIMINATION_PERCENTAGE) {
+            return nextPowerOf2;
+        }
+
+        // Otherwise use the maximum elimination percentage
+        return (int) (totalPlayers * (1 - MAX_ELIMINATION_PERCENTAGE));
     }
 
     public int calculateNumberOfByes(int playersAdvancing) {
@@ -28,13 +35,13 @@ public class KnockoutAdvancementCalculator {
         if (isPowerOfTwo(playersAdvancing)) {
             return 0;
         }
-        
+
         // Find next lower power of 2
         int targetRound = getLargestPowerOf2LessThan(playersAdvancing);
-        
+
         // Calculate how many matches needed to reach target
         int matchesNeeded = (playersAdvancing - targetRound);
-    
+
         // Players that don't need to play get byes
         return playersAdvancing - (matchesNeeded * 2);
     }
