@@ -17,12 +17,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class AftEventIntegrationTest extends BaseIntegrationTest{
+public class AftEventIntegrationTest extends BaseIntegrationTest {
 
     private Player player1;
     private Player player2;
@@ -42,7 +43,6 @@ public class AftEventIntegrationTest extends BaseIntegrationTest{
         // Save PlayerRanks (only after groupStage is created)
         PlayerRank playerRank1 = createPlayerRank(player1, event, groupStage);
         PlayerRank playerRank2 = createPlayerRank(player2, event, groupStage);
-        
 
         // Create and save matches
         grpMatch = createValidGroupMatch();
@@ -81,17 +81,15 @@ public class AftEventIntegrationTest extends BaseIntegrationTest{
 
     // @AfterEach
     // void tearDown(){
-    //     playerRepository.deleteAll();
-    //     userRepository.deleteAll();
-    //     matchRepository.deleteAll();
-    //     groupStageRepository.deleteAll();
-    //     knockoutStageRepository.deleteAll();
-    //     eventRepository.deleteAll();
-    //     tournamentRepository.deleteAll();
-        
+    // playerRepository.deleteAll();
+    // userRepository.deleteAll();
+    // matchRepository.deleteAll();
+    // groupStageRepository.deleteAll();
+    // knockoutStageRepository.deleteAll();
+    // eventRepository.deleteAll();
+    // tournamentRepository.deleteAll();
+
     // }
-
-
 
     @Test
     public void endEvent_Success() throws Exception {
@@ -104,9 +102,10 @@ public class AftEventIntegrationTest extends BaseIntegrationTest{
             System.out.println("Players at the start: " + player.getElo());
         }
 
-          // Act
-        ResponseEntity<List<Player>> response = restTemplate.withBasicAuth("admin", "adminPass")
-        .exchange(uri, HttpMethod.PUT, null, new ParameterizedTypeReference<List<Player>>() {});
+        // Act
+        ResponseEntity<List<Player>> response = restTemplate
+            .exchange(uri, HttpMethod.PUT, new HttpEntity<>(null, createHeaders(adminToken)),
+                new ParameterizedTypeReference<List<Player>>() {});
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode(), "Expected OK status");
@@ -122,21 +121,20 @@ public class AftEventIntegrationTest extends BaseIntegrationTest{
         }
     }
 
-
     @Test
-    //passed
-    public void endEvent_InvalidEventId_Failure()  throws Exception {
+    // passed
+    public void endEvent_InvalidEventId_Failure() throws Exception {
         Long invalidId = -1L; // Use an invalid ID
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + invalidId + "/elo");
 
-        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
-                .exchange(uri, HttpMethod.PUT, null, String.class);
+        ResponseEntity<String> result = restTemplate
+            .exchange(uri, HttpMethod.PUT, new HttpEntity<>(null, createHeaders(adminToken)), String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
 
     // //Need check
-    //need seperate set up
+    // need seperate set up
     @Test
     public void endEvent_IncompleteMatches_Failure() throws Exception {
         grpMatch.setPlayer1Score(0);
@@ -144,25 +142,22 @@ public class AftEventIntegrationTest extends BaseIntegrationTest{
         matchRepository.save(grpMatch);
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/elo");
 
-        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
-                .exchange(uri, HttpMethod.PUT, null, String.class);
+        ResponseEntity<String> result = restTemplate
+            .exchange(uri, HttpMethod.PUT, new HttpEntity<>(null, createHeaders(adminToken)), String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
-
-
 
     @Test
     public void endEvent_ForbiddenForRegularUser_Failure() throws Exception {
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events" + event.getId() + "/elo");
 
-        ResponseEntity<String> result = restTemplate.withBasicAuth("user", "userPass")
-                                            .exchange(uri, HttpMethod.PUT, null, String.class);
+        ResponseEntity<String> result = restTemplate
+            .exchange(uri, HttpMethod.PUT, new HttpEntity<>(null, createHeaders(userToken)), String.class);
 
-        assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());  
+        assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());
     }
-
 
     // Helper methods for creating valid entities
 
@@ -170,7 +165,7 @@ public class AftEventIntegrationTest extends BaseIntegrationTest{
         PlayerRank playerRank = new PlayerRank();
         playerRank.setEvent(event);
         playerRank.setPlayer(player);
-        //playerRank.setGroupStage(groupStage);
+        // playerRank.setGroupStage(groupStage);
         playerRank.initializeTempElo();
         return playerRank;
     }
@@ -178,7 +173,7 @@ public class AftEventIntegrationTest extends BaseIntegrationTest{
     private Player createValidPlayer(int id) {
         Player player = new Player();
         player.setEmail("player" + id + "@email.com");
-        player.setUsername("player" + id + "_" + System.currentTimeMillis());  // Ensures unique username per player
+        player.setUsername("player" + id + "_" + System.currentTimeMillis()); // Ensures unique username per player
         player.setPassword(passwordEncoder.encode("playerPass"));
         player.setElo(1500);
         player.setReached2400(false);
@@ -189,7 +184,7 @@ public class AftEventIntegrationTest extends BaseIntegrationTest{
         return player;
     }
 
-    private Match createValidGroupMatch(){
+    private Match createValidGroupMatch() {
         Match match = new Match();
         match.setGroupStage(groupStage);
         match.setEvent(event);
@@ -205,8 +200,7 @@ public class AftEventIntegrationTest extends BaseIntegrationTest{
 
     }
 
-
-    private Match createValidKnockoutMatch(){
+    private Match createValidKnockoutMatch() {
         Match match = new Match();
         match.setKnockoutStage(knockoutStage);
         match.setEvent(event);
@@ -222,8 +216,4 @@ public class AftEventIntegrationTest extends BaseIntegrationTest{
 
     }
 
-
-
-
 }
-

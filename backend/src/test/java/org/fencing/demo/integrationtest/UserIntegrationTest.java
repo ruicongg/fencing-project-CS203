@@ -26,13 +26,12 @@ public class UserIntegrationTest extends BaseIntegrationTest {
 
         URI uri = createUrl("/users");
 
-        ResponseEntity<User[]> response = restTemplate.withBasicAuth("admin", "adminPass").getForEntity(uri,
-                User[].class);
-        User[] users = response.getBody();
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+        ResponseEntity<User[]> response = restTemplate.exchange(uri, HttpMethod.GET, request, User[].class);
 
         assertEquals(200, response.getStatusCode().value());
         // we have added 3 users in the setUp method
-        assertEquals(3, users.length);
+        assertEquals(3, response.getBody().length);
     }
 
     @Test
@@ -40,7 +39,8 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         Long id = playerUser.getId();
         URI uri = createUrl("/users/" + id);
 
-        ResponseEntity<User> response = restTemplate.withBasicAuth("admin", "adminPass").getForEntity(uri, User.class);
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+        ResponseEntity<User> response = restTemplate.exchange(uri, HttpMethod.GET, request, User.class);
 
         assertEquals(200, response.getStatusCode().value());
         assertEquals(playerUser.getId(), response.getBody().getId());
@@ -50,7 +50,8 @@ public class UserIntegrationTest extends BaseIntegrationTest {
     public void getUser_InvalidId_Failure() throws Exception {
         URI uri = new URI(baseUrl + port + "/users/1");
 
-        ResponseEntity<User> response = restTemplate.withBasicAuth("admin", "adminPass").getForEntity(uri, User.class);
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+        ResponseEntity<User> response = restTemplate.exchange(uri, HttpMethod.GET, request, User.class);
 
         assertEquals(404, response.getStatusCode().value());
     }
@@ -75,8 +76,8 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         URI uri = createUrl("/users/" + id);
         User newUser = new User("user999", "password999", "user999@example.com", Role.USER);
 
-        ResponseEntity<User> result = restTemplate.withBasicAuth("admin", "adminPass")
-                .exchange(uri, HttpMethod.PUT, new HttpEntity<>(newUser), User.class);
+        HttpEntity<User> request = new HttpEntity<>(newUser, createHeaders(adminToken));
+        ResponseEntity<User> result = restTemplate.exchange(uri, HttpMethod.PUT, request, User.class);
 
         assertEquals(200, result.getStatusCode().value());
         assertEquals(newUser.getUsername(), result.getBody().getUsername());
@@ -87,8 +88,8 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         URI uri = createUrl("/users/999");
         User newUser = new User("user999", "password999", "user999@example.com", Role.USER);
 
-        ResponseEntity<User> result = restTemplate.withBasicAuth("admin", "adminPass")
-                .exchange(uri, HttpMethod.PUT, new HttpEntity<>(newUser), User.class);
+        HttpEntity<User> request = new HttpEntity<>(newUser, createHeaders(adminToken));
+        ResponseEntity<User> result = restTemplate.exchange(uri, HttpMethod.PUT, request, User.class);
 
         assertEquals(404, result.getStatusCode().value());
     }
@@ -98,8 +99,8 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         Long id = playerUser.getId();
         URI uri = createUrl("/users/" + id);
 
-        ResponseEntity<Void> response = restTemplate.withBasicAuth("admin", "adminPass").exchange(uri,
-                HttpMethod.DELETE, null, Void.class);
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+        ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.DELETE, request, Void.class);
 
         assertEquals(200, response.getStatusCode().value());
         Optional<User> empty = Optional.empty();
@@ -109,8 +110,8 @@ public class UserIntegrationTest extends BaseIntegrationTest {
     @Test
     public void deleteUser_InvalidId_Failure() throws Exception {
         URI uri = createUrl("/users/999");
-        ResponseEntity<Void> response = restTemplate.withBasicAuth("admin", "adminPass")
-                .exchange(uri, HttpMethod.DELETE, null, Void.class);
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+        ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.DELETE, request, Void.class);
         assertEquals(404, response.getStatusCode().value());
     }
 

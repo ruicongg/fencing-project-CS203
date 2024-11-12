@@ -26,11 +26,11 @@ class TournamentIntegrationTest extends BaseIntegrationTest {
     public void getTournaments_Success() throws Exception {
         URI uri = createUrl("/tournaments");
 
-        ResponseEntity<Tournament[]> result = restTemplate.getForEntity(uri, Tournament[].class);
-        Tournament[] tournaments = result.getBody();
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+        ResponseEntity<Tournament[]> result = restTemplate.exchange(uri, HttpMethod.GET, request, Tournament[].class);
 
         assertEquals(200, result.getStatusCode().value());
-        assertEquals(1, tournaments.length);
+        assertEquals(1, result.getBody().length);
 
     }
 
@@ -40,7 +40,8 @@ class TournamentIntegrationTest extends BaseIntegrationTest {
         Long id = tournament.getId();
         URI uri = createUrl("/tournaments/" + id);
 
-        ResponseEntity<Tournament> result = restTemplate.getForEntity(uri, Tournament.class);
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+        ResponseEntity<Tournament> result = restTemplate.exchange(uri, HttpMethod.GET, request, Tournament.class);
 
         assertEquals(200, result.getStatusCode().value());
         assertEquals(tournament.getName(), result.getBody().getName());
@@ -50,7 +51,8 @@ class TournamentIntegrationTest extends BaseIntegrationTest {
     public void getTournament_InvalidTournamentId_Failure() throws Exception {
         URI uri = createUrl("/tournaments/999");
 
-        ResponseEntity<Tournament> result = restTemplate.getForEntity(uri, Tournament.class);
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+        ResponseEntity<Tournament> result = restTemplate.exchange(uri, HttpMethod.GET, request, Tournament.class);
 
         assertEquals(404, result.getStatusCode().value());
     }
@@ -59,9 +61,8 @@ class TournamentIntegrationTest extends BaseIntegrationTest {
     public void addTournament_AdminUser_Success() throws Exception {
         URI uri = createUrl("/tournaments");
 
-        ResponseEntity<Tournament> result = restTemplate
-            .withBasicAuth("admin", "adminPass")
-            .postForEntity(uri, tournament, Tournament.class);
+        HttpEntity<Tournament> request = new HttpEntity<>(tournament, createHeaders(adminToken));
+        ResponseEntity<Tournament> result = restTemplate.exchange(uri, HttpMethod.POST, request, Tournament.class);
 
         assertEquals(201, result.getStatusCode().value());
         assertEquals(tournament.getName(), result.getBody().getName());
@@ -71,9 +72,8 @@ class TournamentIntegrationTest extends BaseIntegrationTest {
     public void addTournament_RegularUser_Failure() throws Exception {
         URI uri = createUrl("/tournaments");
 
-        ResponseEntity<Tournament> result = restTemplate
-            .withBasicAuth("user", "userPass")
-            .postForEntity(uri, tournament, Tournament.class);
+        HttpEntity<Tournament> request = new HttpEntity<>(tournament, createHeaders(userToken));
+        ResponseEntity<Tournament> result = restTemplate.exchange(uri, HttpMethod.POST, request, Tournament.class);
 
         assertEquals(403, result.getStatusCode().value());
     }
@@ -83,9 +83,8 @@ class TournamentIntegrationTest extends BaseIntegrationTest {
         URI uri = createUrl("/tournaments");
         tournament.setTournamentEndDate(tournament.getTournamentStartDate().minusDays(1)); // Invalid end date
 
-        ResponseEntity<String> result = restTemplate
-            .withBasicAuth("admin", "adminPass")
-            .postForEntity(uri, tournament, String.class);
+        HttpEntity<Tournament> request = new HttpEntity<>(tournament, createHeaders(adminToken));
+        ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.POST, request, String.class);
 
         assertEquals(400, result.getStatusCode().value());
         assertTrue(result.getBody().contains("Tournament end date must be after start date"));
@@ -96,9 +95,8 @@ class TournamentIntegrationTest extends BaseIntegrationTest {
         URI uri = createUrl("/tournaments");
         tournament.setName(null);
 
-        ResponseEntity<String> result = restTemplate
-            .withBasicAuth("admin", "adminPass")
-            .postForEntity(uri, tournament, String.class);
+        HttpEntity<Tournament> request = new HttpEntity<>(tournament, createHeaders(adminToken));
+        ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.POST, request, String.class);
 
         assertEquals(400, result.getStatusCode().value());
         assertTrue(result.getBody().contains("Tournament name cannot be null"));
@@ -110,11 +108,9 @@ class TournamentIntegrationTest extends BaseIntegrationTest {
         URI uri = createUrl("/tournaments/" + id);
 
         tournament.setName("Updated Spring Open");
-        HttpEntity<Tournament> requestEntity = new HttpEntity<>(tournament);
+        HttpEntity<Tournament> request = new HttpEntity<>(tournament, createHeaders(adminToken));
 
-        ResponseEntity<Tournament> result = restTemplate
-            .withBasicAuth("admin", "adminPass")
-            .exchange(uri, HttpMethod.PUT, requestEntity, Tournament.class);
+        ResponseEntity<Tournament> result = restTemplate.exchange(uri, HttpMethod.PUT, request, Tournament.class);
 
         assertEquals(200, result.getStatusCode().value());
         assertEquals("Updated Spring Open", result.getBody().getName());
@@ -126,11 +122,9 @@ class TournamentIntegrationTest extends BaseIntegrationTest {
         URI uri = createUrl("/tournaments/" + id);
 
         tournament.setName("Updated Spring Open");
-        HttpEntity<Tournament> requestEntity = new HttpEntity<>(tournament);
+        HttpEntity<Tournament> request = new HttpEntity<>(tournament, createHeaders(userToken));
 
-        ResponseEntity<Tournament> result = restTemplate
-            .withBasicAuth("user", "userPass")
-            .exchange(uri, HttpMethod.PUT, requestEntity, Tournament.class);
+        ResponseEntity<Tournament> result = restTemplate.exchange(uri, HttpMethod.PUT, request, Tournament.class);
 
         assertEquals(403, result.getStatusCode().value());
     }
@@ -138,11 +132,9 @@ class TournamentIntegrationTest extends BaseIntegrationTest {
     @Test
     public void updateTournament_InvalidId_Failure() throws Exception {
         URI uri = createUrl("/tournaments/999");
-        HttpEntity<Tournament> requestEntity = new HttpEntity<>(tournament);
+        HttpEntity<Tournament> request = new HttpEntity<>(tournament, createHeaders(adminToken));
 
-        ResponseEntity<Tournament> result = restTemplate
-            .withBasicAuth("admin", "adminPass")
-            .exchange(uri, HttpMethod.PUT, requestEntity, Tournament.class);
+        ResponseEntity<Tournament> result = restTemplate.exchange(uri, HttpMethod.PUT, request, Tournament.class);
 
         assertEquals(404, result.getStatusCode().value());
     }
@@ -152,9 +144,8 @@ class TournamentIntegrationTest extends BaseIntegrationTest {
         Long id = tournament.getId();
         URI uri = createUrl("/tournaments/" + id);
 
-        ResponseEntity<Void> result = restTemplate
-            .withBasicAuth("admin", "adminPass")
-            .exchange(uri, HttpMethod.DELETE, null, Void.class);
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+        ResponseEntity<Void> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, Void.class);
 
         assertEquals(204, result.getStatusCode().value());
         assertFalse(tournamentRepository.existsById(id));
@@ -165,9 +156,8 @@ class TournamentIntegrationTest extends BaseIntegrationTest {
         Long id = tournament.getId();
         URI uri = createUrl("/tournaments/" + id);
 
-        ResponseEntity<Void> result = restTemplate
-            .withBasicAuth("user", "userPass")
-            .exchange(uri, HttpMethod.DELETE, null, Void.class);
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(userToken));
+        ResponseEntity<Void> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, Void.class);
 
         assertEquals(403, result.getStatusCode().value());
         assertTrue(tournamentRepository.existsById(id));
@@ -177,9 +167,8 @@ class TournamentIntegrationTest extends BaseIntegrationTest {
     public void deleteTournament_InvalidId_Failure() throws Exception {
         URI uri = createUrl("/tournaments/999");
 
-        ResponseEntity<Void> result = restTemplate
-            .withBasicAuth("admin", "adminPass")
-            .exchange(uri, HttpMethod.DELETE, null, Void.class);
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+        ResponseEntity<Void> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, Void.class);
 
         assertEquals(404, result.getStatusCode().value());
     }
