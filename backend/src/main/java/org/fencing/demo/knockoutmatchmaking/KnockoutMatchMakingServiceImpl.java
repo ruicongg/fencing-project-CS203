@@ -38,7 +38,10 @@ public class KnockoutMatchMakingServiceImpl implements KnockoutMatchMakingServic
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
         KnockoutStage knockoutStage = new KnockoutStage();
         knockoutStage.setEvent(event);
-        return knockoutStageRepository.save(knockoutStage);
+        event.getKnockoutStages().add(knockoutStage);
+        eventRepository.save(event);
+        knockoutStageRepository.save(knockoutStage);
+        return knockoutStage;
     }
 
     @Override
