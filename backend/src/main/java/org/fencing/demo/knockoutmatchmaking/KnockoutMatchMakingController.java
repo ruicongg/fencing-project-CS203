@@ -27,7 +27,7 @@ public class KnockoutMatchMakingController {
     }
 
     // POST: Add a new KnockoutStage for a specific event (Admin Only)
-    @PostMapping
+    @PostMapping("/tournaments/{tournamentId}/events/{eventId}/knockoutStage")
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public KnockoutStage addKnockoutStage(@NotNull@PathVariable Long eventId) {

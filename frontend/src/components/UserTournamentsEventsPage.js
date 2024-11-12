@@ -66,9 +66,10 @@ const TournamentEventsPage = () => {
       navigate('/login');
       return;
     }
+    const username = jwtDecode(token)?.sub;
 
     try {
-      const response = await axios.post(`/events/${eventId}/addPlayer`, {}, {
+      const response = await axios.post(`/tournaments/${tournamentId}/events/${eventId}/players/${username}`, {}, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

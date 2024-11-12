@@ -191,6 +191,7 @@ const AdminDashboard = () => {
       {isEditingEvent && selectedEvent && (
         <AdminEditEvent
           event={selectedEvent}
+          tournamentId={selectedTournament.id}
           onClose={() => setIsEditingEvent(false)}
           onSave={(updatedEvent) => handleSave(`/tournaments/${selectedTournament.id}/events/${updatedEvent.id}`, updatedEvent, 'event')}
         />
@@ -198,6 +199,7 @@ const AdminDashboard = () => {
 
       {isCreatingEvent && (
         <AdminCreateEvent
+          tournamentId={selectedTournament.id}
           onClose={() => setIsCreatingEvent(false)}
           onAdd={(newEvent) => handleAdd(`/tournaments/${selectedTournament.id}/events`, newEvent, 'event')}
         />

@@ -1,7 +1,10 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import '../styles/AdminCreateEvent.css';
 
-const AdminCreateEvent = ({ onClose, onAdd }) => {
+axios.defaults.baseURL = 'http://localhost:8080';
+
+const AdminCreateEvent = ({ tournamentId, onClose, onAdd }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [gender, setGender] = useState('MALE');
@@ -10,36 +13,29 @@ const AdminCreateEvent = ({ onClose, onAdd }) => {
   const [isSaving, setIsSaving] = useState(false); // Add loading state
 
   const handleAdd = async () => {
-    // Validate form inputs
-    if (!startDate || !endDate) {
-      setErrorMessage('Both start and end times are required.');
-      return;
-    }
-
-    if (new Date(startDate) >= new Date(endDate)) {
-      setErrorMessage('Start time must be before end time.');
-      return;
-    }
-
-    // If validation passes, start saving
+    // Set loading state
     setIsSaving(true);
+    setErrorMessage(''); // Clear any previous error
 
     try {
-      // Call the onAdd function passed from the parent component
-      await onAdd({
+      // Call the onAdd function with the new event details
+      const response = await axios.post(`/tournaments/${tournamentId}/events`, {
         startDate,
         endDate,
         gender,
-        weapon
+        weapon,
       });
-
-      // Reset error and close modal after successfully adding
-      setErrorMessage('');
-      onClose();
+      onAdd(response.data); // Pass the newly created event data back
+      onClose(); // Close the modal
     } catch (error) {
-      setErrorMessage('Failed to add event. Please try again.');
+      console.error("Error creating event:", error);
+      if (error.response && error.response.data && error.response.data.error) {
+        setErrorMessage(error.response.data.error);
+      } else {
+        setErrorMessage('Failed to add event. Please try again.');
+      }
     } finally {
-      setIsSaving(false); // Stop saving
+      setIsSaving(false);
     }
   };
 
@@ -54,22 +50,24 @@ const AdminCreateEvent = ({ onClose, onAdd }) => {
             type="datetime-local"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
+            disabled={isSaving}
           />
           to
           <input
             type="datetime-local"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
+            disabled={isSaving}
           />
 
           <label>Gender</label>
-          <select value={gender} onChange={(e) => setGender(e.target.value)}>
+          <select value={gender} onChange={(e) => setGender(e.target.value)} disabled={isSaving}>
             <option value="MALE">Male</option>
             <option value="FEMALE">Female</option>
           </select>
 
           <label>Weapon</label>
-          <select value={weapon} onChange={(e) => setWeapon(e.target.value)}>
+          <select value={weapon} onChange={(e) => setWeapon(e.target.value)} disabled={isSaving}>
             <option value="FOIL">Foil</option>
             <option value="EPEE">Épée</option>
             <option value="SABER">Saber</option>

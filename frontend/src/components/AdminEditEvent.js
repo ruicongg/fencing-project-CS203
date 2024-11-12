@@ -1,12 +1,10 @@
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import '../styles/AdminEditEvent.css';
 
 axios.defaults.baseURL = 'http://localhost:8080';
 
-const AdminEditEvent = ({ event, onClose, onSave }) => {
-  const { tournamentId } = useParams();
+const AdminEditEvent = ({ event, tournamentId,  onClose, onSave }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [gender, setGender] = useState('');

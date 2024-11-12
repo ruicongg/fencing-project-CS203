@@ -6,22 +6,42 @@ axios.defaults.baseURL = 'http://localhost:8080';
 
 const ViewPlayers = ({ onClose, eventId, tournamentId }) => {
   const [players, setPlayers] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
-        const response = await axios.get(`/tournaments/${tournamentId}/events/${eventId}/players`);
-        setPlayers(response.data);
+        // Fetch event data including rankings
+        const response = await axios.get(`/tournaments/${tournamentId}/events/${eventId}`);
+        const event = response.data;
+        console.log(event.rankings);
+  
+        // Check if rankings is defined before proceeding
+        if (!event.rankings) {
+          console.error("rankings is undefined or null in the response:", event);
+          setError('No players registered in this event.');
+          return;
+        }
+  
+        // Extract players from rankings
+        const playerList = event.rankings.map((ranking) => {
+          const player = ranking.player; // Get the player object from ranking
+          return {
+            id: player.id,
+            username: player.username,
+          };
+        });
+  
+        setPlayers(playerList);
       } catch (error) {
         setError('Error fetching players. Please try again later.');
         console.error('Error fetching players:', error);
       } finally {
-        setLoading(false); // Ensure loading stops after fetching data or encountering an error
+        setLoading(false);
       }
     };
-
+  
     fetchPlayers();
   }, [eventId, tournamentId]);
 
@@ -31,19 +51,15 @@ const ViewPlayers = ({ onClose, eventId, tournamentId }) => {
         <h2 id="players-title">Players</h2>
 
         <div className="players-list" id="players-list">
-          {/* Show loading message */}
           {loading && <p>Loading players...</p>}
-
-          {/* Show error message if any */}
           {error && <p className="error-message">{error}</p>}
 
-          {/* Display list of players or empty state message */}
           {!loading && !error && (
             players.length > 0 ? (
               <ul>
                 {players.map(player => (
                   <li key={player.id}>
-                    Player ID: {player.id} @{player.username || 'Unknown'} {/* Handle missing username */}
+                    Player ID: {player.id} @{player.username || 'Unknown'}
                   </li>
                 ))}
               </ul>
