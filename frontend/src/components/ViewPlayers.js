@@ -13,27 +13,21 @@ const ViewPlayers = ({ onClose, eventId, tournamentId }) => {
     const fetchPlayers = async () => {
       try {
         // Fetch event data including rankings
-        const response = await axios.get(`/tournaments/${tournamentId}/events/${eventId}`);
-        const event = response.data;
-        console.log(event.rankings);
+        const response = await axios.get(`/tournaments/${tournamentId}/events/${eventId}/playerRanks`);
+        const playerRanks = response.data;
   
-        // Check if rankings is defined before proceeding
-        if (!event.rankings) {
-          console.error("rankings is undefined or null in the response:", event);
-          setError('No players registered in this event.');
-          return;
+        if (playerRanks.length === 0) {
+          setPlayers([]); // Set players to an empty array
+          setError('No players registered for this event.'); // Display a message
+        } else {
+          // Extract players directly from playerRanks
+          const playerList = playerRanks.map((rank) => ({
+            id: rank.player.id,
+            username: rank.player.username,
+          }));
+          setPlayers(playerList);
+          setError(null); // Clear any previous error
         }
-  
-        // Extract players from rankings
-        const playerList = event.rankings.map((ranking) => {
-          const player = ranking.player; // Get the player object from ranking
-          return {
-            id: player.id,
-            username: player.username,
-          };
-        });
-  
-        setPlayers(playerList);
       } catch (error) {
         setError('Error fetching players. Please try again later.');
         console.error('Error fetching players:', error);

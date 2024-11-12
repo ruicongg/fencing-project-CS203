@@ -9,12 +9,12 @@ axios.defaults.baseURL = 'http://localhost:8080';
 
 const UpcomingMatchesPage = () => {
   const [matches, setMatches] = useState([]);
+  const [eventDetails, setEventDetails] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
   const [filters, setFilters] = useState({
-    time: 'all',  // Default to show all matches
-    location: 'global',
+    time: 'all',
     weapon: 'all',
   });
   const [selectedMatch, setSelectedMatch] = useState(null);
@@ -25,55 +25,70 @@ const UpcomingMatchesPage = () => {
   useEffect(() => {
     if (!token || isTokenExpired(token)) {
       localStorage.removeItem('token');
-      localStorage.removeItem('user');
       navigate('/login');
     } else {
-      const fetchUserId = async () => {
-        try {
-          const response = await axios.get('/users/id', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          setUserId(response.data);
-        } catch (error) {
-          setError('Failed to fetch user ID.');
-          console.error('Error fetching user ID:', error);
-        }
-      };
       fetchUserId();
     }
   }, [token, navigate]);
 
   useEffect(() => {
-    const fetchMatches = async () => {
-      if (!userId) return;
-      try {
-        const response = await axios.get(`/matches`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const userMatches = response.data.filter(
-          (match) => match.player1.id === userId || match.player2.id === userId
-        );
-        setMatches(userMatches);
-      } catch (error) {
-        setError('Failed to fetch upcoming matches.');
-        console.error('Error fetching matches:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchMatches();
-  }, [token, userId]);
+    if (userId) fetchMatches();
+  }, [userId]);
 
-  // Date range helper function for filtering
+  const fetchUserId = async () => {
+    try {
+      const response = await axios.get('/users/id', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUserId(response.data);
+    } catch (error) {
+      setError('Failed to fetch user ID.');
+      console.error(error);
+    }
+  };
+
+  const fetchMatches = async () => {
+    try {
+      const response = await axios.get('/matches', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const userMatches = response.data.filter(
+        (match) => match.player1.id === userId || match.player2.id === userId
+      );
+      setMatches(userMatches);
+      fetchEventDetails(userMatches);
+    } catch (error) {
+      setError('Failed to fetch upcoming matches.');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchEventDetails = async (matches) => {
+    const uniqueEventIds = [...new Set(matches.map((match) => match.event.id))];
+    const fetchedEventDetails = {};
+
+    for (const eventId of uniqueEventIds) {
+      try {
+        const response = await axios.get(`/tournaments/${matches[0].event.tournament.id}/events/${eventId}`);
+        fetchedEventDetails[eventId] = response.data;
+      } catch (error) {
+        console.error(`Failed to fetch event details for event ID: ${eventId}`, error);
+      }
+    }
+    setEventDetails(fetchedEventDetails);
+  };
+
   const getDateRangeForFilter = (filter) => {
     const now = new Date();
     switch (filter) {
       case 'this week':
         const startOfWeek = new Date(now);
-        startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Monday of the current week
+        startOfWeek.setDate(now.getDate() - now.getDay() + 1);
         startOfWeek.setHours(0, 0, 0, 0);
         const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6); // Sunday of the current week
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
         endOfWeek.setHours(23, 59, 59, 999);
         return [startOfWeek, endOfWeek];
       case 'this month':
@@ -86,19 +101,16 @@ const UpcomingMatchesPage = () => {
         const endOfYear = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
         return [startOfYear, endOfYear];
       default:
-        return [null, null]; // No date filtering for 'All'
+        return [null, null];
     }
   };
 
-  // Apply filters
   const filteredMatches = matches.filter((match) => {
     const { time, weapon } = filters;
-    const matchStartDate = new Date(match.event.startDate);
+    const event = eventDetails[match.event.id];
+    const matchStartDate = new Date(event?.startDate);
 
-    // Filter by weapon
-    const weaponMatch = weapon === 'all' || match.event.weapon.toUpperCase() === weapon.toUpperCase();
-
-    // Filter by date range for 'time'
+    const weaponMatch = weapon === 'all' || event?.weapon?.toUpperCase() === weapon.toUpperCase();
     if (time === 'all') return weaponMatch;
 
     const [startDate, endDate] = getDateRangeForFilter(time);
@@ -115,7 +127,6 @@ const UpcomingMatchesPage = () => {
   };
 
   const isTokenExpired = (token) => {
-    if (!token) return true;
     try {
       const decodedToken = jwtDecode(token);
       return decodedToken.exp < Date.now() / 1000;
@@ -126,7 +137,7 @@ const UpcomingMatchesPage = () => {
 
   const groupMatchesByDate = (matches) => {
     return matches.reduce((grouped, match) => {
-      const date = new Date(match.event.startDate).toLocaleDateString('en-CA');
+      const date = new Date(eventDetails[match.event.id]?.startDate).toLocaleDateString('en-CA');
       grouped[date] = grouped[date] || [];
       grouped[date].push(match);
       return grouped;
@@ -134,9 +145,9 @@ const UpcomingMatchesPage = () => {
   };
 
   const getStageType = (match) => {
-    if (match.groupStage) return "Group Stage";
-    if (match.knockoutStage) return "Knockout Stage";
-    return "Unknown Stage";
+    if (match.groupStage) return 'Group Stage';
+    if (match.knockoutStage) return 'Knockout Stage';
+    return 'Unknown Stage';
   };
 
   const renderMatchesByDate = (groupedMatches) => {
@@ -145,13 +156,13 @@ const UpcomingMatchesPage = () => {
 
     const todayMatches = groupedMatches[today] || [];
     const tomorrowMatches = groupedMatches[tomorrow] || [];
-    const otherDates = Object.keys(groupedMatches).filter(date => date !== today && date !== tomorrow);
+    const otherDates = Object.keys(groupedMatches).filter((date) => date !== today && date !== tomorrow);
 
     return (
       <div>
-        {renderMatchSection("Today", today, todayMatches)}
-        {renderMatchSection("Tomorrow", tomorrow, tomorrowMatches)}
-        {otherDates.map(date => renderMatchSection(date, date, groupedMatches[date]))}
+        {renderMatchSection('Today', today, todayMatches)}
+        {renderMatchSection('Tomorrow', tomorrow, tomorrowMatches)}
+        {otherDates.map((date) => renderMatchSection(date, date, groupedMatches[date]))}
       </div>
     );
   };
@@ -161,6 +172,7 @@ const UpcomingMatchesPage = () => {
       <h2>{title}</h2>
       {matches.length > 0 ? (
         matches.map((match) => {
+          const event = eventDetails[match.event.id];
           const opponent = match.player1.id === userId ? match.player2 : match.player1;
           const userScore = match.player1.id === userId ? match.player1Score : match.player2Score;
           const opponentScore = match.player1.id === userId ? match.player2Score : match.player1Score;
@@ -170,12 +182,12 @@ const UpcomingMatchesPage = () => {
             <div key={match.id} className="match-item">
               <p>Match ID: {match.id}, {stageType}</p>
               <p>
-                Event: {match.event.gender}, {match.event.weapon}, 
-                {new Date(match.event.startDate).toLocaleString()} - 
-                {new Date(match.event.endDate).toLocaleString()}
+                Event: {event?.gender}, {event?.weapon},{' '}
+                {event && new Date(event.startDate).toLocaleString()} -{' '}
+                {event && new Date(event.endDate).toLocaleString()}
               </p>
-              <p>Venue: {match.event.tournament.venue}</p>
-              <p>Opponent: Player {opponent.id} @{opponent.username}</p>
+              <p>Venue: {event?.tournament?.venue}</p>
+              <p>Opponent: Player ID: {opponent.id}, @{opponent.username}</p>
               {(userScore !== 0 && opponentScore !== 0) && (
                 <button onClick={() => setSelectedMatch(match)} className="view-results-button">
                   View results
@@ -200,9 +212,18 @@ const UpcomingMatchesPage = () => {
       <h1>Upcoming Matches</h1>
       <div className="filter-by">
         <h3>Filter by</h3>
-        <FilterDropdown label="Time" options={["all", "this week", "this month", "this year"]} value={filters.time} onChange={(value) => handleFilterChange('time', value)} />
-        <FilterDropdown label="Location" options={["global", "local"]} value={filters.location} onChange={(value) => handleFilterChange('location', value)} />
-        <FilterDropdown label="Weapon" options={["all", "Foil", "Epee", "Saber"]} value={filters.weapon} onChange={(value) => handleFilterChange('weapon', value)} />
+        <FilterDropdown
+          label="Time"
+          options={['all', 'this week', 'this month', 'this year']}
+          value={filters.time}
+          onChange={(value) => handleFilterChange('time', value)}
+        />
+        <FilterDropdown
+          label="Weapon"
+          options={['all', 'Foil', 'Epee', 'Saber']}
+          value={filters.weapon}
+          onChange={(value) => handleFilterChange('weapon', value)}
+        />
       </div>
       {renderMatchesByDate(groupedMatches)}
       {selectedMatch && (
@@ -212,6 +233,7 @@ const UpcomingMatchesPage = () => {
   );
 };
 
+// Define the FilterDropdown component
 const FilterDropdown = ({ label, options, value, onChange }) => (
   <div>
     <label>{label}</label>
@@ -221,6 +243,7 @@ const FilterDropdown = ({ label, options, value, onChange }) => (
   </div>
 );
 
+// Define the MatchResultsPopup component
 const MatchResultsPopup = ({ match, userId, onClose }) => {
   const userScore = match.player1.id === userId ? match.player1Score : match.player2Score;
   const opponentScore = match.player1.id === userId ? match.player2Score : match.player1Score;
@@ -237,6 +260,7 @@ const MatchResultsPopup = ({ match, userId, onClose }) => {
 };
 
 export default UpcomingMatchesPage;
+
 
 
 // const UpcomingMatchesPage = () => {
