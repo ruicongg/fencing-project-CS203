@@ -49,7 +49,9 @@ class GroupStageIntegrationTest extends BaseIntegrationTest{
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId()
                 + "/groupStage/" + id);
 
-        ResponseEntity<GroupStage> result = restTemplate.getForEntity(uri, GroupStage.class);
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+        ResponseEntity<GroupStage> result = restTemplate.exchange(uri, HttpMethod.GET, request,
+                GroupStage.class);
 
         assertEquals(200, result.getStatusCode().value());
         assertEquals(groupStage.getId(), result.getBody().getId());
@@ -59,8 +61,10 @@ class GroupStageIntegrationTest extends BaseIntegrationTest{
     public void getGroupStage_InvalidGroupStageId_Failure() throws Exception {
         URI uri = new URI(
                 baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/999");
-
-        ResponseEntity<GroupStage> result = restTemplate.getForEntity(uri, GroupStage.class);
+        
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+        ResponseEntity<GroupStage> result = restTemplate.exchange(uri, HttpMethod.GET, request,
+                GroupStage.class);
 
         assertEquals(404, result.getStatusCode().value());
     }

@@ -240,9 +240,6 @@ public class EventIntegrationTest extends BaseIntegrationTest{
         
         event.setEndDate(LocalDateTime.now().plusDays(24));  // End date before start date
 
-        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
-                .exchange(uri, HttpMethod.PUT, new HttpEntity<>(event), String.class);
-
         HttpEntity<Event> request = new HttpEntity<>(event, createHeaders(adminToken));
         ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class);
 
@@ -282,11 +279,7 @@ public class EventIntegrationTest extends BaseIntegrationTest{
     // Delete Event - Success
     @Test
     public void deleteEvent_Success() throws Exception {
-                long id = eventRepository.save(event).getId();
-
-        
-
-        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId());
 
         HttpEntity<Void> request = new HttpEntity<>(null, createHeaders(adminToken));
         ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.DELETE, request, Void.class);
@@ -297,11 +290,8 @@ public class EventIntegrationTest extends BaseIntegrationTest{
 
     @Test
     public void deleteEvent_ForbiddenForRegularUser_Failure() throws Exception {
-                long id = eventRepository.save(event).getId();
 
-        
-
-        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId());
 
         HttpEntity<Void> request = new HttpEntity<>(null, createHeaders(userToken));
         ResponseEntity<Void> response = restTemplate.exchange(uri, HttpMethod.DELETE, request, Void.class);

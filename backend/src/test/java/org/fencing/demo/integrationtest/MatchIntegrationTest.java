@@ -14,6 +14,8 @@ import org.fencing.demo.user.Role;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -36,8 +38,8 @@ public class MatchIntegrationTest extends BaseIntegrationTest {
         long knockoutStageId = knockoutStage.getId();
         URI uri = createUrl("/tournaments/" + tournamentId + "/events/" + nonExistentEventId + "/knockoutStage/" + knockoutStageId + "/matches");
 
-        ResponseEntity<String> result = restTemplate.withBasicAuth("admin", "adminPass")
-                .postForEntity(uri, null, String.class);
+        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+        ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.POST, request, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
     }
