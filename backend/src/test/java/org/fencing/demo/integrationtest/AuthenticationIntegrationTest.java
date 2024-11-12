@@ -1,4 +1,4 @@
-package org.fencing.demo.security.auth;
+package org.fencing.demo.integrationtest;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -6,6 +6,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.fencing.demo.security.auth.AuthenticationRequest;
+import org.fencing.demo.security.auth.AuthenticationResponse;
+import org.fencing.demo.security.auth.AuthenticationService;
+import org.fencing.demo.security.auth.RegisterRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
