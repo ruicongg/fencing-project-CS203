@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
+
 import '../styles/UserUpcomingMatchesPage.css';
 
 axios.defaults.baseURL = 'http://localhost:8080';

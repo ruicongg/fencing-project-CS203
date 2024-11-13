@@ -112,3 +112,19 @@
   margin-bottom: 10px;
   color: #cccccc;
 }
+
+.popup-content button {
+  padding: 8px 20px;
+  background-color: #00BFFF;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.popup-content button:hover {
+  background-color: #0096d6;
+  transform: scale(1.05);
+}
+  

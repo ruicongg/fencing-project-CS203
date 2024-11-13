@@ -46,6 +46,16 @@
   cursor: not-allowed;
 }
 
+.error-message {
+  color: #ff4d4f;
+  background-color: #2e2e2e;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+
 /* .events-list {
     display: flex;
     flex-direction: column;
