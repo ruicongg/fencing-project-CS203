@@ -74,6 +74,4 @@ public class GroupStageServiceImpl implements GroupStageService{
         groupStageRepository.delete(groupStage);
     }
 
-    
-
 }

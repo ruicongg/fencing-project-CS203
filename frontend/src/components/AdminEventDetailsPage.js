@@ -44,18 +44,7 @@ const AdminEventDetailsPage = () => {
       const response = await axios.get(`/tournaments/${tournamentId}/events/${eventId}/groupStages`);
       setGroupStages(response.data);
     } catch (error) {
-      if (error.response?.data?.error) {
-        const errorMsg = error.response.data.error;
-        if (errorMsg.includes('not found')) {
-          setError('Event or tournament no longer exists.');
-        } else if (errorMsg.includes('permission')) {
-          setError('You do not have permission to view group stages.');
-        } else {
-          setError(`Failed to load group stages: ${errorMsg}`);
-        }
-      } else {
-        setError('Network error while loading group stages. Please try again.');
-      }
+      console.error('Error fetching group stages: ' + (error.response?.data?.error || 'Unknown error'));
     }
   };
 
@@ -64,20 +53,7 @@ const AdminEventDetailsPage = () => {
       const response = await axios.get(`/tournaments/${tournamentId}/events/${eventId}/knockoutStage`);
       setKnockoutStages(response.data);
     } catch (error) {
-      if (error.response?.data?.error) {
-        const errorMsg = error.response.data.error;
-        if (errorMsg.includes('not found')) {
-          setError('Event or tournament no longer exists.');
-        } else if (errorMsg.includes('permission')) {
-          setError('You do not have permission to view knockout stages. Admin access required.');
-        } else if (errorMsg.includes('group')) {
-          setError('Group stages must be completed before knockout stages can be viewed.');
-        } else {
-          setError(`Failed to load knockout stages: ${errorMsg}`);
-        }
-      } else {
-        setError('Network error while loading knockout stages. Please check your connection and try again.');
-      }
+      console.error('Error fetching knockout stages: ' + (error.response?.data?.error || 'Unknown error'));
     }
   };
 
@@ -92,20 +68,8 @@ const AdminEventDetailsPage = () => {
       setSuccessfulGeneration({ ...successfulGeneration, groupStage: groupStageId });
       setError(null);  // Clear any existing error on success
     } catch (error) {
-      if (error.response?.data?.error) {
-        const errorMsg = error.response.data.error;
-        if (errorMsg.includes('players')) {
-          setError('Cannot generate group matches: Insufficient number of registered players. Minimum 8 players required.');
-        } else if (errorMsg.includes('already generated')) {
-          setError('Matches have already been generated for this group stage.');
-        } else if (errorMsg.includes('group stage')) {
-          setError('Please generate group stages before generating matches.');
-        } else {
-          setError(`Failed to generate group matches: ${errorMsg}`);
-        }
-      } else {
-        setError('Network error while generating group matches. Please try again.');
-      }
+      setError('Error generating matches for group stage. ' + (error.response?.data?.error || 'Unknown error'));
+      console.error('Error generating group stage matches:', error);
     }
   };
 
@@ -119,20 +83,8 @@ const AdminEventDetailsPage = () => {
       );
       setSuccessfulGeneration({ ...successfulGeneration, knockoutStage: knockoutStageId });
     } catch (error) {
-      if (error.response?.data?.error) {
-        const errorMsg = error.response.data.error;
-        if (errorMsg.includes('group stage')) {
-          setError('Cannot generate knockout matches: Group stage must be completed first.');
-        } else if (errorMsg.includes('players')) {
-          setError('Not enough qualified players to generate knockout matches.');
-        } else if (errorMsg.includes('already')) {
-          setError('Knockout matches have already been generated for this stage.');
-        } else {
-          setError(`Failed to generate knockout matches: ${errorMsg}`);
-        }
-      } else {
-        setError('Network error while generating knockout matches. Please try again.');
-      }
+      setError('Error generating matches for knockout stage. ' + (error.response?.data?.error || 'Unknown error'));
+      console.error('Error generating knockout stage matches:', error);
     }
   };
 
@@ -142,18 +94,8 @@ const AdminEventDetailsPage = () => {
       await fetchGroupStages();
       setError(null);  // Clear any existing error on success
     } catch (error) {
-      if (error.response?.data?.error) {
-        const errorMsg = error.response.data.error;
-        if (errorMsg.includes('players')) {
-          setError('Cannot generate groups: Insufficient number of registered players.');
-        } else if (errorMsg.includes('already')) {
-          setError('Group stages have already been generated for this event.');
-        } else {
-          setError(`Failed to generate group stages: ${errorMsg}`);
-        }
-      } else {
-        setError('Network error while generating group stages. Please try again.');
-      }
+      setError('Error generating group stages: ' + (error.response?.data?.error || 'Unknown error'));
+      console.error('Error generating group stages:', error);
     }
   };
 
@@ -162,18 +104,8 @@ const AdminEventDetailsPage = () => {
       await axios.post(`/tournaments/${tournamentId}/events/${eventId}/knockoutStage`);
       await fetchKnockoutStages();
     } catch (error) {
-      if (error.response?.data?.error) {
-        const errorMsg = error.response.data.error;
-        if (errorMsg.includes('group stage')) {
-          setError('Cannot generate knockout stages: Group stages must be completed first.');
-        } else if (errorMsg.includes('already')) {
-          setError('Knockout stages have already been generated for this event.');
-        } else {
-          setError(`Failed to generate knockout stages: ${errorMsg}`);
-        }
-      } else {
-        setError('Network error while generating knockout stages. Please try again.');
-      }
+      setError('Error generating knockout stages. ' + (error.response?.data?.error || 'Unknown error'));
+      console.error('Error generating knockout stages:', error);
     }
   };
 

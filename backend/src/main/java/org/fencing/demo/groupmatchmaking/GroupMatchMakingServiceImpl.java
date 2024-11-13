@@ -28,8 +28,6 @@ public class GroupMatchMakingServiceImpl implements GroupMatchMakingService {
     private final GroupDistributionService groupDistributionService;
     private final GroupMatchGenerator groupMatchGenerator;
 
-    private static final int MIN_PLAYERS_GROUP_STAGE = 8;
-
     public GroupMatchMakingServiceImpl(GroupStageRepository groupStageRepository, EventRepository eventRepository,
             MatchRepository matchRepository, GroupDistributionService groupDistributionService,
                 GroupMatchGenerator groupMatchGenerator) {
@@ -43,9 +41,6 @@ public class GroupMatchMakingServiceImpl implements GroupMatchMakingService {
     @Override
     public List<GroupStage> createGroupStages(@NotNull Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
-
-        validatePlayersForGroupStage(event);
-        
         if (event.getGroupStages() != null && !event.getGroupStages().isEmpty()) {
             throw new IllegalArgumentException("GroupStages already exist for event " + eventId);
         }
@@ -85,14 +80,6 @@ public class GroupMatchMakingServiceImpl implements GroupMatchMakingService {
         return matchRepository.saveAll(allMatches);
     }
 
-    private void validatePlayersForGroupStage(Event event) {
-        int registeredPlayers = event.getRankings().size();
-        if (registeredPlayers < MIN_PLAYERS_GROUP_STAGE) {
-            throw new IllegalStateException(
-                String.format("Cannot generate group stages: Insufficient number of registered players. Minimum %d players required, but only %d registered.", 
-                    MIN_PLAYERS_GROUP_STAGE, 
-                    registeredPlayers)
-            );
-        }
-    }
+
+
 }

@@ -59,56 +59,8 @@ const AdminCreateEvent = ({ tournamentId, onClose, onAdd }) => {
       }
     } finally {
       setIsSaving(false);
-      return;
     }
-
-    // Convert strings to Date objects for comparison
-  const eventStart = new Date(startDate);
-  const eventEnd = new Date(endDate);
-  const now = new Date();
-
-  // Validate event dates
-  if (eventStart < now) {
-    setErrorMessage('Event start date must be in the future.');
-    setIsSaving(false);
-    return;
-  }
-
-  if (eventEnd <= eventStart) {
-    setErrorMessage(`Event end date (${eventEnd.toLocaleString()}) must be after event start date (${eventStart.toLocaleString()}).`);
-    setIsSaving(false);
-    return;
-  }
-
-  try {
-    const response = await axios.post(`/tournaments/${tournamentId}/events`, {
-      startDate,
-      endDate,
-      gender,
-      weapon,
-    });
-    onAdd(response.data);
-    onClose();
-  } catch (error) {
-    console.error("Error creating event:", error);
-    if (error.response?.data?.error) {
-      const errorMsg = error.response.data.error;
-      if (errorMsg.includes('start date')) {
-        setErrorMessage(`Event start date must be during the tournament period. Please check tournament dates.`);
-      } else if (errorMsg.includes('end date')) {
-        setErrorMessage(`Event end date must be during the tournament period. Please check tournament dates.`);
-      } else if (errorMsg.includes('Tournament')) {
-        setErrorMessage('Tournament not found or no longer exists.');
-      } else {
-        setErrorMessage(errorMsg);
-      }
-    } else {
-      setErrorMessage('Failed to create event. Please check your connection and try again.');
-    }
-  } finally {
-    setIsSaving(false);
-  }
-};
+  };
 
   return (
     <div className="modal-backdrop">

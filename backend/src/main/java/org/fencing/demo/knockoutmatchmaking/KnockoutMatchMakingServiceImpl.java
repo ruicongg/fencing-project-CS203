@@ -5,7 +5,6 @@ import java.util.*;
 import org.fencing.demo.events.Event;
 import org.fencing.demo.events.EventNotFoundException;
 import org.fencing.demo.events.EventRepository;
-import org.fencing.demo.groupstage.GroupStage;
 import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.knockoutstage.KnockoutStageRepository;
 import org.fencing.demo.match.Match;
@@ -37,9 +36,6 @@ public class KnockoutMatchMakingServiceImpl implements KnockoutMatchMakingServic
     @Override
     public KnockoutStage createNextKnockoutStage(@NotNull Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
-        if(checkIfGroupStageComplete(event.getGroupStages()) == false){
-            throw new IllegalArgumentException("group stage has not been completed");
-        }
         KnockoutStage knockoutStage = new KnockoutStage();
         knockoutStage.setEvent(event);
         event.getKnockoutStages().add(knockoutStage);
@@ -47,27 +43,6 @@ public class KnockoutMatchMakingServiceImpl implements KnockoutMatchMakingServic
         knockoutStageRepository.save(knockoutStage);
         return knockoutStage;
     }
-
-    private boolean checkIfGroupStageComplete(List<GroupStage> groupStages){
-        if(groupStages == null || groupStages.size() == 0){
-            return false;
-        }
-        for(GroupStage gs:groupStages){
-            List<Match> matches = gs.getMatches();
-            if(matches == null || matches.size() == 0){
-                return false;
-            }
-            for(Match m : matches){
-                if(m.isFinished() == false){
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-
 
     @Override
     public List<Match> createMatchesInKnockoutStage(@NotNull Long eventId) {

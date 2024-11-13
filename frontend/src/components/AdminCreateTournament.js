@@ -47,8 +47,8 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
       return;
     }
 
-    if (new Date(registrationStartDate) < new Date().setHours(0, 0, 0, 0)) {
-      setErrorMessage('Registration start date must be today or in the future.');
+    if (new Date(registrationStartDate) < new Date()) {
+      setErrorMessage('Registration start date must be in the present or future.');
       return;
     }
 

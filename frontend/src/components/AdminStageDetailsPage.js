@@ -67,22 +67,7 @@ const AdminStageDetailsPage = () => {
       const response = await axios.get(fetchEndpoint);
       setMatches(response.data);
     } catch (error) {
-      if (error.response?.status === 404) {
-        setError(`${stageType === 'groupStage' ? 'Group' : 'Knockout'} stage not found. It may have been deleted.`);
-      } else if (error.response?.data?.error) {
-        const errorMsg = error.response.data.error;
-        if (errorMsg.includes('group stage')) {
-          setError('Cannot generate knockout matches: All group stage matches must be completed first.');
-        } else if (errorMsg.includes('insufficient players')) {
-          setError(`Cannot generate ${stageType === 'groupStage' ? 'group' : 'knockout'} matches: Not enough players.`);
-        } else if (errorMsg.includes('already generated')) {
-          setError(`Matches have already been generated for this ${stageType === 'groupStage' ? 'group' : 'knockout'} stage.`);
-        } else {
-          setError(`Failed to generate matches: ${errorMsg}`);
-        }
-      } else {
-        setError('Network error while generating matches. Please try again.');
-      }
+      setError('Error generating matches.');
       console.error('Error generating matches:', error);
     } finally {
       setGenerating(false);
