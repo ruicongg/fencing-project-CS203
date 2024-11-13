@@ -42,8 +42,14 @@ public class KnockoutStageGenerator {
     }
 
     private boolean checkIfGroupStageComplete(List<GroupStage> groupStages){
+        if(groupStages == null || groupStages.size() == 0){
+            return false;
+        }
         for(GroupStage gs:groupStages){
             List<Match> matches = gs.getMatches();
+            if(matches == null || matches.size() == 0){
+                return false;
+            }
             for(Match m : matches){
                 if(m.isFinished() == false){
                     return false;
