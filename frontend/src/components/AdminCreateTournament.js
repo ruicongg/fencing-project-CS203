@@ -17,6 +17,11 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
       return;
     }
 
+    if (new Date(registrationStartDate) < new Date()) {
+      setErrorMessage('Registration start date must be in the present or future.');
+      return;
+    }
+
     if (new Date(registrationStartDate) >= new Date(registrationEndDate)) {
       setErrorMessage('Registration start date must be before registration end date.');
       return;

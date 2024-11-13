@@ -12,6 +12,7 @@ import EventsPage from './UserEventsPage';
 import UpcomingMatchesPage from './UserUpcomingMatchesPage';
 import TournamentsPage from './UserTournamentsPage';
 import TournamentEventsPage from './UserTournamentsEventsPage';
+import UserProfilePage from './UserProfilePage';
 import '../styles/UserDashboard.css';
 
 const UserDashboard = () => {
@@ -39,6 +40,12 @@ const UserDashboard = () => {
         >
           Upcoming
         </button>
+        <button
+          className={window.location.pathname === '/dashboard/profile' ? 'active' : ''}
+          onClick={() => navigate('/dashboard/profile')}
+        >
+          Profile
+        </button>
       </div>
 
       {/* Main Content */}
@@ -48,6 +55,7 @@ const UserDashboard = () => {
           <Route path="my-events" element={<EventsPage />} />
           <Route path="upcoming" element={<UpcomingMatchesPage />} />
           <Route path="tournaments/:tournamentId/events" element={<TournamentEventsPage />} />
+          <Route path="profile" element={<UserProfilePage />} />
           <Route path="*" element={<TournamentsPage />} />
         </Routes>
       </div>
