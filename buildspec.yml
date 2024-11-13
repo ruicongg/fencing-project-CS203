@@ -30,10 +30,10 @@ phases:
       - echo setting container name...
       - DOCKER_CONTAINER_NAME=fencing-cs203-container
       - echo writing image definitions file...
-      - printf '[{"name":"%s","imageUri":"%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"%s","imageUri":"%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > ../imagedefinitions.json
       - echo printing imagedefinitions file
       - cat imagedefinitions.json
 artifacts:
-  files: backend/imagedefinitions.json
+  files: imagedefinitions.json
   
 
