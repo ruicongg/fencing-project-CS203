@@ -18,6 +18,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class EventServiceImpl implements EventService {
+    private static final int MIN_PLAYERS_GROUP_STAGE = 8;
     private final EventRepository eventRepository;
     private final TournamentRepository tournamentRepository;
     private PlayerRepository playerRepository;
@@ -129,10 +130,7 @@ public class EventServiceImpl implements EventService {
 
         // Check for conflicting events
         if (hasConflictingEvents(player, event)) {
-            throw new IllegalStateException(
-                String.format(
-                        "Cannot register for %s as you are already registered for another event at the same time",
-                        event.getGender() + " " + event.getWeapon() + " event"));
+            throw new IllegalStateException("time conflict: You cannot register for this event as you are already registered for another event at the same time");
         }
 
         PlayerRank playerRank = new PlayerRank();
