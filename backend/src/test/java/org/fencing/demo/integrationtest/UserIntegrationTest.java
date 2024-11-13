@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.net.URI;
 import java.util.Optional;
 
-import org.fencing.demo.user.*;
 import org.fencing.demo.security.auth.AuthenticationResponse;
+import org.fencing.demo.user.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
