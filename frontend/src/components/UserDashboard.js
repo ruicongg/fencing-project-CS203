@@ -20,11 +20,12 @@ const UserDashboard = () => {
   return (
     <div className="user-dashboard">
       {/* Navigation Buttons */}
-      <div className="button-container">
-        <button
-          className={window.location.pathname === '/dashboard' ? 'active' : ''}
-          onClick={() => navigate('/dashboard')}
-        >
+      <div className="top-nav">
+        <div className="nav-buttons">
+          <button
+            className={window.location.pathname === '/dashboard' ? 'active' : ''}
+            onClick={() => navigate('/dashboard')}
+          >
           Tournaments
         </button>
         <button
@@ -38,6 +39,13 @@ const UserDashboard = () => {
           onClick={() => navigate('/dashboard/upcoming')}
         >
           Upcoming
+          </button>
+        </div>
+        <button 
+          className="profile-button"
+          onClick={() => navigate('/dashboard')}
+        >
+          Profile
         </button>
       </div>
 
