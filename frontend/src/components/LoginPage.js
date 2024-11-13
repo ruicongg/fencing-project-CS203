@@ -48,6 +48,8 @@ const LoginPage = () => {
       // Handle error based on status code or generic error
       if (error.response && error.response.status === 401) {
         setError('Invalid credentials. Please try again.');
+      } else if (error.response && error.response.status === 409) {
+        setError('A user with this username or email already exists. Please choose a different username or email.');
       } else {
         setError('An unexpected error occurred. Please try again later.');
       }
