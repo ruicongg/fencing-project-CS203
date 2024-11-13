@@ -20,4 +20,6 @@ USER javauser
 EXPOSE 8080
 
 # Run the application
-CMD ["java", "-jar", "app.jar"]
+# CMD ["java", "-jar", "app.jar"]
+# trying to resolve health check failing when connecting to RDS
+CMD ["java", "-XX:MaxRAMPercentage=75.0", "-XX:InitialRAMPercentage=50.0", "-jar", "app.jar"]
