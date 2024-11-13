@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/AdminEditTournament.css';
+import { DateRangeField } from './shared/DateRangeField';
 
 const AdminEditTournament = ({ tournament, onClose, onSave }) => {
   const [name, setName] = useState('');
@@ -80,7 +81,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
             }}
             disabled={isSaving}
           />
-
+          
           <label>Registration Start Date</label>
           <input
             type="date"

@@ -1,23 +1,48 @@
-import React, { useState } from 'react';
-import '../styles/AdminCreateEvent.css';
+import React, { useState } from "react";
+import "../styles/AdminCreateEvent.css";
+import { DateRangeField } from "./shared/DateRangeField";
+import { DateTimeRangeField } from "./shared/DateTimeRangeField";
+import "../styles/shared/Modal.css";
 
 const AdminCreateEvent = ({ onClose, onAdd }) => {
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [gender, setGender] = useState('MALE');
-  const [weapon, setWeapon] = useState('FOIL');
-  const [errorMessage, setErrorMessage] = useState('');
+  const formatDateTime = (date) => {
+    // Get timezone offset in minutes and convert to milliseconds
+    const tzOffset = date.getTimezoneOffset() * 60000;
+
+    // Create new date adjusted for timezone
+    const localDate = new Date(date.getTime() - tzOffset);
+
+    // Return in ISO format but only up to minutes
+    return localDate.toISOString().slice(0, 16);
+  };
+
+  // Calculate initial dates
+
+  const eventStartDateTime = new Date();
+  eventStartDateTime.setDate(eventStartDateTime.getDate() + 60);
+  eventStartDateTime.setHours(8, 0, 0, 0);
+  const eventEndDateTime = new Date();
+  eventEndDateTime.setDate(eventEndDateTime.getDate() + 90);
+  eventEndDateTime.setHours(17, 0, 0, 0);
+
+  const [startDate, setStartDate] = useState(
+    formatDateTime(eventStartDateTime)
+  );
+  const [endDate, setEndDate] = useState(formatDateTime(eventEndDateTime));
+  const [gender, setGender] = useState("MALE");
+  const [weapon, setWeapon] = useState("FOIL");
+  const [errorMessage, setErrorMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false); // Add loading state
 
   const handleAdd = async () => {
     // Validate form inputs
     if (!startDate || !endDate) {
-      setErrorMessage('Both start and end times are required.');
+      setErrorMessage("Both start and end times are required.");
       return;
     }
 
     if (new Date(startDate) >= new Date(endDate)) {
-      setErrorMessage('Start time must be before end time.');
+      setErrorMessage("Start time must be before end time.");
       return;
     }
 
@@ -30,14 +55,14 @@ const AdminCreateEvent = ({ onClose, onAdd }) => {
         startDate,
         endDate,
         gender,
-        weapon
+        weapon,
       });
 
       // Reset error and close modal after successfully adding
-      setErrorMessage('');
+      setErrorMessage("");
       onClose();
     } catch (error) {
-      setErrorMessage('Failed to add event. Please try again.');
+      setErrorMessage("Failed to add event. Please try again.");
     } finally {
       setIsSaving(false); // Stop saving
     }
@@ -49,17 +74,14 @@ const AdminCreateEvent = ({ onClose, onAdd }) => {
         <h2>Create New Event</h2>
         <div className="modal-content">
           {errorMessage && <p className="error-message">{errorMessage}</p>}
-          <label>Event Start Date Time</label>
-          <input
-            type="datetime-local"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
-          to
-          <input
-            type="datetime-local"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
+
+          <DateTimeRangeField
+            label="Event Start Date Time"
+            startValue={startDate}
+            endValue={endDate}
+            onStartChange={(e) => setStartDate(e.target.value)}
+            onEndChange={(e) => setEndDate(e.target.value)}
+            disabled={isSaving}
           />
 
           <label>Gender</label>
@@ -76,9 +98,14 @@ const AdminCreateEvent = ({ onClose, onAdd }) => {
           </select>
         </div>
         <div className="modal-actions">
-          <button onClick={onClose} disabled={isSaving}>Cancel</button>
-          <button onClick={handleAdd} disabled={isSaving || !startDate || !endDate}>
-            {isSaving ? 'Adding...' : 'Add'}
+          <button onClick={onClose} disabled={isSaving}>
+            Cancel
+          </button>
+          <button
+            onClick={handleAdd}
+            disabled={isSaving || !startDate || !endDate}
+          >
+            {isSaving ? "Adding..." : "Add"}
           </button>
         </div>
       </div>
@@ -87,7 +114,6 @@ const AdminCreateEvent = ({ onClose, onAdd }) => {
 };
 
 export default AdminCreateEvent;
-
 
 // import React, { useState } from 'react';
 // import '../styles/AdminCreateEvent.css';
@@ -168,7 +194,6 @@ export default AdminCreateEvent;
 
 // export default AdminCreateEvent;
 
-
 // import React, { useState } from 'react';
 // import './CreateEventModal.css';
 
@@ -198,7 +223,7 @@ export default AdminCreateEvent;
 //       gender,
 //       weapon
 //     });
-    
+
 //     // Reset error and close modal
 //     setErrorMessage('');
 //   };

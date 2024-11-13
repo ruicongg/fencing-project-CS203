@@ -3,8 +3,8 @@ import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
-import "../styles/shared/Form.css";
-import "../styles/shared/Modal.css";
+import "../styles/shared/index.css";
+
 axios.defaults.baseURL = 'http://localhost:8080';
 
 const LoginPage = () => {
@@ -64,7 +64,7 @@ const LoginPage = () => {
     <div className="login-page">
       <div className="modal">
         <h1>Login</h1>
-        <form onSubmit={handleLogin} className="login-form">
+        <form onSubmit={handleLogin} className="modal-content">
           <div className="modal-content input">
             <input
               type="text"
@@ -81,7 +81,7 @@ const LoginPage = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit" className="login-button" disabled={loading}>
+          <button type="submit" className="button" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
           </button>
           {error && (

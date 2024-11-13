@@ -1,0 +1,66 @@
+.button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.button:hover {
+  background-color: #0056b3;
+}
+
+.button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+.popup-content button {
+  padding: 8px 20px;
+  background-color: #00bfff;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.popup-content button:hover {
+  background-color: #0096d6;
+  transform: scale(1.05);
+}
+
+
+.cancel-button,
+.add-button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cancel-button {
+  background-color: #dc3545; /* Red for cancel button */
+  color: white;
+}
+
+.cancel-button:hover {
+  background-color: #b02a37; /* Darker red on hover */
+}
+
+.add-button {
+  background-color: #007bff; /* Blue for add button */
+  color: white;
+}
+
+.add-button:disabled {
+  background-color: #444; /* Dark gray for disabled */
+  cursor: not-allowed;
+}
+
+.add-button:hover:enabled {
+  background-color: #0056b3; /* Darker blue on hover */
+}

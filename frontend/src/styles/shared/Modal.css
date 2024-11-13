@@ -24,6 +24,7 @@
   background-color: white;
 }
 
+
 /* popup background */
 
 .modal {
@@ -45,6 +46,10 @@
 
 
 .modal-content {
+  /* from create account page */
+  /* display: flex;
+  flex-direction: column;
+  gap: 20px; */
   margin-bottom: 20px;
   color: black;
 
@@ -117,3 +122,64 @@
 .modal-actions button:last-of-type:hover:enabled {
   background-color: #0056b3; /* Darker blue on hover */
 }
+
+
+  /* Add responsive design */
+  @media (max-width: 480px) {
+    .moda {
+      padding: 20px;
+      margin: 0 20px;
+    }
+  }
+  
+
+
+  
+  .input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+
+  .input::placeholder {
+    color: #999;
+    padding: 4px;
+  }
+
+
+  
+  .signup-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+  }
+  
+  .signup-link a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .signup-link a:hover {
+    text-decoration: underline;
+  }
+
+    
+  
+  h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 24px;
+    font-weight: 500;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }

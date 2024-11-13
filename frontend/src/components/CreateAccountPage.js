@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import '../styles/CreateAccountPage.css';
-import '../styles/shared/Form.css';
+import '../styles/shared/Button.css';
 
 axios.defaults.baseURL = 'http://localhost:8080';
 
@@ -51,9 +50,9 @@ const CreateAccountPage = () => {
 
   return (
     <div className="login-page">
-      <div className="create-account-box">
+      <div className="modal">
         <h1>Create Account</h1>
-        <form onSubmit={handleCreateAccount} className="create-account-form">
+        <form onSubmit={handleCreateAccount} className="modal-content">
           <div className="form-group">
             <input
               type="text"
@@ -96,7 +95,7 @@ const CreateAccountPage = () => {
               <option value="FEMALE">Female</option>
             </select>
           </div>
-          <button type="submit" className="login-button" disabled={loading}>
+          <button type="submit" className="button" disabled={loading}>
             {loading ? 'Creating Account...' : 'Create Account'}
           </button>
           {error && (

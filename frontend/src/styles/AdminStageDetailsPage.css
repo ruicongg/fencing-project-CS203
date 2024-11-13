@@ -34,16 +34,7 @@ h1 {
   text-align: center;
 }
 
-/* Error Message */
-.error-message {
-  background-color: #d9534f;
-  color: #ffffff;
-  padding: 12px;
-  margin-top: 20px;
-  border-radius: 5px;
-  font-size: 1rem;
-  text-align: center;
-}
+
 
 /* Generate Button */
 .generate-button {
