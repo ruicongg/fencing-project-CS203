@@ -26,20 +26,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class GroupMatchMakingServiceTest {
-    
 
     @Mock
     private GroupStageRepository groupStageRepository;
-    
+
     @Mock
     private EventRepository eventRepository;
-    
+
     @Mock
     private MatchRepository matchRepository;
-    
+
     @Mock
     private GroupDistributionService groupDistributionService;
-    
+
     @Mock
     private GroupMatchGenerator groupMatchGenerator;
 
@@ -48,12 +47,11 @@ public class GroupMatchMakingServiceTest {
     @BeforeEach
     void setUp() {
         groupMatchMakingService = new GroupMatchMakingServiceImpl(
-            groupStageRepository,
-            eventRepository,
-            matchRepository,
-            groupDistributionService,
-            groupMatchGenerator
-        );
+                groupStageRepository,
+                eventRepository,
+                matchRepository,
+                groupDistributionService,
+                groupMatchGenerator);
     }
 
     @Test
@@ -62,7 +60,17 @@ public class GroupMatchMakingServiceTest {
         Long eventId = 1L;
         Event event = new Event();
         event.setId(eventId);
+
+        // Create at least 8 player rankings
         SortedSet<PlayerRank> rankings = new TreeSet<>();
+        for (int i = 0; i < 8; i++) {
+            Player player = new Player();
+            player.setId((long) i);
+            PlayerRank rank = new PlayerRank();
+            rank.setPlayer(player);
+            rank.setTempElo(1000 + i);
+            rankings.add(rank);
+        }
         event.setRankings(rankings);
 
         Map<Integer, List<Player>> mockGroups = new HashMap<>();
@@ -70,9 +78,8 @@ public class GroupMatchMakingServiceTest {
         mockGroups.put(1, Arrays.asList(new Player(), new Player()));
 
         List<GroupStage> expectedGroupStages = Arrays.asList(
-            new GroupStage(),
-            new GroupStage()
-        );
+                new GroupStage(),
+                new GroupStage());
 
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         when(groupDistributionService.distributePlayersIntoGroups(rankings)).thenReturn(mockGroups);
@@ -92,14 +99,13 @@ public class GroupMatchMakingServiceTest {
         Long eventId = 1L;
         Event event = new Event();
         event.setId(eventId);
-        
+
         SortedSet<PlayerRank> rankings = new TreeSet<>();
         event.setRankings(rankings);
 
         List<GroupStage> groupStages = Arrays.asList(
-            new GroupStage(),
-            new GroupStage()
-        );
+                new GroupStage(),
+                new GroupStage());
         event.setGroupStages(groupStages);
 
         Map<Integer, List<Player>> mockGroups = new HashMap<>();
@@ -111,8 +117,7 @@ public class GroupMatchMakingServiceTest {
         mockGroupMatches.put(1, Arrays.asList(new Match(), new Match()));
 
         List<Match> expectedMatches = Arrays.asList(
-            new Match(), new Match(), new Match(), new Match()
-        );
+                new Match(), new Match(), new Match(), new Match());
 
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
         when(groupDistributionService.distributePlayersIntoGroups(rankings)).thenReturn(mockGroups);
@@ -133,6 +138,19 @@ public class GroupMatchMakingServiceTest {
         Long eventId = 1L;
         Event event = new Event();
         event.setId(eventId);
+
+        // Add minimum required players
+        SortedSet<PlayerRank> rankings = new TreeSet<>();
+        for (int i = 0; i < 8; i++) {
+            Player player = new Player();
+            player.setId((long) i);
+            PlayerRank rank = new PlayerRank();
+            rank.setPlayer(player);
+            rank.setTempElo(1000 + i);
+            rankings.add(rank);
+        }
+        event.setRankings(rankings);
+
         event.setGroupStages(Arrays.asList(new GroupStage()));
 
         when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
@@ -158,6 +176,5 @@ public class GroupMatchMakingServiceTest {
             groupMatchMakingService.createMatchesInGroupStages(eventId);
         });
     }
-
 
 }
