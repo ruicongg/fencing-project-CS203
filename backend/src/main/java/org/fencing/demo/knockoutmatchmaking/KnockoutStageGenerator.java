@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.fencing.demo.events.Event;
-import org.fencing.demo.groupstage.GroupStage;
 import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.player.Player;
@@ -23,9 +22,9 @@ public class KnockoutStageGenerator {
     }
 
     public List<Match> generateInitialKnockoutMatches(KnockoutStage knockoutStage, Event event) {
-        if(checkIfGroupStageComplete(event.getGroupStages()) == false){
-            throw new IllegalArgumentException("GroupStage has not been completed");
-        }
+        // if(checkIfGroupStageComplete(event.getGroupStages()) == false){
+        //     throw new IllegalArgumentException("GroupStage has not been completed");
+        // }
         
         Set<PlayerRank> rankings = event.getRankings();
         int totalPlayers = rankings.size();
@@ -41,24 +40,24 @@ public class KnockoutStageGenerator {
         return createMatchesWithByes(qualifiedPlayers, numberOfByes, knockoutStage, event);
     }
 
-    private boolean checkIfGroupStageComplete(List<GroupStage> groupStages){
-        if(groupStages == null || groupStages.size() == 0){
-            return false;
-        }
-        for(GroupStage gs:groupStages){
-            List<Match> matches = gs.getMatches();
-            if(matches == null || matches.size() == 0){
-                return false;
-            }
-            for(Match m : matches){
-                if(m.isFinished() == false){
-                    return false;
-                }
-            }
-        }
+    // private boolean checkIfGroupStageComplete(List<GroupStage> groupStages){
+    //     if(groupStages == null || groupStages.size() == 0){
+    //         return false;
+    //     }
+    //     for(GroupStage gs:groupStages){
+    //         List<Match> matches = gs.getMatches();
+    //         if(matches == null || matches.size() == 0){
+    //             return false;
+    //         }
+    //         for(Match m : matches){
+    //             if(m.isFinished() == false){
+    //                 return false;
+    //             }
+    //         }
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
     public List<Match> generateNextKnockoutMatches(KnockoutStage previousStage, KnockoutStage currentStage,
             Event event) {
