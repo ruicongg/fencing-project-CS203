@@ -1,6 +1,6 @@
 /* Login.css / CreateAccount.css */
 
-body {
+/* body {
     background-color: #0044cc;
     font-family: 'Arial', sans-serif;
   }
@@ -38,7 +38,7 @@ body {
     padding: 12px 24px;
     background-color: #007bff;
     border: none;
-    border-radius: 5px;
+    border-radius: 5px;d
     color: white;
     cursor: pointer;
   }
@@ -59,5 +59,29 @@ body {
   
   .create-account-link:hover {
     color: #ccc;
+  } */
+
+  /* added by ruicong */
+    /* Override specific styles for create account page */
+  .create-account-box {
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
   }
   
+  .create-account-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Add responsive design */
+  @media (max-width: 480px) {
+    .create-account-box {
+      padding: 20px;
+      margin: 0 20px;
+    }
+  }
