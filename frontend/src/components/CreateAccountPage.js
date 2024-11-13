@@ -40,7 +40,11 @@ const CreateAccountPage = () => {
       }, { withCredentials: true });
       navigate('/login'); // Redirect to login page after account creation
     } catch (error) {
-      setError('Error creating account. Please try again.');
+      if (error.response && error.response.data && error.response.data.error) {
+        setError(error.response.data.error);
+      } else {
+        setError('Error creating account. Please try again.');
+      }
     } finally {
       setLoading(false); // Reset loading state after the request completes
     }

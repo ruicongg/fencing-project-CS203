@@ -36,7 +36,14 @@ public class RestExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         Map<String, Object> body = new HashMap<>();
-        body.put("error", "Data integrity violation: Duplicate entry:" + e.getMostSpecificCause().getMessage());
+        String message = e.getMostSpecificCause().getMessage();
+        if (message.contains("username")) {
+            body.put("error", "Username already exists. Please choose a different username.");
+        } else if (message.contains("email")) {
+            body.put("error", "Email address already registered. Please use a different email.");
+        } else {
+            body.put("error", "An error occurred while creating your account. Please try again.");
+        }
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
 
