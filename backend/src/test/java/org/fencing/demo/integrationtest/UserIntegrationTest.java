@@ -1,11 +1,13 @@
 package org.fencing.demo.integrationtest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
 import java.util.Optional;
 
 import org.fencing.demo.user.*;
+import org.fencing.demo.security.auth.AuthenticationResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -77,10 +79,17 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         User newUser = new User("user999", "password999", "user999@example.com", Role.USER);
 
         HttpEntity<User> request = new HttpEntity<>(newUser, createHeaders(adminToken));
-        ResponseEntity<User> result = restTemplate.exchange(uri, HttpMethod.PUT, request, User.class);
+        ResponseEntity<AuthenticationResponse> result = restTemplate.exchange(uri, HttpMethod.PUT, request, AuthenticationResponse.class);
 
         assertEquals(200, result.getStatusCode().value());
-        assertEquals(newUser.getUsername(), result.getBody().getUsername());
+        // Verify we received a JWT token
+        assertNotNull(result.getBody().getToken());
+        
+        // Verify the user was actually updated in the database
+        User updatedUser = userRepository.findById(id).orElse(null);
+        assertNotNull(updatedUser);
+        assertEquals(newUser.getUsername(), updatedUser.getUsername());
+        assertEquals(newUser.getEmail(), updatedUser.getEmail());
     }
 
     @Test
@@ -89,7 +98,7 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         User newUser = new User("user999", "password999", "user999@example.com", Role.USER);
 
         HttpEntity<User> request = new HttpEntity<>(newUser, createHeaders(adminToken));
-        ResponseEntity<User> result = restTemplate.exchange(uri, HttpMethod.PUT, request, User.class);
+        ResponseEntity<AuthenticationResponse> result = restTemplate.exchange(uri, HttpMethod.PUT, request, AuthenticationResponse.class);
 
         assertEquals(404, result.getStatusCode().value());
     }
