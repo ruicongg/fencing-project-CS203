@@ -64,7 +64,20 @@ const AdminEventDetailsPage = () => {
       const response = await axios.get(`/tournaments/${tournamentId}/events/${eventId}/knockoutStage`);
       setKnockoutStages(response.data);
     } catch (error) {
-      console.error('Error fetching knockout stages: ' + (error.response?.data?.error || 'Unknown error'));
+      if (error.response?.data?.error) {
+        const errorMsg = error.response.data.error;
+        if (errorMsg.includes('not found')) {
+          setError('Event or tournament no longer exists.');
+        } else if (errorMsg.includes('permission')) {
+          setError('You do not have permission to view knockout stages. Admin access required.');
+        } else if (errorMsg.includes('group')) {
+          setError('Group stages must be completed before knockout stages can be viewed.');
+        } else {
+          setError(`Failed to load knockout stages: ${errorMsg}`);
+        }
+      } else {
+        setError('Network error while loading knockout stages. Please check your connection and try again.');
+      }
     }
   };
 
@@ -82,10 +95,10 @@ const AdminEventDetailsPage = () => {
       if (error.response?.data?.error) {
         const errorMsg = error.response.data.error;
         if (errorMsg.includes('players')) {
-          setError('Cannot generate group matches: Not enough players registered (minimum 4 per group required).');
+          setError('Cannot generate group matches: Insufficient number of registered players. Minimum 8 players required.');
         } else if (errorMsg.includes('already generated')) {
           setError('Matches have already been generated for this group stage.');
-        } else if (errorMsg.includes('groups')) {
+        } else if (errorMsg.includes('group stage')) {
           setError('Please generate group stages before generating matches.');
         } else {
           setError(`Failed to generate group matches: ${errorMsg}`);
@@ -151,7 +164,7 @@ const AdminEventDetailsPage = () => {
     } catch (error) {
       if (error.response?.data?.error) {
         const errorMsg = error.response.data.error;
-        if (errorMsg.includes('group')) {
+        if (errorMsg.includes('group stage')) {
           setError('Cannot generate knockout stages: Group stages must be completed first.');
         } else if (errorMsg.includes('already')) {
           setError('Knockout stages have already been generated for this event.');

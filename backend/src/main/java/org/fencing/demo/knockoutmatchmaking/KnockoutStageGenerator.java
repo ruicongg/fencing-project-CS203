@@ -22,9 +22,6 @@ public class KnockoutStageGenerator {
     }
 
     public List<Match> generateInitialKnockoutMatches(KnockoutStage knockoutStage, Event event) {
-        // if(checkIfGroupStageComplete(event.getGroupStages()) == false){
-        //     throw new IllegalArgumentException("GroupStage has not been completed");
-        // }
         
         Set<PlayerRank> rankings = event.getRankings();
         int totalPlayers = rankings.size();
@@ -39,25 +36,6 @@ public class KnockoutStageGenerator {
         // Create matches, accounting for byes
         return createMatchesWithByes(qualifiedPlayers, numberOfByes, knockoutStage, event);
     }
-
-    // private boolean checkIfGroupStageComplete(List<GroupStage> groupStages){
-    //     if(groupStages == null || groupStages.size() == 0){
-    //         return false;
-    //     }
-    //     for(GroupStage gs:groupStages){
-    //         List<Match> matches = gs.getMatches();
-    //         if(matches == null || matches.size() == 0){
-    //             return false;
-    //         }
-    //         for(Match m : matches){
-    //             if(m.isFinished() == false){
-    //                 return false;
-    //             }
-    //         }
-    //     }
-
-    //     return true;
-    // }
 
     public List<Match> generateNextKnockoutMatches(KnockoutStage previousStage, KnockoutStage currentStage,
             Event event) {

@@ -38,7 +38,7 @@ public class KnockoutMatchMakingServiceImpl implements KnockoutMatchMakingServic
     public KnockoutStage createNextKnockoutStage(@NotNull Long eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
         if(checkIfGroupStageComplete(event.getGroupStages()) == false){
-            throw new IllegalArgumentException("GroupStage has not been completed");
+            throw new IllegalArgumentException("group stage has not been completed");
         }
         KnockoutStage knockoutStage = new KnockoutStage();
         knockoutStage.setEvent(event);
