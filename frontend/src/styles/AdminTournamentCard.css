@@ -39,25 +39,6 @@
   margin-top: 12px;
 }
 
-/* Specific styling for edit and delete buttons */
-.edit-button {
-  background-color: #007bff;
-  color: white;
-  margin-right: 10px;
-}
-
-.edit-button:hover {
-  background-color: #0056b3;
-}
-
-.delete-button {
-  background-color: #dc3545;
-  color: white;
-}
-
-.delete-button:hover {
-  background-color: #c82333;
-}
 
 /* .tournament-card {
   background-color: #f8f9fa;

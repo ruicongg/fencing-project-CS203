@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import '../styles/CreateAccountPage.css';
+import { useNavigate, Link } from 'react-router-dom';
+import '../styles/shared/Button.css';
 
 axios.defaults.baseURL = 'http://localhost:8080';
 
@@ -26,7 +26,8 @@ const CreateAccountPage = () => {
     return true;
   };
 
-  const handleCreateAccount = async () => {
+  const handleCreateAccount = async (e) => {
+    e.preventDefault();
     if (!validateForm()) return;
     setLoading(true); // Set loading state when form is submitted
 
@@ -40,118 +41,78 @@ const CreateAccountPage = () => {
       }, { withCredentials: true });
       navigate('/login'); // Redirect to login page after account creation
     } catch (error) {
-      setError('Error creating account. Please try again.');
+      setError('Error creating account.');
     } finally {
       setLoading(false); // Reset loading state after the request completes
     }
   };
 
   return (
-    <div className="create-account-container">
-      <h1>FENCING</h1>
-      <div className="input-container">
-        <input
-          type="text"
-          placeholder="USERNAME"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          disabled={loading} // Disable input while loading
-        />
+    <div className="login-page">
+      <div className="modal">
+        <h1>Create Account</h1>
+        <form onSubmit={handleCreateAccount} className="modal-content">
+          <div className="form-group">
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="text-input"
+              disabled={loading}
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="text-input"
+              disabled={loading}
+            />
+          </div>
+          <div className="form-group">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="text-input"
+              disabled={loading}
+            />
+          </div>
+          <div className="form-group">
+            <select
+              value={gender}
+              onChange={(e) => setGender(e.target.value)}
+              className="text-input"
+              disabled={loading}
+            >
+              <option value="">Select Gender</option>
+              <option value="MALE">Male</option>
+              <option value="FEMALE">Female</option>
+            </select>
+          </div>
+          <button type="submit" className="button" disabled={loading}>
+            {loading ? 'Creating Account...' : 'Create Account'}
+          </button>
+          {error && (
+            <div className="error-container">
+              <svg className="error-icon" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              <span className="error-message">{error}</span>
+            </div>
+          )}
+        </form>
+        <div className="signup-link">
+          <p>Already have an account? <Link to="/login">Login</Link></p>
+        </div>
       </div>
-      <div className="input-container">
-        <input
-          type="email"
-          placeholder="EMAIL"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          disabled={loading}
-        />
-      </div>
-      <div className="input-container">
-        <input
-          type="password"
-          placeholder="PASSWORD"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          disabled={loading}
-        />
-      </div>
-      <div className="input-container">
-        <label>Gender</label>
-        <select
-          value={gender}
-          onChange={(e) => setGender(e.target.value)}
-          disabled={loading}
-          aria-required="true"
-        >
-          <option value="">Select Gender</option>
-          <option value="MALE">Male</option>
-          <option value="FEMALE">Female</option>
-        </select>
-      </div>
-      <button onClick={handleCreateAccount} disabled={loading}>
-        {loading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}
-      </button>
-      {error && <p className="error">{error}</p>}
     </div>
   );
 };
 
+
 export default CreateAccountPage;
-
-
-// import React, { useState } from 'react';
-// import axios from 'axios';
-// import { useNavigate } from 'react-router-dom';
-// import './CreateAccount.css';
-
-// const CreateAccountPage = () => {
-//   const [username, setUsername] = useState('');
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [error, setError] = useState(null);
-//   const navigate = useNavigate();
-
-//   const handleCreateAccount = async () => {
-//     try {
-//       await axios.post('/auth/register', { username, email, password });
-//       navigate('/login'); // Redirect to login page after account creation
-//     } catch (error) {
-//       setError('Error creating account. Please try again.');
-//     }
-//   };
-
-//   return (
-//     <div className="create-account-container">
-//       <h1>FENCING</h1>
-//       <div className="input-container">
-//         <input
-//           type="text"
-//           placeholder="USERNAME"
-//           value={username}
-//           onChange={(e) => setUsername(e.target.value)}
-//         />
-//       </div>
-//       <div className="input-container">
-//         <input
-//           type="email"
-//           placeholder="EMAIL"
-//           value={email}
-//           onChange={(e) => setEmail(e.target.value)}
-//         />
-//       </div>
-//       <div className="input-container">
-//         <input
-//           type="password"
-//           placeholder="PASSWORD"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//         />
-//       </div>
-//       <button onClick={handleCreateAccount}>CREATE ACCOUNT</button>
-//       {error && <p className="error">{error}</p>}
-//     </div>
-//   );
-// };
-
-// export default CreateAccountPage;

@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import '../styles/AdminEditTournament.css';
+import React, { useState, useEffect } from "react";
+import "../styles/AdminEditTournament.css";
+import { DateRangeField } from "./shared/DateRangeField";
 
 const AdminEditTournament = ({ tournament, onClose, onSave }) => {
-  const [name, setName] = useState('');
-  const [registrationStartDate, setRegistrationStart] = useState('');
-  const [registrationEndDate, setRegistrationEnd] = useState('');
-  const [tournamentStartDate, setTournamentStart] = useState('');
-  const [tournamentEndDate, setTournamentEnd] = useState('');
-  const [venue, setVenue] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState("");
+  const [registrationStartDate, setRegistrationStart] = useState("");
+  const [registrationEndDate, setRegistrationEnd] = useState("");
+  const [tournamentStartDate, setTournamentStart] = useState("");
+  const [tournamentEndDate, setTournamentEnd] = useState("");
+  const [venue, setVenue] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false); // New loading state
 
   useEffect(() => {
@@ -31,23 +32,29 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
     }
     
     if (new Date(registrationStartDate) >= new Date(registrationEndDate)) {
-      setErrorMessage('Registration start date must be before the registration end date.');
+      setErrorMessage(
+        "Registration start date must be before the registration end date."
+      );
       return;
     }
-    
+
     if (new Date(tournamentStartDate) < new Date(registrationEndDate)) {
-      setErrorMessage('Tournament start date cannot be before registration start date.');
+      setErrorMessage(
+        "Tournament start date cannot be before registration start date."
+      );
       return;
     }
 
     if (new Date(tournamentStartDate) >= new Date(tournamentEndDate)) {
-      setErrorMessage('Tournament start date must be before the tournament end date.');
+      setErrorMessage(
+        "Tournament start date must be before the tournament end date."
+      );
       return;
     }
 
     // Validation for empty fields
     if (!name || !venue) {
-      setErrorMessage('All fields are required.');
+      setErrorMessage("All fields are required.");
       return;
     }
 
@@ -64,10 +71,10 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
         venue,
       });
 
-      setErrorMessage(''); // Clear error message on successful save
+      setErrorMessage(""); // Clear error message on successful save
       onClose(); // Close modal after save
     } catch (error) {
-      setErrorMessage('Error saving tournament. Please try again.');
+      setErrorMessage("Error saving tournament. Please try again.");
     } finally {
       setIsSaving(false); // Stop loading state
     }
@@ -86,7 +93,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
             value={name}
             onChange={(e) => {
               setName(e.target.value);
-              setErrorMessage(''); // Clear error message when editing
+              setErrorMessage(""); // Clear error message when editing
             }}
             disabled={isSaving}
           />
@@ -97,7 +104,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
             value={registrationStartDate}
             onChange={(e) => {
               setRegistrationStart(e.target.value);
-              setErrorMessage(''); // Clear error message when editing
+              setErrorMessage(""); // Clear error message when editing
             }}
             disabled={isSaving}
           />
@@ -108,7 +115,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
             value={registrationEndDate}
             onChange={(e) => {
               setRegistrationEnd(e.target.value);
-              setErrorMessage(''); // Clear error message when editing
+              setErrorMessage(""); // Clear error message when editing
             }}
             disabled={isSaving}
           />
@@ -119,7 +126,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
             value={tournamentStartDate}
             onChange={(e) => {
               setTournamentStart(e.target.value);
-              setErrorMessage(''); // Clear error message when editing
+              setErrorMessage(""); // Clear error message when editing
             }}
             disabled={isSaving}
           />
@@ -130,7 +137,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
             value={tournamentEndDate}
             onChange={(e) => {
               setTournamentEnd(e.target.value);
-              setErrorMessage(''); // Clear error message when editing
+              setErrorMessage(""); // Clear error message when editing
             }}
             disabled={isSaving}
           />
@@ -141,7 +148,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
             value={venue}
             onChange={(e) => {
               setVenue(e.target.value);
-              setErrorMessage(''); // Clear error message when editing
+              setErrorMessage(""); // Clear error message when editing
             }}
             disabled={isSaving}
           />
@@ -150,8 +157,19 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
           <button onClick={onClose} disabled={isSaving}>
             Cancel
           </button>
-          <button onClick={handleSave} disabled={isSaving || !name || !venue || !registrationStartDate || !registrationEndDate || !tournamentStartDate || !tournamentEndDate}>
-            {isSaving ? 'Saving...' : 'Save'}
+          <button
+            onClick={handleSave}
+            disabled={
+              isSaving ||
+              !name ||
+              !venue ||
+              !registrationStartDate ||
+              !registrationEndDate ||
+              !tournamentStartDate ||
+              !tournamentEndDate
+            }
+          >
+            {isSaving ? "Saving..." : "Save"}
           </button>
         </div>
       </div>
@@ -160,7 +178,6 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
 };
 
 export default AdminEditTournament;
-
 
 // import React, { useState, useEffect } from 'react';
 // import '../styles/AdminEditTournament.css';
@@ -275,7 +292,6 @@ export default AdminEditTournament;
 // };
 
 // export default AdminEditTournament;
-
 
 // import React, { useState } from 'react';
 // import './EditTournamentModal.css';

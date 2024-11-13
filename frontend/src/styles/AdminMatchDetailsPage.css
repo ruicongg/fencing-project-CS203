@@ -22,12 +22,6 @@
   margin-bottom: 10px;
 }
 
-/* Error Message */
-.error-message {
-  color: #ff4d4f;
-  margin-top: 10px;
-}
-
 /* Score Input */
 .score-input {
   display: flex;
