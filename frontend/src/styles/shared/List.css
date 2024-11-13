@@ -1,0 +1,137 @@
+/* Title for each list (e.g., "Tournaments", "Events") */
+.list-title {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Style for each list item */
+.list-item {
+  background-color: #f8f8fb;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Hover effect for each list item */
+.list-item:hover {
+  background-color: #eef2ff; /* Light blue tint on hover */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Slight shadow on hover */
+}
+
+/* Styling for main item label (e.g., tournament name, event name) */
+.list-item .item-title {
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #333;
+  flex-grow: 1;
+}
+
+/* Subtle details for date, venue, or status */
+.list-item .item-details {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Action button for each item (e.g., View, Edit, Delete) */
+.list-item .action-button {
+  background-color: #007bff;
+  color: white;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85em;
+  transition: background-color 0.3s;
+  margin-left: 10px;
+}
+
+.list-item .action-button:hover {
+  background-color: #0056b3;
+}
+
+.tournament-list-container {
+  display: flex;
+  overflow-x: auto;
+  padding: 20px;
+  gap: 16px; /* Space between cards */
+  scroll-snap-type: x mandatory; /* Snaps cards into place when scrolling */
+}
+
+.tournament-list-container::-webkit-scrollbar {
+  height: 8px; /* Horizontal scrollbar height */
+}
+
+.tournament-list-container::-webkit-scrollbar-thumb {
+  background-color: #cccccc;
+  border-radius: 4px;
+}
+
+
+/* Main container for the events list */
+/* .list {
+    padding: 20px;
+    background-color: #141414;
+    color: #ffffff;
+    border-radius: 8px;
+  } */
+  
+  /* Styling for each individual event item */
+  /* .list-item {
+    padding: 15px;
+    background-color: #1f1f1f;
+    border-radius: 8px;
+    border: 1px solid #00BFFF;
+    margin-bottom: 15px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+  } */
+  
+  /* .list-item:hover {
+    background-color: #2e2e2e;
+    transform: translateY(-2px);
+  }
+  
+  .list-item h4 {
+    font-size: 18px;
+    color: #00BFFF;
+    margin-bottom: 8px;
+  } */
+
+  /* .tournament-card {
+    background-color: #1f1f1f;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    transition: transform 0.2s, background-color 0.2s;
+    color: #ffffff;
+  } */
+/*   
+  .tournament-card:hover {
+    background-color: #2e2e2e;
+    transform: scale(1.03);
+  } */
+  
+  /* Title */
+  .tournament-card h3 {
+    font-size: 20px;
+    color: #00BFFF;
+    margin-bottom: 12px;
+  }
+  
+  /* Date, venue, and participant details */
+  .tournament-card p {
+    margin: 6px 0;
+    font-size: 16px;
+    color: #cccccc;
+  }

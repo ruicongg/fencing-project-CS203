@@ -71,8 +71,19 @@ const EventsPage = () => {
   }
 
   return (
-    <div className="my-events-page">
-      <h1>My Events</h1>
+    <div className="dashboard">
+      {/* Error Message Container */}
+      {error && (
+        <div className="error-container">
+          <svg className="error-icon" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+          </svg>
+          <span className="error-message">{error}</span>
+          <button className="close-error-button" onClick={() => setError(null)}>✕</button>
+        </div>
+      )}
+      
+      <h1 className="dashboard-title">My Events</h1>
 
       <div className="tabs">
         <button

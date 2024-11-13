@@ -13,15 +13,15 @@ import UpcomingMatchesPage from './UserUpcomingMatchesPage';
 import TournamentsPage from './UserTournamentsPage';
 import TournamentEventsPage from './UserTournamentsEventsPage';
 import UserProfilePage from './UserProfilePage';
-import '../styles/UserDashboard.css';
+import '../styles/shared/index.css';
 
 const UserDashboard = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="user-dashboard">
+    <div className="section-container">
       {/* Navigation Buttons */}
-      <div className="button-container">
+      <div className="tabs">
         <button
           className={window.location.pathname === '/dashboard' ? 'active' : ''}
           onClick={() => navigate('/dashboard')}
@@ -49,7 +49,7 @@ const UserDashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="main-content">
+      <div className="dashboard">
         <Routes>
           <Route path="/" element={<TournamentsPage />} />
           <Route path="my-events" element={<EventsPage />} />

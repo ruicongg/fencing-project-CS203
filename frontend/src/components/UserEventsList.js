@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
-import '../styles/UserEventsList.css';
+import '../styles/shared/index.css';
 
 axios.defaults.baseURL = 'http://localhost:8080';
 
@@ -50,13 +50,24 @@ const EventsList = ({ events, showWithdrawButton, onWithdraw }) => {
   }
 
   return (
-    <div className="events-list">
-      {error && <p className="error-message">{error}</p>}
+    <div className="section-container">
+      {/* Error Message Container */}
+      {error && (
+        <div className="error-container">
+          <svg className="error-icon" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+          </svg>
+          <span className="error-message">{error}</span>
+          <button className="close-error-button" onClick={() => setError(null)}>✕</button>
+        </div>
+      )}
+      
       {events.map(event => (
-        <div key={event.id} className="event-item">
+        <div key={event.id} className="modal">
           <h2>{event.tournament.name}</h2>
-          <h4>Venue: {event.tournament.venue}</h4>
+          <p><strong>Venue:</strong> {event.tournament.venue}</p>
           <p>{new Date(event.startDate).toLocaleString()} - {new Date(event.endDate).toLocaleString()}</p>
+          <p><strong>Gender:</strong> {event.gender}</p>
           <p><strong>Weapon:</strong> {event.weapon}</p>
 
           {showWithdrawButton && isUpcomingAndWithinRegistrationPeriod(event) && (
