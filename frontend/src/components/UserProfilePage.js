@@ -123,9 +123,9 @@ const UserProfilePage = () => {
         
         if (error.response.status === 400) {
           if (errorMessage?.includes('username')) {
-            setError('This username is already taken. Please choose another one.');
+            setError('Username is already taken. Please choose another one.');
           } else if (errorMessage?.includes('email')) {
-            setError('This email address is already registered.');
+            setError('Email address is invalid or already registered with another account.');
           } else {
             setError(errorMessage || 'Invalid input. Please check your details.');
           }
