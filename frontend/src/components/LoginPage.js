@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import '../styles/LoginPage.css';
+
+import "../styles/shared/index.css";
 
 axios.defaults.baseURL = 'http://localhost:8080';
 
@@ -13,7 +14,9 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault(); // added by ruicong
+
     // Validate input
     if (!username || !password) {
       setError('Please enter both username and password.');
@@ -48,8 +51,6 @@ const LoginPage = () => {
       // Handle error based on status code or generic error
       if (error.response && error.response.status === 401) {
         setError('Invalid credentials. Please try again.');
-      } else if (error.response && error.response.status === 409) {
-        setError('A user with this username or email already exists. Please choose a different username or email.');
       } else {
         setError('An unexpected error occurred. Please try again later.');
       }
@@ -57,155 +58,47 @@ const LoginPage = () => {
       setLoading(false);  // End loading state
     }
   };
-
-  return (
-    <div className="login-container">
-      <h1>FENCING</h1>
-      <div className="input-container">
-        <input
-          type="text"
-          placeholder="USERNAME"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+  
+  // added by ruicong
+  return (       
+    <div className="login-page">
+      <div className="modal">
+        <h1>Login</h1>
+        <form onSubmit={handleLogin} className="modal-content">
+          <div className="modal-content input">
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+          <div className="modal-content input">
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <button type="submit" className="button" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+          {error && (
+            <div className="error-container">
+              <svg className="error-icon" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              <span className="error-message">{error}</span>
+            </div>
+          )}
+        </form>
+        <div className="signup-link">
+          <p>Don't have an account? <Link to="/create-account">Sign up</Link></p>
+        </div>
       </div>
-      <div className="input-container">
-        <input
-          type="password"
-          placeholder="PASSWORD"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      <button onClick={handleLogin} disabled={loading}>
-        {loading ? 'Logging in...' : 'LOGIN'}
-      </button>
-      {error && <p className="error">{error}</p>}
-      <p>
-      <Link to="/create-account" className="create-account-link"> {/* Use Link here */}
-          Create account here
-        </Link>
-      </p>
     </div>
   );
 };
 
 export default LoginPage;
-
-
-// import React, { useState } from 'react';
-// import axios from 'axios';
-// import { useNavigate } from 'react-router-dom';
-// import '../styles/Login.css';
-
-// const LoginPage = () => {
-//   const [username, setUsername] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [error, setError] = useState(null);
-//   const navigate = useNavigate();
-
-//   const handleLogin = async () => {
-//     try {
-//       const response = await axios.post('/auth/login', { username, password });
-//       localStorage.setItem('token', response.data.token); // Store JWT token
-//       localStorage.setItem('user', JSON.stringify(response.data.user)); // Store user data
-
-//       // Redirect based on the user's role (admin or regular user)
-//       if (response.data.user.role === 'admin') {
-//         navigate('/admin-dashboard');
-//       } else {
-//         navigate('/user-dashboard');
-//       }
-//     } catch (error) {
-//       setError('Invalid credentials. Please try again.');
-//     }
-//   };
-
-//   return (
-//     <div className="login-container">
-//       <h1>FENCING</h1>
-//       <div className="input-container">
-//         <input
-//           type="text"
-//           placeholder="USERNAME"
-//           value={username}
-//           onChange={(e) => setUsername(e.target.value)}
-//         />
-//       </div>
-//       <div className="input-container">
-//         <input
-//           type="password"
-//           placeholder="PASSWORD"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//         />
-//       </div>
-//       <button onClick={handleLogin}>LOGIN</button>
-//       {error && <p className="error">{error}</p>}
-//       <p>
-//         <a href="/create-account" className="create-account-link">
-//           Create account here
-//         </a>
-//       </p>
-//     </div>
-//   );
-// };
-
-// export default LoginPage;
-
-
-// import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
-// import authService from '../services/authService';
-// import '../styles/LoginPage.css';  // Custom styling from Figma
-
-// const LoginPage = () => {
-//   const [username, setUsername] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [error, setError] = useState('');
-//   const navigate = useNavigate();
-
-//   const handleLogin = async (e) => {
-//     e.preventDefault();
-
-//     try {
-//       const { token, role } = await authService.login(username, password);
-//       localStorage.setItem('token', token);
-//       localStorage.setItem('role', role);
-      
-//       role === 'ADMIN' ? navigate('/admin/dashboard') : navigate('/dashboard');
-//     } catch (err) {
-//       setError('Invalid username or password');
-//     }
-//   };
-
-//   return (
-//     <div className="login-container">
-//       <h2>Login</h2>
-//       {error && <p style={{ color: 'red' }}>{error}</p>}
-//       <form onSubmit={handleLogin}>
-//         <div>
-//           <label>Username</label>
-//           <input
-//             type="text"
-//             value={username}
-//             onChange={(e) => setUsername(e.target.value)}
-//             required
-//           />
-//         </div>
-//         <div>
-//           <label>Password</label>
-//           <input
-//             type="password"
-//             value={password}
-//             onChange={(e) => setPassword(e.target.value)}
-//             required
-//           />
-//         </div>
-//         <button type="submit">Login</button>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default LoginPage;

@@ -13,11 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class MatchMakingIT extends BaseIntegrationTest {
-    
+
     @Test
     public void addKnockoutStage_AdminUser_Success() throws Exception {
         URI uri = createUrl("/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage");
-
 
         HttpEntity<KnockoutStage> request = new HttpEntity<>(knockoutStage, createHeaders(adminToken));
         ResponseEntity<KnockoutStage> result = restTemplate

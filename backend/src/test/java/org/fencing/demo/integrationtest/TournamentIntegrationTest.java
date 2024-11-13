@@ -14,13 +14,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+
 class TournamentIntegrationTest extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp() {
         super.setUp();
     }
-
 
     @Test
     public void getTournaments_Success() throws Exception {
