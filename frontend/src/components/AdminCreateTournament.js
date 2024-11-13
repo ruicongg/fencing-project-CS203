@@ -6,7 +6,7 @@ import { DateRangeField } from "./shared/DateRangeField";
 const AdminCreateTournament = ({ onClose, onAdd }) => {
   // Helper function to format date to YYYY-MM-DD
   const formatDate = (date) => {
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   };
 
   // Calculate initial dates
@@ -20,11 +20,17 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
 
   // Initialize state with calculated dates
   const [name, setName] = useState("");
-  const [tournamentStartDate, setStartDate] = useState(formatDate(tournamentStart));
+  const [tournamentStartDate, setStartDate] = useState(
+    formatDate(tournamentStart)
+  );
   const [tournamentEndDate, setEndDate] = useState(formatDate(tournamentEnd));
   const [venue, setVenue] = useState("");
-  const [registrationStartDate, setRegistrationStart] = useState(formatDate(today));
-  const [registrationEndDate, setRegistrationEnd] = useState(formatDate(registrationEnd));
+  const [registrationStartDate, setRegistrationStart] = useState(
+    formatDate(today)
+  );
+  const [registrationEndDate, setRegistrationEnd] = useState(
+    formatDate(registrationEnd)
+  );
   const [errorMessage, setErrorMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
@@ -49,7 +55,9 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
     }
 
     if (new Date(tournamentStartDate) < new Date(registrationEndDate)) {
-      setErrorMessage('Tournament start date cannot be before registration start date.');
+      setErrorMessage(
+        "Tournament start date cannot be before registration start date."
+      );
       return;
     }
 
@@ -93,7 +101,6 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
         <div className="modal-content">
           {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-
           <FormField
             id="tournament-name"
             type="text"
@@ -103,7 +110,6 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
             placeholder="Tournament Name"
             aria-required="true"
           />
-
 
           <DateRangeField
             label="Registration Dates"
@@ -123,7 +129,6 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
             disabled={isSaving}
           />
 
-
           <FormField
             id="venue"
             type="text"
@@ -133,7 +138,6 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
             placeholder="Venue"
             aria-required="true"
           />
-
         </div>
 
         <div className="modal-actions">

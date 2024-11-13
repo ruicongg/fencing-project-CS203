@@ -1,13 +1,12 @@
-import axios from 'axios';
+import axios from "axios";
 import React, { useState } from "react";
 import "../styles/AdminCreateEvent.css";
 import { DateTimeRangeField } from "./shared/DateTimeRangeField";
 import "../styles/shared/Modal.css";
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = "http://localhost:8080";
 
 const AdminCreateEvent = ({ tournamentId, onClose, onAdd }) => {
-
   const formatDateTime = (date) => {
     // Get timezone offset in minutes and convert to milliseconds
     const tzOffset = date.getTimezoneOffset() * 60000;
@@ -39,7 +38,7 @@ const AdminCreateEvent = ({ tournamentId, onClose, onAdd }) => {
   const handleAdd = async () => {
     // Set loading state
     setIsSaving(true);
-    setErrorMessage(''); // Clear any previous error
+    setErrorMessage(""); // Clear any previous error
 
     try {
       // Call the onAdd function with the new event details
@@ -56,7 +55,7 @@ const AdminCreateEvent = ({ tournamentId, onClose, onAdd }) => {
       if (error.response && error.response.data && error.response.data.error) {
         setErrorMessage(error.response.data.error);
       } else {
-        setErrorMessage('Failed to add event. Please try again.');
+        setErrorMessage("Failed to add event. Please try again.");
       }
     } finally {
       setIsSaving(false);
@@ -80,13 +79,21 @@ const AdminCreateEvent = ({ tournamentId, onClose, onAdd }) => {
           />
 
           <label>Gender</label>
-          <select value={gender} onChange={(e) => setGender(e.target.value)} disabled={isSaving}>
+          <select
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+            disabled={isSaving}
+          >
             <option value="MALE">Male</option>
             <option value="FEMALE">Female</option>
           </select>
 
           <label>Weapon</label>
-          <select value={weapon} onChange={(e) => setWeapon(e.target.value)} disabled={isSaving}>
+          <select
+            value={weapon}
+            onChange={(e) => setWeapon(e.target.value)}
+            disabled={isSaving}
+          >
             <option value="FOIL">Foil</option>
             <option value="EPEE">Épée</option>
             <option value="SABER">Saber</option>
