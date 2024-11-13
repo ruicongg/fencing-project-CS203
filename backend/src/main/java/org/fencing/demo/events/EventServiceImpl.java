@@ -40,6 +40,9 @@ public class EventServiceImpl implements EventService {
             if (event.getStartDate().toLocalDate().isBefore(tournament.getTournamentStartDate())) {
                 throw new IllegalArgumentException("Event start date cannt be earlier than Tournament start date");
             }
+            if (event.getEndDate().toLocalDate().isAfter(tournament.getTournamentEndDate())) {
+                throw new IllegalArgumentException("Event end date cannot be later than Tournament end date");
+            }
             if (event.getEndDate().isBefore(event.getStartDate())) {
                 throw new IllegalArgumentException("Event end date must be after start date");
             }
@@ -109,7 +112,7 @@ public class EventServiceImpl implements EventService {
         List<Player> players = playerRepository.findByUsername(username);
         if (players.isEmpty()) {
             throw new PlayerNotFoundException(username);
-        }          
+        }
         Player player = players.get(0);
 
         // Check if the current date is within the registration period
@@ -126,13 +129,16 @@ public class EventServiceImpl implements EventService {
 
         // Check for conflicting events
         if (hasConflictingEvents(player, event)) {
-            throw new IllegalStateException("Player is already registered for a conflicting event");
+            throw new IllegalStateException(
+                String.format(
+                        "Cannot register for %s as you are already registered for another event at the same time",
+                        event.getGender() + " " + event.getWeapon() + " event"));
         }
 
         PlayerRank playerRank = new PlayerRank();
         playerRank.setPlayer(player);
         playerRank.setEvent(event);
-        playerRank.setScore(0);  // Initialize score
+        playerRank.setScore(0); // Initialize score
 
         event.getRankings().add(playerRank); // Add PlayerRank to event rankings
 
@@ -195,7 +201,8 @@ public class EventServiceImpl implements EventService {
         LocalDate currentDate = LocalDate.now();
         if (currentDate.isBefore(event.getTournament().getRegistrationStartDate()) ||
                 currentDate.isAfter(event.getTournament().getTournamentStartDate().minusDays(1))) {
-            throw new IllegalStateException("Player removal is only allowed from the start of registration until the day before the event starts");
+            throw new IllegalStateException(
+                    "Player removal is only allowed from the start of registration until the day before the event starts");
         }
 
         // Find the PlayerRank for this player and event
@@ -211,47 +218,46 @@ public class EventServiceImpl implements EventService {
 
     public List<Player> updatePlayerEloAfterEvent(Long eventId) {
         // if (eventId == null) {
-        //     throw new IllegalArgumentException("Event ID cannot be null");
+        // throw new IllegalArgumentException("Event ID cannot be null");
         // }
-    
+
         Event event = eventRepository.findById(eventId)
-                        .orElseThrow(() -> new EventNotFoundException(eventId));
+                .orElseThrow(() -> new EventNotFoundException(eventId));
 
-
-        if(!allMatchesComplete(eventId)){
+        if (!allMatchesComplete(eventId)) {
             System.out.println("matches are not complete!!!!");
             throw new MatchesNotCompleteException();
         }
 
         for (PlayerRank pr : event.getRankings()) {
-            System.out.println("this are the player rankings:"+ pr);
+            System.out.println("this are the player rankings:" + pr);
             Player p = pr.getPlayer();
             p.setElo(pr.getTempElo());
-            if(pr.getTempElo() >= 2400){
+            if (pr.getTempElo() >= 2400) {
                 pr.getPlayer().setReached2400(true);
             }
             playerRepository.save(p);
         }
 
         return playerRepository.findAll();
-        
+
     }
 
     public boolean allMatchesComplete(Long eventId) {
         if (eventId == null) {
             throw new IllegalArgumentException("Event ID cannot be null");
         }
-    
+
         Event event = eventRepository.findById(eventId)
-                        .orElseThrow(() -> new EventNotFoundException(eventId));
-    
+                .orElseThrow(() -> new EventNotFoundException(eventId));
+
         List<GroupStage> grpStages = event.getGroupStages();
         List<KnockoutStage> knockoutStages = event.getKnockoutStages();
-    
+
         if (grpStages.isEmpty() || knockoutStages.isEmpty()) {
             throw new IllegalArgumentException("There are no group or knockout stages");
         }
-    
+
         for (GroupStage grpStage : grpStages) {
             for (Match match : grpStage.getMatches()) {
                 if (!match.isFinished()) {
@@ -259,7 +265,7 @@ public class EventServiceImpl implements EventService {
                 }
             }
         }
-    
+
         for (KnockoutStage knockoutStage : knockoutStages) {
             for (Match match : knockoutStage.getMatches()) {
                 if (!match.isFinished()) {
@@ -267,9 +273,8 @@ public class EventServiceImpl implements EventService {
                 }
             }
         }
-    
+
         return true;
     }
-
 
 }

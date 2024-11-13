@@ -56,14 +56,14 @@ const AdminEditEvent = ({ event, tournamentId,  onClose, onSave }) => {
         <h2>Edit Event</h2>
         <div className="modal-content">
           {errorMessage && <p className="error-message">{errorMessage}</p>}
-          <label>Event Date Time</label>
+          <label>Event Start Date Time</label>
           <input
             type="datetime-local"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             disabled={isSaving}
           />
-          to
+          <label>Event End Date Time</label>
           <input
             type="datetime-local"
             value={endDate}

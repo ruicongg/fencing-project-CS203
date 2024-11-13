@@ -122,6 +122,8 @@ const TournamentEventsPage = () => {
             alert('You cannot join this event due to gender restrictions.');
           } else if (errorMessage?.includes('Registration')) {
             alert('Registration period for this event has ended or not yet started.');
+          } else if (errorMessage?.includes('time conflict')) {
+            alert('You cannot join this event as it conflicts with another event you are registered for.');
           } else {
             alert(errorMessage || 'Failed to join event. Please check event requirements.');
           }
