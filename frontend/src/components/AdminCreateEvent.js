@@ -53,6 +53,7 @@ const AdminCreateEvent = ({ tournamentId, onClose, onAdd }) => {
             disabled={isSaving}
           />
           <label>Event End Date Time</label>
+          Event End Date Time
           <input
             type="datetime-local"
             value={endDate}

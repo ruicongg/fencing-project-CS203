@@ -111,8 +111,28 @@ const TournamentEventsPage = () => {
         alert('Successfully joined the event!');
       }
     } catch (error) {
-      console.error('Failed to join event', error);
-      alert('An error occurred while trying to join the event. Please try again.');
+      console.error('Failed to join event:', error);
+      
+      // Handle specific error cases from the backend
+      if (error.response) {
+        const errorMessage = error.response.data?.error || error.response.data?.message;
+        
+        if (error.response.status === 400) {
+          if (errorMessage?.includes('gender')) {
+            alert('You cannot join this event due to gender restrictions.');
+          } else if (errorMessage?.includes('Registration')) {
+            alert('Registration period for this event has ended or not yet started.');
+          } else {
+            alert(errorMessage || 'Failed to join event. Please check event requirements.');
+          }
+        } else if (error.response.status === 409) {
+          alert('You are already registered for this event.');
+        } else {
+          alert(errorMessage || 'An error occurred while trying to join the event. Please try again.');
+        }
+      } else {
+        alert('Network error. Please check your connection and try again.');
+      }
     }
   };
 
