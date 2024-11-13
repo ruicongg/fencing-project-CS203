@@ -107,6 +107,38 @@ public class UserIntegrationTest extends BaseIntegrationTest {
     }
 
     @Test
+    public void testUpdateUser_ShouldThrowUserExistException_WhenUsernameExists() throws Exception {
+        Long id = playerUser.getId();
+        URI uri = createUrl("/users/" + id);
+
+        User newUser = new User("exisitingUser", "password999", "user999@example.com", Role.USER);
+        User existingUser = new User("exisitingUser", "password1000", "user1000@example.com", Role.USER);
+        userRepository.save(existingUser);
+
+        HttpEntity<User> request = new HttpEntity<>(newUser, createHeaders(adminToken));
+        ResponseEntity<User> result = restTemplate.exchange(uri, HttpMethod.PUT, request, User.class);
+        userRepository.delete(existingUser);
+
+        assertEquals(409, result.getStatusCode().value());
+    }
+
+    @Test
+    public void testUpdateUser_ShouldThrowUserExistException_WhenEmailExists() throws Exception {
+        Long id = playerUser.getId();
+        URI uri = createUrl("/users/" + id);
+
+        User newUser = new User("user999", "password999", "user999@example.com", Role.USER);
+        User existingUser = new User("user1000", "password1000", "user999@example.com", Role.USER);
+        userRepository.save(existingUser);
+
+        HttpEntity<User> request = new HttpEntity<>(newUser, createHeaders(adminToken));
+        ResponseEntity<User> result = restTemplate.exchange(uri, HttpMethod.PUT, request, User.class);
+        userRepository.delete(existingUser);
+
+        assertEquals(409, result.getStatusCode().value());
+    }
+
+    @Test
     public void deleteUser_Success() throws Exception {
         Long id = playerUser.getId();
         URI uri = createUrl("/users/" + id);

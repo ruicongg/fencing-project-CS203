@@ -58,6 +58,13 @@ public class UserServiceImpl implements UserService {
         if (existingUser.isPresent()) {
             User updatedUser = existingUser.get();
 
+            if (userRepository.existsByUsernameAndIdNot(user.getUsername(), id)) {
+                throw new UserExistException("Username already exists. Please choose a different username.");
+            }
+            if (userRepository.existsByEmailAndIdNot(user.getEmail(), id)) {
+                throw new UserExistException("Email already exists. Please choose a different email.");
+            }
+
             // Update the fields of the existing user with the new user data
             updatedUser.setUsername(user.getUsername());
             updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));
