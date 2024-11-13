@@ -48,6 +48,11 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
       return;
     }
 
+    if (new Date(tournamentStartDate) < new Date(registrationEndDate)) {
+      setErrorMessage('Tournament start date cannot be before registration start date.');
+      return;
+    }
+
     if (new Date(tournamentStartDate) >= new Date(tournamentEndDate)) {
       setErrorMessage(
         "Tournament start date must be before tournament end date."

@@ -27,7 +27,10 @@ const AdminStageDetailsPage = () => {
 
       try {
         // Define the endpoint based on the stageType
-        const endpoint = `/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/matches`;
+        const endpoint = stageType === 'groupStage'
+          ? `/tournaments/${tournamentId}/events/${eventId}/groupStage/${stageId}/matches`
+          : `/tournaments/${tournamentId}/events/${eventId}/knockoutStage/${stageId}/matches`;
+        
         console.log('Fetching from endpoint:', endpoint);
         
         const response = await axios.get(endpoint);
@@ -49,10 +52,19 @@ const AdminStageDetailsPage = () => {
     setError(null);
 
     try {
-      const endpoint = `/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/matches`;
-      await axios.post(endpoint); // Generate matches
+      // Use the correct endpoint for generating matches based on stageType
+      const endpoint = stageType === 'groupStage'
+        ? `/tournaments/${tournamentId}/events/${eventId}/groupStage/matches`
+        : `/tournaments/${tournamentId}/events/${eventId}/knockoutStage/${stageId}/matches`;
+
+      console.log('Creating matches from endpoint:', endpoint);
       
-      const response = await axios.get(endpoint); // Fetch the newly generated matches
+      // Generate matches
+      await axios.post(endpoint);
+      
+      // Fetch the newly generated matches
+      const fetchEndpoint = `/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/matches`;
+      const response = await axios.get(fetchEndpoint);
       setMatches(response.data);
     } catch (error) {
       setError('Error generating matches.');
@@ -98,6 +110,7 @@ const AdminStageDetailsPage = () => {
 };
 
 export default AdminStageDetailsPage;
+
 
 
 // import React, { useState, useEffect } from 'react';

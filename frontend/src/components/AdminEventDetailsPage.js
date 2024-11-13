@@ -8,24 +8,24 @@ axios.defaults.baseURL = 'http://localhost:8080';
 
 const AdminEventDetailsPage = () => {
   const { tournamentId, eventId } = useParams();
-  useEffect(() => {
-    console.log('Params:', { tournamentId, eventId });
-  }, [tournamentId, eventId]);
   const navigate = useNavigate();
 
   const [event, setEvent] = useState(null);
-  const [groupStages, setGroupStages] = useState([]); // Separate state for group stages
-  const [knockoutStages, setKnockoutStages] = useState([]); // Separate state for knockout stages
+  const [groupStages, setGroupStages] = useState([]);
+  const [knockoutStages, setKnockoutStages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isPlayersModalOpen, setIsPlayersModalOpen] = useState(false);
+  const [successfulGeneration, setSuccessfulGeneration] = useState({
+    groupStage: null,
+    knockoutStage: null,
+  });
 
   useEffect(() => {
     const fetchEventData = async () => {
       try {
         const eventResponse = await axios.get(`/tournaments/${tournamentId}/events/${eventId}`);
         setEvent(eventResponse.data);
-        // Fetch group stages and knockout stages separately
         await fetchGroupStages();
         await fetchKnockoutStages();
       } catch (error) {
@@ -39,60 +39,80 @@ const AdminEventDetailsPage = () => {
     fetchEventData();
   }, [tournamentId, eventId]);
 
-  // Function to fetch group stages
   const fetchGroupStages = async () => {
     try {
-      const groupStagesResponse = await axios.get(`/tournaments/${tournamentId}/events/${eventId}/groupStages`);
-      setGroupStages(groupStagesResponse.data);
+      const response = await axios.get(`/tournaments/${tournamentId}/events/${eventId}/groupStages`);
+      setGroupStages(response.data);
     } catch (error) {
       console.error('Error fetching group stages:', error);
     }
   };
 
-  // Function to fetch knockout stages
   const fetchKnockoutStages = async () => {
     try {
-      const knockoutStagesResponse = await axios.get(`/tournaments/${tournamentId}/events/${eventId}/knockoutStage`);
-      setKnockoutStages(knockoutStagesResponse.data);
+      const response = await axios.get(`/tournaments/${tournamentId}/events/${eventId}/knockoutStage`);
+      setKnockoutStages(response.data);
     } catch (error) {
       console.error('Error fetching knockout stages:', error);
     }
   };
 
-  const handleGenerateKnockoutStages = async () => {
+  const handleGenerateGroupStageMatches = async (groupStageId) => {
     try {
-      await axios.post(`/tournaments/${tournamentId}/events/${eventId}/knockoutStage`);
-      await fetchKnockoutStages(); // Fetch the updated knockout stages after creation
+      await axios.post(`/tournaments/${tournamentId}/events/${eventId}/groupStage/matches`);
+      setGroupStages(prevStages =>
+        prevStages.map(stage =>
+          stage.id === groupStageId ? { ...stage, matches: [{}] } : stage
+        )
+      );
+      setSuccessfulGeneration({ ...successfulGeneration, groupStage: groupStageId });
     } catch (error) {
-      setError('Error generating knockout stages.');
-      console.error('Error generating knockout stages:', error);
+      setError('Error generating matches for group stage.');
+      console.error('Error generating group stage matches:', error);
+    }
+  };
+
+  const handleGenerateKnockoutStageMatches = async (knockoutStageId) => {
+    try {
+      await axios.post(`/tournaments/${tournamentId}/events/${eventId}/knockoutStage/${knockoutStageId}/matches`);
+      setKnockoutStages(prevStages =>
+        prevStages.map(stage =>
+          stage.id === knockoutStageId ? { ...stage, matches: [{}] } : stage
+        )
+      );
+      setSuccessfulGeneration({ ...successfulGeneration, knockoutStage: knockoutStageId });
+    } catch (error) {
+      setError('Error generating matches for knockout stage.');
+      console.error('Error generating knockout stage matches:', error);
     }
   };
 
   const handleGenerateGroupStages = async () => {
     try {
       await axios.post(`/tournaments/${tournamentId}/events/${eventId}/groupStage`);
-      await fetchGroupStages(); // Fetch the updated group stages after creation
+      await fetchGroupStages();
     } catch (error) {
       setError('Error generating group stages.');
       console.error('Error generating group stages:', error);
     }
   };
 
+  const handleGenerateKnockoutStages = async () => {
+    try {
+      await axios.post(`/tournaments/${tournamentId}/events/${eventId}/knockoutStage`);
+      await fetchKnockoutStages();
+    } catch (error) {
+      setError('Error generating knockout stages.');
+      console.error('Error generating knockout stages:', error);
+    }
+  };
+
   const openPlayersModal = () => setIsPlayersModalOpen(true);
   const closePlayersModal = () => setIsPlayersModalOpen(false);
 
-  if (loading) {
-    return <p>Loading event details...</p>;
-  }
-
-  if (error) {
-    return <p>{error}</p>;
-  }
-
-  if (!event) {
-    return <p>Event not found.</p>;
-  }
+  if (loading) return <p>Loading event details...</p>;
+  if (error) return <p>{error}</p>;
+  if (!event) return <p>Event not found.</p>;
 
   return (
     <div className="event-details-page">
@@ -119,6 +139,13 @@ const AdminEventDetailsPage = () => {
                 <button onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}/groupStage/${groupStage.id}`)}>
                   View
                 </button>
+                {groupStage.matches && groupStage.matches.length === 0 ? (
+                  <button onClick={() => handleGenerateGroupStageMatches(groupStage.id)}>
+                    Generate Matches
+                  </button>
+                ) : successfulGeneration.groupStage === groupStage.id ? (
+                  <p>Matches creation successful.</p>
+                ) : null}
               </li>
             ))}
           </ul>
@@ -140,15 +167,22 @@ const AdminEventDetailsPage = () => {
                 <button onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}/knockoutStage/${knockoutStage.id}`)}>
                   View
                 </button>
+                {knockoutStage.matches && knockoutStage.matches.length === 0 ? (
+                  <button onClick={() => handleGenerateKnockoutStageMatches(knockoutStage.id)}>
+                    Generate Matches
+                  </button>
+                ) : successfulGeneration.knockoutStage === knockoutStage.id ? (
+                  <p>Matches creation successful.</p>
+                ) : null}
               </li>
             ))}
           </ul>
         ) : (
           <div>
             <p>No Knockout Stages have been generated yet. Click below to create them.</p>
+            <button onClick={handleGenerateKnockoutStages}>+ New Knockout Stage</button>
           </div>
         )}
-        <button onClick={handleGenerateKnockoutStages}>+ New Knockout Stage</button>
       </div>
 
       {isPlayersModalOpen && (

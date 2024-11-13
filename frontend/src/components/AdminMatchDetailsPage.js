@@ -20,7 +20,7 @@ const AdminMatchDetailsPage = () => {
     const fetchMatchDetails = async () => {
       try {
         const response = await axios.get(
-          `/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/match/${matchId}`
+          `/tournaments/${tournamentId}/events/${eventId}/match/${matchId}`
         );
         setMatch(response.data);
         setPlayer1Score(response.data.player1Score || '');
@@ -46,8 +46,10 @@ const AdminMatchDetailsPage = () => {
     setError(null);
     try {
       await axios.put(
-        `/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/match/${matchId}`,
+        `/tournaments/${tournamentId}/events/${eventId}/match/${matchId}`,
         {
+          player1: match.player1,
+          player2: match.player2,
           player1Score: Number(player1Score),
           player2Score: Number(player2Score)
         }
@@ -84,8 +86,8 @@ const AdminMatchDetailsPage = () => {
       </nav>
 
       <h1>Match {match.id}</h1>
-      <p>Player 1: {match.player1.username}</p>
-      <p>Player 2: {match.player2.username}</p>
+      <p>Player 1: @{match.player1.username}</p>
+      <p>Player 2: @{match.player2.username}</p>
 
       <div className="score-input">
         <label>

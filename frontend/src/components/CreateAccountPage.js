@@ -9,13 +9,13 @@ const CreateAccountPage = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [gender, setGender] = useState('');
+  const [gender, setGender] = useState(''); // New state for gender
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const validateForm = () => {
-    if (!username || !email || !password || !gender) {
+    if (!username || !email || !password || !gender) { // Include gender in validation
       setError('All fields are required.');
       return false;
     }
@@ -23,10 +23,6 @@ const CreateAccountPage = () => {
       setError('Please enter a valid email.');
       return false;
     }
-    // if (password.length < 6) {
-    //   setError('Password must be at least 6 characters long.');
-    //   return false;
-    // }
     return true;
   };
 
@@ -36,10 +32,13 @@ const CreateAccountPage = () => {
     setLoading(true); // Set loading state when form is submitted
 
     try {
-      await axios.post('/api/v1/auth/register', 
-        { username, email, password, role: 'USER', gender }, 
-        { withCredentials: true }
-      );
+      await axios.post('/api/v1/auth/register', {
+        username,
+        email,
+        password,
+        gender, // Add gender to request payload
+        role: 'USER',
+      }, { withCredentials: true });
       navigate('/login'); // Redirect to login page after account creation
     } catch (error) {
       setError('Error creating account.');
