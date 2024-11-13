@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import '../styles/LoginPage.css';
 
+import "../styles/shared/Form.css";
+import "../styles/shared/Modal.css";
 axios.defaults.baseURL = 'http://localhost:8080';
 
 const LoginPage = () => {
@@ -61,25 +62,23 @@ const LoginPage = () => {
   // added by ruicong
   return (       
     <div className="login-page">
-      <div className="login-box">
+      <div className="modal">
         <h1>Login</h1>
         <form onSubmit={handleLogin} className="login-form">
-          <div className="form-group">
+          <div className="modal-content input">
             <input
               type="text"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="text-input"
             />
           </div>
-          <div className="form-group">
+          <div className="modal-content input">
             <input
               type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="text-input"
             />
           </div>
           <button type="submit" className="login-button" disabled={loading}>

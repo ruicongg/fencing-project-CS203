@@ -1,26 +1,5 @@
-.login-page {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-  }
 
 
-  .form-group {
-    position: relative;
-    margin: 10px;
-  }
-  
-  .text-input {
-    width: 100%;
-    padding: 10px 4px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
-    color: #333;
-  }
   
   .input:focus {
     border-color: #007bff;

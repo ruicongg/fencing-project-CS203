@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import "../styles/AdminCreateTournament.css";
 
+import "../styles/shared/Modal.css";
+import { FormField } from "./shared/FormField";
+import { DateRangeField } from "./shared/DateRangeField";
 const AdminCreateTournament = ({ onClose, onAdd }) => {
   // Helper function to format date to YYYY-MM-DD
   const formatDate = (date) => {
@@ -86,63 +88,47 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
         <div className="modal-content">
           {errorMessage && <p className="error-message">{errorMessage}</p>}
 
-          <label htmlFor="tournament-name">Tournament Name</label>
-          <input
+
+          <FormField
             id="tournament-name"
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             disabled={isSaving}
+            placeholder="Tournament Name"
             aria-required="true"
           />
 
-          <label>Registration Dates</label>
-          <div className="date-range">
-            <input
-              type="date"
-              value={registrationStartDate}
-              onChange={(e) => setRegistrationStart(e.target.value)}
-              disabled={isSaving}
-              aria-required="true"
-            />
-            to
-            <input
-              type="date"
-              value={registrationEndDate}
-              onChange={(e) => setRegistrationEnd(e.target.value)}
-              disabled={isSaving}
-              aria-required="true"
-            />
-          </div>
 
-          <label>Tournament Dates</label>
-          <div className="date-range">
-            <input
-              type="date"
-              value={tournamentStartDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              disabled={isSaving}
-              aria-required="true"
-            />
-            to
-            <input
-              type="date"
-              value={tournamentEndDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              disabled={isSaving}
-              aria-required="true"
-            />
-          </div>
+          <DateRangeField
+            label="Registration Dates"
+            startValue={registrationStartDate}
+            endValue={registrationEndDate}
+            onStartChange={(e) => setRegistrationStart(e.target.value)}
+            onEndChange={(e) => setRegistrationEnd(e.target.value)}
+            disabled={isSaving}
+          />
 
-          <label htmlFor="venue">Venue</label>
-          <input
+          <DateRangeField
+            label="Tournament Dates"
+            startValue={tournamentStartDate}
+            endValue={tournamentEndDate}
+            onStartChange={(e) => setStartDate(e.target.value)}
+            onEndChange={(e) => setEndDate(e.target.value)}
+            disabled={isSaving}
+          />
+
+
+          <FormField
             id="venue"
             type="text"
             value={venue}
             onChange={(e) => setVenue(e.target.value)}
             disabled={isSaving}
+            placeholder="Venue"
             aria-required="true"
           />
+
         </div>
 
         <div className="modal-actions">

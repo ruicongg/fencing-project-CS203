@@ -1,30 +1,9 @@
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.75); /* Darker overlay for consistency */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease;
-}
 
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
-.modal {
-  background-color: #1f1f1f; /* Dark background for modal */
-  padding: 20px;
-  width: 400px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
-  color: #ffffff; /* Light text color */
-}
 
 h2 {
   margin-bottom: 20px;
@@ -32,39 +11,6 @@ h2 {
   color: #00BFFF; /* Accent color for title */
 }
 
-.modal-content {
-  margin-bottom: 20px;
-}
-
-.modal-content label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #cccccc; /* Light gray text */
-}
-
-.modal-content input,
-.modal-content select {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  background-color: #333; /* Darker input background */
-  border: 1px solid #444; /* Dark border */
-  color: #ffffff;
-  border-radius: 4px;
-}
-
-.date-range {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  color: #ffffff;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: space-between;
-}
 
 .cancel-button,
 .add-button {
