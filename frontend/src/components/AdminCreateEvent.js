@@ -52,7 +52,7 @@ const AdminCreateEvent = ({ tournamentId, onClose, onAdd }) => {
             onChange={(e) => setStartDate(e.target.value)}
             disabled={isSaving}
           />
-          to
+          <label>Event End Date Time</label>
           <input
             type="datetime-local"
             value={endDate}
