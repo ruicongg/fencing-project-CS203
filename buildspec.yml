@@ -28,7 +28,7 @@ phases:
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo setting container name...
-      - DOCKER_CONTAINER_NAME=cs203-fencing-cs203-container
+      - DOCKER_CONTAINER_NAME=fencing-cs203-container
       - echo writing image definitions file...
       - printf '[{"name":"%s","imageUri":"%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - echo printing imagedefinitions file
