@@ -20,122 +20,123 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+
 public class KnockoutMatchMakingIntegrationTest extends BaseIntegrationTest {
 
-    @Autowired
-    private KnockoutMatchMakingService knockoutMatchMakingService;
+        @Autowired
+        private KnockoutMatchMakingService knockoutMatchMakingService;
 
-    @BeforeEach
-    void setUp() {
-        super.setUp();
-        knockoutStageRepository.deleteAll();
-        // Setup players
-        int[] elos = new int[32];
-        for (int i = 0; i < 32; i++) {
-            elos[i] = 1000 + i;
+        @BeforeEach
+        void setUp() {
+                super.setUp();
+                knockoutStageRepository.deleteAll();
+                // Setup players
+                int[] elos = new int[32];
+                for (int i = 0; i < 32; i++) {
+                        elos[i] = 1000 + i;
+                }
+                setUpWithPlayersInEvent(elos);
         }
-        setUpWithPlayersInEvent(elos);
-    }
 
-    @Test
-    void createKnockoutStage_AdminUser_Success() throws Exception {
+        @Test
+        void createKnockoutStage_AdminUser_Success() throws Exception {
 
-        String url = "/tournaments/" + tournament.getId() +
-                "/events/" + event.getId() +
-                "/knockoutStage";
+                String url = "/tournaments/" + tournament.getId() +
+                                "/events/" + event.getId() +
+                                "/knockoutStage";
 
-        ResponseEntity<KnockoutStage> response = restTemplate.exchange(
-                createUrl(url),
-                HttpMethod.POST,
-                new HttpEntity<>(null, createHeaders(adminToken)),
-                KnockoutStage.class);
+                ResponseEntity<KnockoutStage> response = restTemplate.exchange(
+                                createUrl(url),
+                                HttpMethod.POST,
+                                new HttpEntity<>(null, createHeaders(adminToken)),
+                                KnockoutStage.class);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(event.getId(), response.getBody().getEvent().getId());
-    }
-
-    @Test
-    void createKnockoutStage_RegularUser_Failure() throws Exception {
-        String url = "/tournaments/" + tournament.getId() +
-                "/events/" + event.getId() +
-                "/knockoutStage";
-
-        ResponseEntity<KnockoutStage> response = restTemplate.exchange(
-                createUrl(url),
-                HttpMethod.POST,
-                new HttpEntity<>(null, createHeaders(userToken)),
-                KnockoutStage.class);
-
-        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
-    }
-
-    @Test
-    void createMatches_Success() throws Exception {
-        // Create knockout stage
-        ResponseEntity<KnockoutStage> stageResponse = restTemplate.exchange(
-                createUrl("/tournaments/" + tournament.getId() +
-                        "/events/" + event.getId() +
-                        "/knockoutStage"),
-                HttpMethod.POST,
-                new HttpEntity<>(null, createHeaders(adminToken)),
-                KnockoutStage.class);
-
-        KnockoutStage knockoutStage = stageResponse.getBody();
-        assertNotNull(knockoutStage);
-
-        // Create matches
-        String url = "/tournaments/" + tournament.getId() +
-                "/events/" + event.getId() +
-                "/knockoutStage/" + knockoutStage.getId() +
-                "/matches";
-
-        ResponseEntity<List<Match>> response = restTemplate.exchange(
-                createUrl(url),
-                HttpMethod.POST,
-                new HttpEntity<>(null, createHeaders(adminToken)),
-                new ParameterizedTypeReference<List<Match>>() {
-                });
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        List<Match> matches = response.getBody();
-        assertNotNull(matches);
-        assertEquals(16, matches.size());
-        verifyMatchProperties(matches);
-    }
-
-    @Test
-    void createMatches_NoKnockoutStage_Failure() throws Exception {
-        String url = "/tournaments/" + tournament.getId() +
-                "/events/" + event.getId() +
-                "/knockoutStage/1/matches";
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                createUrl(url),
-                HttpMethod.POST,
-                new HttpEntity<>(null, createHeaders(adminToken)),
-                String.class);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    private void verifyMatchProperties(List<Match> matches) {
-        Set<String> uniquePairings = new HashSet<>();
-
-        for (Match match : matches) {
-            assertNotNull(match.getPlayer1());
-            assertNotNull(match.getPlayer2());
-            assertNotNull(match.getKnockoutStage());
-            assertEquals(event.getId(), match.getEvent().getId());
-
-            // Verify no duplicate pairings
-            String pairing = Math.min(match.getPlayer1().getId(), match.getPlayer2().getId()) +
-                    "-" + Math.max(match.getPlayer1().getId(), match.getPlayer2().getId());
-            assertTrue(uniquePairings.add(pairing), "No duplicate pairings should exist");
-
-            // Verify seeding order (higher ranked player should be player1)
-            assertTrue(match.getPlayer1().getId() < match.getPlayer2().getId(),
-                    "Higher ranked player should be player1");
+                assertEquals(HttpStatus.CREATED, response.getStatusCode());
+                assertNotNull(response.getBody());
+                assertEquals(event.getId(), response.getBody().getEvent().getId());
         }
-    }
+
+        @Test
+        void createKnockoutStage_RegularUser_Failure() throws Exception {
+                String url = "/tournaments/" + tournament.getId() +
+                                "/events/" + event.getId() +
+                                "/knockoutStage";
+
+                ResponseEntity<KnockoutStage> response = restTemplate.exchange(
+                                createUrl(url),
+                                HttpMethod.POST,
+                                new HttpEntity<>(null, createHeaders(userToken)),
+                                KnockoutStage.class);
+
+                assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+        }
+
+        @Test
+        void createMatches_Success() throws Exception {
+                // Create knockout stage
+                ResponseEntity<KnockoutStage> stageResponse = restTemplate.exchange(
+                                createUrl("/tournaments/" + tournament.getId() +
+                                                "/events/" + event.getId() +
+                                                "/knockoutStage"),
+                                HttpMethod.POST,
+                                new HttpEntity<>(null, createHeaders(adminToken)),
+                                KnockoutStage.class);
+
+                KnockoutStage knockoutStage = stageResponse.getBody();
+                assertNotNull(knockoutStage);
+
+                // Create matches
+                String url = "/tournaments/" + tournament.getId() +
+                                "/events/" + event.getId() +
+                                "/knockoutStage/" + knockoutStage.getId() +
+                                "/matches";
+
+                ResponseEntity<List<Match>> response = restTemplate.exchange(
+                                createUrl(url),
+                                HttpMethod.POST,
+                                new HttpEntity<>(null, createHeaders(adminToken)),
+                                new ParameterizedTypeReference<List<Match>>() {
+                                });
+
+                assertEquals(HttpStatus.CREATED, response.getStatusCode());
+                List<Match> matches = response.getBody();
+                assertNotNull(matches);
+                assertEquals(16, matches.size());
+                verifyMatchProperties(matches);
+        }
+
+        @Test
+        void createMatches_NoKnockoutStage_Failure() throws Exception {
+                String url = "/tournaments/" + tournament.getId() +
+                                "/events/" + event.getId() +
+                                "/knockoutStage/1/matches";
+
+                ResponseEntity<String> response = restTemplate.exchange(
+                                createUrl(url),
+                                HttpMethod.POST,
+                                new HttpEntity<>(null, createHeaders(adminToken)),
+                                String.class);
+
+                assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        }
+
+        private void verifyMatchProperties(List<Match> matches) {
+                Set<String> uniquePairings = new HashSet<>();
+
+                for (Match match : matches) {
+                        assertNotNull(match.getPlayer1());
+                        assertNotNull(match.getPlayer2());
+                        assertNotNull(match.getKnockoutStage());
+                        assertEquals(event.getId(), match.getEvent().getId());
+
+                        // Verify no duplicate pairings
+                        String pairing = Math.min(match.getPlayer1().getId(), match.getPlayer2().getId()) +
+                                        "-" + Math.max(match.getPlayer1().getId(), match.getPlayer2().getId());
+                        assertTrue(uniquePairings.add(pairing), "No duplicate pairings should exist");
+
+                        // Verify seeding order (higher ranked player should be player1)
+                        assertTrue(match.getPlayer1().getId() < match.getPlayer2().getId(),
+                                        "Higher ranked player should be player1");
+                }
+        }
 }

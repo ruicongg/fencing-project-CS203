@@ -18,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+
 public class PlayerIntegrationTest extends BaseIntegrationTest {
 
     @BeforeEach
@@ -117,6 +118,5 @@ public class PlayerIntegrationTest extends BaseIntegrationTest {
         ResponseEntity<Void> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, Void.class);
         assertEquals(404, result.getStatusCode().value());
     }
-
 
 }

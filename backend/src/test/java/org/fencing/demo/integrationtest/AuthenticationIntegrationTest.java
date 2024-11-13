@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
+
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
 public class AuthenticationIntegrationTest {
@@ -45,7 +46,8 @@ public class AuthenticationIntegrationTest {
     @Test
     public void testRegisterEndpoint() throws Exception {
         // Arrange
-        RegisterRequest registerRequest = new RegisterRequest("testUser", "password", "test@example.com", "PLAYER", "MALE");
+        RegisterRequest registerRequest = new RegisterRequest("testUser", "password", "test@example.com", "PLAYER",
+                "MALE");
         AuthenticationResponse expectedResponse = new AuthenticationResponse("jwt-token");
 
         when(authenticationService.register(any(RegisterRequest.class))).thenReturn(expectedResponse);
@@ -74,4 +76,3 @@ public class AuthenticationIntegrationTest {
                 .andExpect(jsonPath("$.token").value("jwt-token"));
     }
 }
-

@@ -8,7 +8,7 @@ phases:
       - echo Logging into Amazon ECR....
       - aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin 844522605599.dkr.ecr.ap-southeast-1.amazonaws.com
       - echo setting repository URI...
-      - REPOSITORY_URI=844522605599.dkr.ecr.ap-southeast-1.amazonaws.com/cs203-fencing-project-private-repository
+      - REPOSITORY_URI=844522605599.dkr.ecr.ap-southeast-1.amazonaws.com/fencing-cs203-repo
       - echo setting image tag...
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
       - cd backend  # Change to the backend directory
@@ -28,11 +28,13 @@ phases:
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo setting container name...
-      - DOCKER_CONTAINER_NAME=cs203-fencing-project-backend-container
+      - DOCKER_CONTAINER_NAME=fencing-cs203-container
       - echo writing image definitions file...
+      - cd ..
       - printf '[{"name":"%s","imageUri":"%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - echo printing imagedefinitions file
       - cat imagedefinitions.json
 artifacts:
-  files: backend/imagedefinitions.json
+  files: imagedefinitions.json
   
+

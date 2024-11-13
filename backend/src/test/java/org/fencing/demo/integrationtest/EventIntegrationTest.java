@@ -24,18 +24,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class EventIntegrationTest extends BaseIntegrationTest{
+
+public class EventIntegrationTest extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp() {
         super.setUp();
     }
 
-
     // Add Event - Success
     @Test
     public void addEvent_Success() throws Exception {
-                
+
         URI uri = createUrl("/tournaments/" + tournament.getId() + "/events");
 
         HttpEntity<Event> request = new HttpEntity<>(event, createHeaders(adminToken));
@@ -48,7 +48,7 @@ public class EventIntegrationTest extends BaseIntegrationTest{
 
     @Test
     public void addEvent_ForbiddenForRegularUser_Failure() throws Exception {
-        
+
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
 
         HttpEntity<Event> request = new HttpEntity<>(event, createHeaders(userToken));
@@ -60,7 +60,6 @@ public class EventIntegrationTest extends BaseIntegrationTest{
     @Test
     public void addEvent_NullTournamentId_Failure() throws Exception {
 
-        
         URI uri = new URI(baseUrl + port + "/tournaments/null/events");
 
         HttpEntity<Event> request = new HttpEntity<>(event, createHeaders(adminToken));
@@ -94,8 +93,8 @@ public class EventIntegrationTest extends BaseIntegrationTest{
 
     @Test
     public void addEvent_NonExistentTournamentId_Failure() throws Exception {
-        
-        Long nonExistentTournamentId = 999L;  
+
+        Long nonExistentTournamentId = 999L;
         URI uri = new URI(baseUrl + port + "/tournaments/" + nonExistentTournamentId + "/events");
 
         HttpEntity<Event> request = new HttpEntity<>(event, createHeaders(adminToken));
@@ -149,7 +148,7 @@ public class EventIntegrationTest extends BaseIntegrationTest{
     public void addEvent_StartDateBeforeTournamentStartDate_Failure() throws Exception {
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events");
 
-                event.setStartDate(LocalDateTime.now().plusDays(24));
+        event.setStartDate(LocalDateTime.now().plusDays(24));
 
         HttpEntity<Event> request = new HttpEntity<>(event, createHeaders(adminToken));
         ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.POST, request, String.class);
@@ -206,9 +205,7 @@ public class EventIntegrationTest extends BaseIntegrationTest{
 
     @Test
     public void updateEvent_ForbiddenForRegularUser_Failure() throws Exception {
-                long id = eventRepository.save(event).getId();
-
-        
+        long id = eventRepository.save(event).getId();
 
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
 
@@ -231,14 +228,13 @@ public class EventIntegrationTest extends BaseIntegrationTest{
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
-
-    @Test 
+    @Test
     public void updateEvent_EndDateBeforeStartDate_Failure() throws Exception {
 
         long id = event.getId();
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + id);
-        
-        event.setEndDate(LocalDateTime.now().plusDays(24));  // End date before start date
+
+        event.setEndDate(LocalDateTime.now().plusDays(24)); // End date before start date
 
         HttpEntity<Event> request = new HttpEntity<>(event, createHeaders(adminToken));
         ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.PUT, request, String.class);
@@ -250,7 +246,7 @@ public class EventIntegrationTest extends BaseIntegrationTest{
 
     @Test
     public void updateEvent_NonExistentEvent_Failure() throws Exception {
-        
+
         Long nonExistentId = 9999L;
         URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + nonExistentId);
 

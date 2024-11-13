@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+
 public class GroupMatchMakingIntegrationTest extends BaseIntegrationTest {
 
     @BeforeEach
@@ -34,7 +35,8 @@ public class GroupMatchMakingIntegrationTest extends BaseIntegrationTest {
 
         ResponseEntity<List<GroupStage>> result = restTemplate.exchange(createUrl(url),
                 HttpMethod.POST, new HttpEntity<>(createHeaders(adminToken)),
-                new ParameterizedTypeReference<List<GroupStage>>() {});
+                new ParameterizedTypeReference<List<GroupStage>>() {
+                });
 
         assertEquals(201, result.getStatusCode().value());
         assertNotNull(result.getBody());
@@ -59,7 +61,8 @@ public class GroupMatchMakingIntegrationTest extends BaseIntegrationTest {
 
         ResponseEntity<List<GroupStage>> response = restTemplate.exchange(createUrl(url),
                 HttpMethod.POST, new HttpEntity<>(null, createHeaders(adminToken)),
-                new ParameterizedTypeReference<List<GroupStage>>() {});
+                new ParameterizedTypeReference<List<GroupStage>>() {
+                });
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         List<GroupStage> groupStages = response.getBody();

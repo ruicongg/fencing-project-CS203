@@ -22,6 +22,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+
 public class MatchIntegrationTest extends BaseIntegrationTest {
 
     @BeforeEach
@@ -36,7 +37,8 @@ public class MatchIntegrationTest extends BaseIntegrationTest {
         long nonExistentEventId = 999L;
         long tournamentId = tournament.getId();
         long knockoutStageId = knockoutStage.getId();
-        URI uri = createUrl("/tournaments/" + tournamentId + "/events/" + nonExistentEventId + "/knockoutStage/" + knockoutStageId + "/matches");
+        URI uri = createUrl("/tournaments/" + tournamentId + "/events/" + nonExistentEventId + "/knockoutStage/"
+                + knockoutStageId + "/matches");
 
         HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
         ResponseEntity<String> result = restTemplate.exchange(uri, HttpMethod.POST, request, String.class);

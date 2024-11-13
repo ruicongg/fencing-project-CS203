@@ -39,6 +39,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+
 public abstract class BaseIntegrationTest {
     @LocalServerPort
     protected int port;
@@ -75,6 +76,7 @@ public abstract class BaseIntegrationTest {
     protected Tournament tournament;
     protected GroupStage groupStage;
     protected KnockoutStage knockoutStage;
+
     @BeforeEach
     void setUp() {
 
@@ -90,7 +92,6 @@ public abstract class BaseIntegrationTest {
         userToken = "Bearer " + generateToken(regularUser);
         playerToken = "Bearer " + generateToken(playerUser);
     }
-
 
     protected List<Player> setUpWithPlayersInEvent(int[] uniqueElos) {
         List<Player> players = new ArrayList<>();
@@ -109,7 +110,6 @@ public abstract class BaseIntegrationTest {
         return players;
     }
 
-
     @AfterEach
     void tearDown() {
         tournamentRepository.deleteAll();
@@ -126,13 +126,11 @@ public abstract class BaseIntegrationTest {
         return headers;
     }
 
-
     protected URI createUrl(String endpoint) {
         return URI.create(baseUrl + port + endpoint);
     }
 
-
-    // security 
+    // security
     private static final String SECRET_KEY = System.getenv("JWT_SECRET_KEY") != null
             ? System.getenv("JWT_SECRET_KEY")
             : "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
@@ -151,7 +149,6 @@ public abstract class BaseIntegrationTest {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
 
     // Helper method to create everything
     private User createValidAdminUser() {

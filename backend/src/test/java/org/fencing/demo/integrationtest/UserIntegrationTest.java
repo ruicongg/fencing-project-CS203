@@ -1,10 +1,12 @@
 package org.fencing.demo.integrationtest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
 import java.util.Optional;
 
+import org.fencing.demo.security.auth.AuthenticationResponse;
 import org.fencing.demo.user.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+
 public class UserIntegrationTest extends BaseIntegrationTest {
 
     @BeforeEach
@@ -77,10 +80,18 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         User newUser = new User("user999", "password999", "user999@example.com", Role.USER);
 
         HttpEntity<User> request = new HttpEntity<>(newUser, createHeaders(adminToken));
-        ResponseEntity<User> result = restTemplate.exchange(uri, HttpMethod.PUT, request, User.class);
+        ResponseEntity<AuthenticationResponse> result = restTemplate.exchange(uri, HttpMethod.PUT, request,
+                AuthenticationResponse.class);
 
         assertEquals(200, result.getStatusCode().value());
-        assertEquals(newUser.getUsername(), result.getBody().getUsername());
+        // Verify we received a JWT token
+        assertNotNull(result.getBody().getToken());
+
+        // Verify the user was actually updated in the database
+        User updatedUser = userRepository.findById(id).orElse(null);
+        assertNotNull(updatedUser);
+        assertEquals(newUser.getUsername(), updatedUser.getUsername());
+        assertEquals(newUser.getEmail(), updatedUser.getEmail());
     }
 
     @Test
@@ -89,9 +100,42 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         User newUser = new User("user999", "password999", "user999@example.com", Role.USER);
 
         HttpEntity<User> request = new HttpEntity<>(newUser, createHeaders(adminToken));
-        ResponseEntity<User> result = restTemplate.exchange(uri, HttpMethod.PUT, request, User.class);
+        ResponseEntity<AuthenticationResponse> result = restTemplate.exchange(uri, HttpMethod.PUT, request,
+                AuthenticationResponse.class);
 
         assertEquals(404, result.getStatusCode().value());
+    }
+
+    @Test
+    public void testUpdateUser_ShouldThrowUserExistException_WhenUsernameExists() throws Exception {
+        Long id = playerUser.getId();
+        URI uri = createUrl("/users/" + id);
+
+        User newUser = new User("exisitingUser", "password999", "user999@example.com", Role.USER);
+        User existingUser = new User("exisitingUser", "password1000", "user1000@example.com", Role.USER);
+        userRepository.save(existingUser);
+
+        HttpEntity<User> request = new HttpEntity<>(newUser, createHeaders(adminToken));
+        ResponseEntity<User> result = restTemplate.exchange(uri, HttpMethod.PUT, request, User.class);
+        userRepository.delete(existingUser);
+
+        assertEquals(409, result.getStatusCode().value());
+    }
+
+    @Test
+    public void testUpdateUser_ShouldThrowUserExistException_WhenEmailExists() throws Exception {
+        Long id = playerUser.getId();
+        URI uri = createUrl("/users/" + id);
+
+        User newUser = new User("user999", "password999", "user999@example.com", Role.USER);
+        User existingUser = new User("user1000", "password1000", "user999@example.com", Role.USER);
+        userRepository.save(existingUser);
+
+        HttpEntity<User> request = new HttpEntity<>(newUser, createHeaders(adminToken));
+        ResponseEntity<User> result = restTemplate.exchange(uri, HttpMethod.PUT, request, User.class);
+        userRepository.delete(existingUser);
+
+        assertEquals(409, result.getStatusCode().value());
     }
 
     @Test
