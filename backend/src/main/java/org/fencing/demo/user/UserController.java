@@ -2,7 +2,10 @@ package org.fencing.demo.user;
 
 import java.util.List;
 
+import org.fencing.demo.security.JwtService;
+import org.fencing.demo.security.auth.AuthenticationResponse;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,9 +20,11 @@ import jakarta.validation.Valid;
 @RestController
 public class UserController {
     private UserService userService; 
+    private JwtService jwtService;
 
-    public UserController(UserService us) {
-        this.userService = us;  
+    public UserController(UserService userService, JwtService jwtService) {
+        this.userService = userService;  
+        this.jwtService = jwtService;
     }
 
     // List all users 
@@ -60,12 +65,18 @@ public class UserController {
 
     // Updates user info 
     @PutMapping("/users/{id}")
-    public User updateUser(@PathVariable Long id, @Valid @RequestBody User updatedUserInfo) {
+    public ResponseEntity<AuthenticationResponse> updateUser(@PathVariable Long id, @Valid @RequestBody User updatedUserInfo) {
         User user = userService.updateUser(id, updatedUserInfo);  
         if (user == null) {
             throw new UserNotFoundException(id);  
         }
-        return user;
+        String jwtToken = jwtService.generateToken(user);
+        return ResponseEntity.ok(
+                AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build()
+                );
+                
     }
 
     // Deletes user 

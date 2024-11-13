@@ -9,7 +9,7 @@ axios.defaults.baseURL = 'http://localhost:8080';
 const TournamentsPage = () => {
   const [tournaments, setTournaments] = useState([]);
   const [filters, setFilters] = useState({
-    time: 'this week',
+    time: 'all',
     location: 'global',
   });
   const [loading, setLoading] = useState(true);

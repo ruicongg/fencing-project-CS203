@@ -26,6 +26,11 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
 
   const handleSave = async () => {
     // Validation: Check if registration dates and tournament dates are valid
+    if (new Date(registrationStartDate) < new Date()) {
+      setErrorMessage('Registration start date must be in the present or future.');
+      return;
+    }
+    
     if (new Date(registrationStartDate) >= new Date(registrationEndDate)) {
       setErrorMessage(
         "Registration start date must be before the registration end date."

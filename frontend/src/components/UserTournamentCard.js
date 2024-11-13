@@ -12,19 +12,10 @@ const TournamentCard = ({ tournament, onSelect, showStatus = true }) => {
 
   return (
     <div className="tournament-card" onClick={onSelect}>
-      <h3>{tournament.name}</h3>
+      <h2>{tournament.name}</h2>
       <p>{formattedStartDate} - {formattedEndDate}</p>
-      <p>{tournament.venue}</p>
-      {/* <p>{participantCount} Participants</p> */}
-
-      {/* Conditionally render the status button */}
-      {showStatus && (
-        <button 
-          className={tournament.status === 'Ongoing' ? 'ongoing' : 'upcoming'}
-        >
-          {tournament.status}
-        </button>
-      )}
+      <p>Venue: {tournament.venue}</p>
+      <h4>Registration deadline: {tournament.registrationEndDate}</h4>
     </div>
   );
 };

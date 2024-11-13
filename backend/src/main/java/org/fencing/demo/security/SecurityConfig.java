@@ -81,7 +81,7 @@ public class SecurityConfig {
                         // Then user and player endpoints
                         .requestMatchers(HttpMethod.GET, "/users/id").hasRole("USER")
                         .requestMatchers(HttpMethod.GET, "/users/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/users/*").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/users/*").hasAnyRole("USER", "ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/users/*").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/player/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/players/**").permitAll()

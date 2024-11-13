@@ -9,7 +9,7 @@ axios.defaults.baseURL = 'http://localhost:8080';
 
 const UpcomingMatchesPage = () => {
   const [matches, setMatches] = useState([]);
-  const [eventDetails, setEventDetails] = useState({});
+  const [eventDetailsMap, setEventDetailsMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -43,7 +43,6 @@ const UpcomingMatchesPage = () => {
       setUserId(response.data);
     } catch (error) {
       setError('Failed to fetch user ID.');
-      console.error(error);
     }
   };
 
@@ -56,10 +55,9 @@ const UpcomingMatchesPage = () => {
         (match) => match.player1.id === userId || match.player2.id === userId
       );
       setMatches(userMatches);
-      fetchEventDetails(userMatches);
+      fetchEventDetails(userMatches); // Fetch event details for matches
     } catch (error) {
       setError('Failed to fetch upcoming matches.');
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -71,13 +69,15 @@ const UpcomingMatchesPage = () => {
 
     for (const eventId of uniqueEventIds) {
       try {
-        const response = await axios.get(`/tournaments/${matches[0].event.tournament.id}/events/${eventId}`);
+        const response = await axios.get(`/tournaments/1/events/${eventId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         fetchedEventDetails[eventId] = response.data;
       } catch (error) {
         console.error(`Failed to fetch event details for event ID: ${eventId}`, error);
       }
     }
-    setEventDetails(fetchedEventDetails);
+    setEventDetailsMap(fetchedEventDetails);
   };
 
   const getDateRangeForFilter = (filter) => {
@@ -105,12 +105,21 @@ const UpcomingMatchesPage = () => {
     }
   };
 
-  const filteredMatches = matches.filter((match) => {
+  const filteredMatches = matches.map((match) => {
+    // Populate event details only if missing
+    if (!match.event.startDate && eventDetailsMap[match.event.id]) {
+      return {
+        ...match,
+        event: eventDetailsMap[match.event.id], // Replace with full event details
+      };
+    }
+    return match;
+  }).filter((match) => {
     const { time, weapon } = filters;
-    const event = eventDetails[match.event.id];
+    const event = match.event;
     const matchStartDate = new Date(event?.startDate);
 
-    const weaponMatch = weapon === 'all' || event?.weapon?.toUpperCase() === weapon.toUpperCase();
+    const weaponMatch = weapon === 'all' || event.weapon?.toUpperCase() === weapon.toUpperCase();
     if (time === 'all') return weaponMatch;
 
     const [startDate, endDate] = getDateRangeForFilter(time);
@@ -137,11 +146,41 @@ const UpcomingMatchesPage = () => {
 
   const groupMatchesByDate = (matches) => {
     return matches.reduce((grouped, match) => {
-      const date = new Date(eventDetails[match.event.id]?.startDate).toLocaleDateString('en-CA');
-      grouped[date] = grouped[date] || [];
-      grouped[date].push(match);
+      // Use the event details from eventDetailsMap if startDate is missing
+      const event = match.event.startDate ? match.event : eventDetailsMap[match.event] || {};
+      const matchDate = new Date(event.startDate).toLocaleDateString('en-CA'); // Format date as 'YYYY-MM-DD'
+      
+      if (!grouped[matchDate]) {
+        grouped[matchDate] = [];
+      }
+      grouped[matchDate].push({ ...match, event }); // Add event details to each match if missing
+  
       return grouped;
     }, {});
+  };
+  
+  // Sorting function to sort matches by event start time within each date group
+  const renderMatchesByDate = (groupedMatches) => {
+    const today = new Date().toLocaleDateString('en-CA');
+    const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
+    
+    const todayMatches = (groupedMatches[today] || []).sort((a, b) => new Date(a.event.startDate) - new Date(b.event.startDate));
+    const tomorrowMatches = (groupedMatches[tomorrow] || []).sort((a, b) => new Date(a.event.startDate) - new Date(b.event.startDate));
+    const otherDates = Object.keys(groupedMatches)
+      .filter((date) => date !== today && date !== tomorrow)
+      .sort() // Sort dates in ascending order
+      .map((date) => ({
+        date,
+        matches: (groupedMatches[date] || []).sort((a, b) => new Date(a.event.startDate) - new Date(b.event.startDate)),
+      }));
+  
+    return (
+      <div>
+        {renderMatchSection('Today', today, todayMatches)}
+        {renderMatchSection('Tomorrow', tomorrow, tomorrowMatches)}
+        {otherDates.map(({ date, matches }) => renderMatchSection(date, date, matches))}
+      </div>
+    );
   };
 
   const getStageType = (match) => {
@@ -150,43 +189,48 @@ const UpcomingMatchesPage = () => {
     return 'Unknown Stage';
   };
 
-  const renderMatchesByDate = (groupedMatches) => {
-    const today = new Date().toLocaleDateString('en-CA');
-    const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
+  // const renderMatchesByDate = (groupedMatches) => {
+  //   const today = new Date().toLocaleDateString('en-CA');
+  //   const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
 
-    const todayMatches = groupedMatches[today] || [];
-    const tomorrowMatches = groupedMatches[tomorrow] || [];
-    const otherDates = Object.keys(groupedMatches).filter((date) => date !== today && date !== tomorrow);
+  //   const todayMatches = groupedMatches[today] || [];
+  //   const tomorrowMatches = groupedMatches[tomorrow] || [];
+  //   const otherDates = Object.keys(groupedMatches).filter((date) => date !== today && date !== tomorrow);
 
-    return (
-      <div>
-        {renderMatchSection('Today', today, todayMatches)}
-        {renderMatchSection('Tomorrow', tomorrow, tomorrowMatches)}
-        {otherDates.map((date) => renderMatchSection(date, date, groupedMatches[date]))}
-      </div>
-    );
-  };
+  //   return (
+  //     <div>
+  //       {renderMatchSection('Today', today, todayMatches)}
+  //       {renderMatchSection('Tomorrow', tomorrow, tomorrowMatches)}
+  //       {otherDates.map((date) => renderMatchSection(date, date, groupedMatches[date]))}
+  //     </div>
+  //   );
+  // };
 
   const renderMatchSection = (title, date, matches) => (
     <div className="date-section" key={date}>
       <h2>{title}</h2>
       {matches.length > 0 ? (
         matches.map((match) => {
-          const event = eventDetails[match.event.id];
+          // Retrieve event details from eventDetailsMap if missing in match
+          const event = match.event.startDate ? match.event : eventDetailsMap[match.event] || {};
+          const tournament = event.tournament || {};
           const opponent = match.player1.id === userId ? match.player2 : match.player1;
           const userScore = match.player1.id === userId ? match.player1Score : match.player2Score;
           const opponentScore = match.player1.id === userId ? match.player2Score : match.player1Score;
           const stageType = getStageType(match);
-
+  
           return (
             <div key={match.id} className="match-item">
               <p>Match ID: {match.id}, {stageType}</p>
               <p>
-                Event: {event?.gender}, {event?.weapon},{' '}
-                {event && new Date(event.startDate).toLocaleString()} -{' '}
-                {event && new Date(event.endDate).toLocaleString()}
+                Event: {event.gender || 'N/A'}, {event.weapon || 'N/A'}
               </p>
-              <p>Venue: {event?.tournament?.venue}</p>
+              <p>
+              {event.startDate ? new Date(event.startDate).toLocaleString() : 'N/A'} - 
+              {event.endDate ? new Date(event.endDate).toLocaleString() : 'N/A'}
+              </p>
+              <h4>{tournament.name || 'N/A'}</h4>
+              <p>Venue: {tournament.venue || 'N/A'}</p>
               <p>Opponent: Player ID: {opponent.id}, @{opponent.username}</p>
               {(userScore !== 0 && opponentScore !== 0) && (
                 <button onClick={() => setSelectedMatch(match)} className="view-results-button">
@@ -200,7 +244,9 @@ const UpcomingMatchesPage = () => {
         <p>No matches for {title.toLowerCase()}</p>
       )}
     </div>
-  );
+  );  
+  
+  
 
   if (loading) return <p>Loading matches...</p>;
   if (error) return <p>{error}</p>;

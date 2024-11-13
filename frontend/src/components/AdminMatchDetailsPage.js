@@ -26,8 +26,8 @@ const AdminMatchDetailsPage = () => {
         setPlayer1Score(response.data.player1Score || '');
         setPlayer2Score(response.data.player2Score || '');
       } catch (error) {
-        setError('Error fetching match details.');
-        console.error('Error fetching match details:', error);
+        setError('Error fetching match details.', error);
+        // console.error('Error fetching match details:', error);
       } finally {
         setLoading(false);
       }
