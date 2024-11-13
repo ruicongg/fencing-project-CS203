@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.fencing.demo.events.Event;
+import org.fencing.demo.groupstage.GroupStage;
 import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.match.Match;
 import org.fencing.demo.player.Player;
@@ -22,6 +23,10 @@ public class KnockoutStageGenerator {
     }
 
     public List<Match> generateInitialKnockoutMatches(KnockoutStage knockoutStage, Event event) {
+        if(checkIfGroupStageComplete(event.getGroupStages()) == false){
+            throw new IllegalArgumentException("GroupStage has not been completed");
+        }
+        
         Set<PlayerRank> rankings = event.getRankings();
         int totalPlayers = rankings.size();
 
@@ -36,11 +41,39 @@ public class KnockoutStageGenerator {
         return createMatchesWithByes(qualifiedPlayers, numberOfByes, knockoutStage, event);
     }
 
+    private boolean checkIfGroupStageComplete(List<GroupStage> groupStages){
+        for(GroupStage gs:groupStages){
+            List<Match> matches = gs.getMatches();
+            for(Match m : matches){
+                if(m.isFinished() == false){
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     public List<Match> generateNextKnockoutMatches(KnockoutStage previousStage, KnockoutStage currentStage,
             Event event) {
+        if(checkIfPrevStageComplete(previousStage) == false){
+            throw new IllegalArgumentException("Previous Knockout Stage has not been completed");
+        }
         List<Match> matches = previousStage.getMatches();
         List<Player> winners = getPreviousRoundWinners(matches);
         return createMatches(winners, currentStage, event);
+    }
+
+    private boolean checkIfPrevStageComplete(KnockoutStage previousStage){
+
+        List<Match> matches = previousStage.getMatches();
+        for(Match m : matches){
+            if(m.isFinished() == false){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private int largestPowerOf2LessThan(int number) {
