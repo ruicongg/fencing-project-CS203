@@ -18,206 +18,207 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
+
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-class GroupStageIntegrationTest extends BaseIntegrationTest{
 
-    List<Player> players;
-    @BeforeEach
-    void setUp() {
+class GroupStageIntegrationTest extends BaseIntegrationTest {
 
-        super.setUp();
-        players = new ArrayList<>();
+        List<Player> players;
 
-        //add 8 player into database
-        for(int i = 1; i <= 8; i++){
-                Player tempPlayer = new Player("player" + i, passwordEncoder.encode("password" + i), "player" + i + "@example.com", Role.USER, Gender.MALE);
-                tempPlayer.setElo(1700);
-                playerRepository.save(tempPlayer);
-                players.add(tempPlayer);
+        @BeforeEach
+        void setUp() {
+
+                super.setUp();
+                players = new ArrayList<>();
+
+                // add 8 player into database
+                for (int i = 1; i <= 8; i++) {
+                        Player tempPlayer = new Player("player" + i, passwordEncoder.encode("password" + i),
+                                        "player" + i + "@example.com", Role.USER, Gender.MALE);
+                        tempPlayer.setElo(1700);
+                        playerRepository.save(tempPlayer);
+                        players.add(tempPlayer);
+                }
+                for (Player p : players) {
+                        event.getRankings().add(createPlayerRank(p, event));
+                }
+                event = eventRepository.save(event);
         }
-        for(Player p:players){
-                event.getRankings().add(createPlayerRank(p, event));
+
+        @Test
+        public void getGroupStage_ValidGroupStageId_Success() throws Exception {
+                Long id = groupStage.getId();
+                URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId()
+                                + "/groupStage/" + id);
+
+                HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+                ResponseEntity<GroupStage> result = restTemplate.exchange(uri, HttpMethod.GET, request,
+                                GroupStage.class);
+
+                assertEquals(200, result.getStatusCode().value());
+                assertEquals(groupStage.getId(), result.getBody().getId());
         }
-        event = eventRepository.save(event);
-    }
 
+        @Test
+        public void getGroupStage_InvalidGroupStageId_Failure() throws Exception {
+                URI uri = new URI(
+                                baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId()
+                                                + "/groupStage/999");
 
-    @Test
-    public void getGroupStage_ValidGroupStageId_Success() throws Exception {
-        Long id = groupStage.getId();
-        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId()
-                + "/groupStage/" + id);
+                HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+                ResponseEntity<GroupStage> result = restTemplate.exchange(uri, HttpMethod.GET, request,
+                                GroupStage.class);
 
-        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
-        ResponseEntity<GroupStage> result = restTemplate.exchange(uri, HttpMethod.GET, request,
-                GroupStage.class);
+                assertEquals(404, result.getStatusCode().value());
+        }
 
-        assertEquals(200, result.getStatusCode().value());
-        assertEquals(groupStage.getId(), result.getBody().getId());
-    }
+        @Test
+        public void addGroupStage_RegularUser_Failure() throws Exception {
+                URI uri = new URI(
+                                baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId()
+                                                + "/groupStage");
 
-    @Test
-    public void getGroupStage_InvalidGroupStageId_Failure() throws Exception {
-        URI uri = new URI(
-                baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/999");
-        
-        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
-        ResponseEntity<GroupStage> result = restTemplate.exchange(uri, HttpMethod.GET, request,
-                GroupStage.class);
+                HttpEntity<GroupStage> request = new HttpEntity<>(groupStage, createHeaders(userToken));
+                ResponseEntity<GroupStage> result = restTemplate
+                                .exchange(uri, HttpMethod.POST, request, GroupStage.class);
 
-        assertEquals(404, result.getStatusCode().value());
-    }
+                assertEquals(403, result.getStatusCode().value());
+        }
 
+        @Test
+        public void updateGroupStage_AdminUser_Success() throws Exception {
+                // Create a valid GroupStage
+                Long id = groupStage.getId();
 
-    @Test
-    public void addGroupStage_RegularUser_Failure() throws Exception {
-        URI uri = new URI(
-                baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage");
+                // System.out.println("Before adding match:"+groupStage);
+                // System.out.println("GroupStage ID:" + groupStage.getId());
+                // System.out.println("Matches:" + groupStage.getMatches());
+                // Create the URI for the PUT request
+                URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId()
+                                + "/groupStage/" + id);
 
+                // Add a new match to the GroupStage
+                Match newMatch = Match.builder()
+                                .player1(players.get(1))
+                                .player2(players.get(2))
+                                .player1Score(15)
+                                .player2Score(10)
+                                .event(event) // Make sure event is associated with the match
+                                .groupStage(groupStage)
+                                .build();
+                matchRepository.save(newMatch);
+                groupStage.getMatches().add(newMatch);
 
-        HttpEntity<GroupStage> request = new HttpEntity<>(groupStage, createHeaders(userToken));
-        ResponseEntity<GroupStage> result = restTemplate
-                .exchange(uri, HttpMethod.POST, request, GroupStage.class);
+                // Create the HTTP request with the updated GroupStage
+                HttpEntity<GroupStage> request = new HttpEntity<>(groupStage, createHeaders(adminToken));
 
-        assertEquals(403, result.getStatusCode().value());
-    }
+                // Execute the PUT request
 
-    @Test
-    public void updateGroupStage_AdminUser_Success() throws Exception {
-        // Create a valid GroupStage
-        Long id = groupStage.getId();
+                ResponseEntity<GroupStage> result = restTemplate
+                                .exchange(uri, HttpMethod.PUT, request, GroupStage.class);
 
-        // System.out.println("Before adding match:"+groupStage);
-        // System.out.println("GroupStage ID:" + groupStage.getId());
-        // System.out.println("Matches:" + groupStage.getMatches());
-        // Create the URI for the PUT request
-        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId()
-                + "/groupStage/" + id);
+                assertEquals(200, result.getStatusCode().value());
+                assertEquals(groupStage.getId(), result.getBody().getId());
+                // Assert the results
+                // assertEquals("smtth", result.getBody());
+        }
 
-        // Add a new match to the GroupStage
-        Match newMatch = Match.builder()
-                .player1(players.get(1))
-                .player2(players.get(2))
-                .player1Score(15)
-                .player2Score(10)
-                .event(event) // Make sure event is associated with the match
-                .groupStage(groupStage)
-                .build();
-        matchRepository.save(newMatch);
-        groupStage.getMatches().add(newMatch);
+        @Test
+        public void updateGroupStage_RegularUser_Failure() throws Exception {
+                Long id = groupStage.getId();
+                URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId()
+                                + "/groupStage/" + id);
 
-        // Create the HTTP request with the updated GroupStage
-        HttpEntity<GroupStage> request = new HttpEntity<>(groupStage, createHeaders(adminToken));
+                GroupStage updatedGroupStage = GroupStage.builder()
+                                .id(id)
+                                .event(event)
+                                .build();
 
-        // Execute the PUT request
+                HttpEntity<GroupStage> request = new HttpEntity<>(updatedGroupStage, createHeaders(userToken));
+                ResponseEntity<GroupStage> result = restTemplate
+                                .exchange(uri, HttpMethod.PUT, request, GroupStage.class);
 
-        ResponseEntity<GroupStage> result = restTemplate
-                .exchange(uri, HttpMethod.PUT, request, GroupStage.class);
+                assertEquals(403, result.getStatusCode().value());
+        }
 
-        assertEquals(200, result.getStatusCode().value());
-        assertEquals(groupStage.getId(), result.getBody().getId());
-        // Assert the results
-        // assertEquals("smtth", result.getBody());
-    }
+        @Test
+        public void updateGroupStage_InvalidId_Failure() throws Exception {
+                URI uri = new URI(
+                                baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId()
+                                                + "/groupStage/999");
 
-    @Test
-    public void updateGroupStage_RegularUser_Failure() throws Exception {
-        Long id = groupStage.getId();
-        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId()
-                + "/groupStage/" + id);
+                GroupStage updateGroupStage = GroupStage.builder()
+                                .id(999L)
+                                .event(event)
+                                .build();
 
-        GroupStage updatedGroupStage = GroupStage.builder()
-                .id(id)
-                .event(event)
-                .build();
+                HttpEntity<GroupStage> request = new HttpEntity<>(updateGroupStage, createHeaders(adminToken));
+                ResponseEntity<GroupStage> result = restTemplate
+                                .exchange(uri, HttpMethod.PUT, request, GroupStage.class);
 
-        HttpEntity<GroupStage> request = new HttpEntity<>(updatedGroupStage, createHeaders(userToken));
-        ResponseEntity<GroupStage> result = restTemplate
-                .exchange(uri, HttpMethod.PUT, request, GroupStage.class);
+                assertEquals(404, result.getStatusCode().value());
+        }
 
-        assertEquals(403, result.getStatusCode().value());
-    }
+        @Test
+        public void deleteGroupStage_AdminUser_Success() throws Exception {
+                // Create and save a valid GroupStage
 
-    @Test
-    public void updateGroupStage_InvalidId_Failure() throws Exception {
-        URI uri = new URI(
-                baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/999");
+                Long id = groupStage.getId();
 
-        GroupStage updateGroupStage = GroupStage.builder()
-                .id(999L)
-                .event(event)
-                .build();
+                // Construct the URI for the DELETE request
+                URI uri = URI.create(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId()
+                                + "/groupStage/" + id);
 
-        HttpEntity<GroupStage> request = new HttpEntity<>(updateGroupStage, createHeaders(adminToken));
-        ResponseEntity<GroupStage> result = restTemplate
-                .exchange(uri, HttpMethod.PUT, request, GroupStage.class);
+                // Log the ID of the GroupStage to be deleted
+                // System.out.println("Deleting GroupStage with ID: " + id);
 
-        assertEquals(404, result.getStatusCode().value());
-    }
+                // Create the HTTP request entity with headers
+                HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
 
-    @Test
-    public void deleteGroupStage_AdminUser_Success() throws Exception {
-        // Create and save a valid GroupStage
+                // Execute the DELETE request
+                ResponseEntity<Void> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, Void.class);
+                // Log the response status
+                // System.out.println("Response Status: " + result.getStatusCode());
 
-        Long id = groupStage.getId();
+                // Assert the response status code and database state
+                assertEquals(204, result.getStatusCode().value());
+                // Verify that the GroupStage has been deleted
+        }
 
-        // Construct the URI for the DELETE request
-        URI uri = URI.create(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId()
-                + "/groupStage/" + id);
+        @Test
+        public void deleteGroupStage_RegularUser_Failure() throws Exception {
+                Long id = groupStage.getId();
+                URI uri = createUrl("/tournaments/" + tournament.getId() + "/events/" + event.getId()
+                                + "/groupStage/" + id);
 
-        // Log the ID of the GroupStage to be deleted
-        // System.out.println("Deleting GroupStage with ID: " + id);
+                HttpEntity<Void> request = new HttpEntity<>(createHeaders(userToken));
+                ResponseEntity<Void> result = restTemplate
+                                .exchange(uri, HttpMethod.DELETE, request, Void.class);
 
-        // Create the HTTP request entity with headers
-        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+                assertEquals(403, result.getStatusCode().value());
+                assertTrue(groupStageRepository.existsById(id));
+        }
 
-        // Execute the DELETE request
-        ResponseEntity<Void> result = restTemplate.exchange(uri, HttpMethod.DELETE, request, Void.class);
-        // Log the response status
-        // System.out.println("Response Status: " + result.getStatusCode());
+        @Test
+        public void deleteGroupStage_InvalidId_Failure() throws Exception {
+                Long id = 999L;
+                assertFalse(groupStageRepository.existsById(id));
+                URI uri = URI.create(
+                                baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId()
+                                                + "/groupStage/999");
 
-        // Assert the response status code and database state
-        assertEquals(204, result.getStatusCode().value());
-        // Verify that the GroupStage has been deleted
-    }
+                HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
+                ResponseEntity<Void> result = restTemplate
+                                .exchange(uri, HttpMethod.DELETE, request, Void.class);
 
-    @Test
-    public void deleteGroupStage_RegularUser_Failure() throws Exception {
-        Long id = groupStage.getId();
-        URI uri = createUrl("/tournaments/" + tournament.getId() + "/events/" + event.getId()
-                + "/groupStage/" + id);
+                assertEquals(404, result.getStatusCode().value());
+        }
 
-        HttpEntity<Void> request = new HttpEntity<>(createHeaders(userToken));
-        ResponseEntity<Void> result = restTemplate
-                .exchange(uri, HttpMethod.DELETE, request, Void.class);
-
-        assertEquals(403, result.getStatusCode().value());
-        assertTrue(groupStageRepository.existsById(id));
-    }
-
-    @Test
-    public void deleteGroupStage_InvalidId_Failure() throws Exception {
-        Long id = 999L;
-        assertFalse(groupStageRepository.existsById(id));
-        URI uri = URI.create(
-                baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/groupStage/999");
-
-        HttpEntity<Void> request = new HttpEntity<>(createHeaders(adminToken));
-        ResponseEntity<Void> result = restTemplate
-                .exchange(uri, HttpMethod.DELETE, request, Void.class);
-
-        assertEquals(404, result.getStatusCode().value());
-    }
-
-
-    private PlayerRank createPlayerRank(Player player, Event event) {
-        PlayerRank playerRank = new PlayerRank();
-        playerRank.setEvent(event);
-        playerRank.setPlayer(player);
-        return playerRank;
-    }
-
+        private PlayerRank createPlayerRank(Player player, Event event) {
+                PlayerRank playerRank = new PlayerRank();
+                playerRank.setEvent(event);
+                playerRank.setPlayer(player);
+                return playerRank;
+        }
 
 }

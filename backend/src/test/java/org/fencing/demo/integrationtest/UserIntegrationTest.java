@@ -14,9 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
+
 public class UserIntegrationTest extends BaseIntegrationTest {
 
     @BeforeEach
@@ -80,12 +80,13 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         User newUser = new User("user999", "password999", "user999@example.com", Role.USER);
 
         HttpEntity<User> request = new HttpEntity<>(newUser, createHeaders(adminToken));
-        ResponseEntity<AuthenticationResponse> result = restTemplate.exchange(uri, HttpMethod.PUT, request, AuthenticationResponse.class);
+        ResponseEntity<AuthenticationResponse> result = restTemplate.exchange(uri, HttpMethod.PUT, request,
+                AuthenticationResponse.class);
 
         assertEquals(200, result.getStatusCode().value());
         // Verify we received a JWT token
         assertNotNull(result.getBody().getToken());
-        
+
         // Verify the user was actually updated in the database
         User updatedUser = userRepository.findById(id).orElse(null);
         assertNotNull(updatedUser);
@@ -99,7 +100,8 @@ public class UserIntegrationTest extends BaseIntegrationTest {
         User newUser = new User("user999", "password999", "user999@example.com", Role.USER);
 
         HttpEntity<User> request = new HttpEntity<>(newUser, createHeaders(adminToken));
-        ResponseEntity<AuthenticationResponse> result = restTemplate.exchange(uri, HttpMethod.PUT, request, AuthenticationResponse.class);
+        ResponseEntity<AuthenticationResponse> result = restTemplate.exchange(uri, HttpMethod.PUT, request,
+                AuthenticationResponse.class);
 
         assertEquals(404, result.getStatusCode().value());
     }

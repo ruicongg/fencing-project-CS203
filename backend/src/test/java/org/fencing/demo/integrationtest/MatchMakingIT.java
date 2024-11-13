@@ -11,14 +11,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
-@ActiveProfiles("test")
+
 public class MatchMakingIT extends BaseIntegrationTest {
-    
+
     @Test
     public void addKnockoutStage_AdminUser_Success() throws Exception {
         URI uri = createUrl("/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage");
-
 
         HttpEntity<KnockoutStage> request = new HttpEntity<>(knockoutStage, createHeaders(adminToken));
         ResponseEntity<KnockoutStage> result = restTemplate

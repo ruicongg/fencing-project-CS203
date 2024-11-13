@@ -15,23 +15,26 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
+
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
+
 class KnockoutStageIntegrationTest extends BaseIntegrationTest {
 
     private Player player1;
     private Player player2;
+
     @BeforeEach
     void setUp() {
         super.setUp();
 
         // Initialize players for the matches
-        player1 = new Player("player1", passwordEncoder.encode("password1"), "player1@example.com", Role.USER, Gender.MALE);
+        player1 = new Player("player1", passwordEncoder.encode("password1"), "player1@example.com", Role.USER,
+                Gender.MALE);
         player1.setElo(1700);
         playerRepository.save(player1);
 
-        player2 = new Player("player2", passwordEncoder.encode("password2"), "player2@example.com", Role.USER, Gender.MALE);
+        player2 = new Player("player2", passwordEncoder.encode("password2"), "player2@example.com", Role.USER,
+                Gender.MALE);
         player2.setElo(1700);
         playerRepository.save(player2);
 
@@ -57,11 +60,9 @@ class KnockoutStageIntegrationTest extends BaseIntegrationTest {
         assertEquals(404, result.getStatusCode().value());
     }
 
-
     @Test
     public void addKnockoutStage_RegularUser_Failure() throws Exception {
         URI uri = createUrl("/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/knockoutStage");
-
 
         HttpEntity<KnockoutStage> request = new HttpEntity<>(knockoutStage, createHeaders(userToken));
         ResponseEntity<KnockoutStage> result = restTemplate
@@ -69,8 +70,6 @@ class KnockoutStageIntegrationTest extends BaseIntegrationTest {
 
         assertEquals(403, result.getStatusCode().value());
     }
-
-
 
     @Test
     public void deleteKnockoutStage_AdminUser_Success() throws Exception {
