@@ -83,20 +83,20 @@ const TournamentsPage = () => {
   const filteredTournaments = tournaments.filter((tournament) => {
     const tournamentStart = new Date(tournament.tournamentStartDate);
     const tournamentEnd = new Date(tournament.tournamentEndDate);
-
-    // Time filter
+  
     const withinTimeRange =
-      !startDate || !endDate || // "All" option (no date filter)
+      !startDate || !endDate || 
       (tournamentStart >= startDate && tournamentStart <= endDate) ||
       (tournamentEnd >= startDate && tournamentEnd <= endDate) ||
       (tournamentStart <= startDate && tournamentEnd >= endDate);
-
-    // Location filter
+  
     const locationMatch =
-      filters.location === 'global' || tournament.location.toLowerCase() === filters.location.toLowerCase();
-
+      filters.location === 'global' || 
+      (tournament.location && typeof tournament.location === 'string' && tournament.location.toLowerCase() === filters.location.toLowerCase());
+  
     return withinTimeRange && locationMatch;
   });
+  
 
   const handleTournamentClick = (tournamentId) => {
     navigate(`/dashboard/tournaments/${tournamentId}/events`);

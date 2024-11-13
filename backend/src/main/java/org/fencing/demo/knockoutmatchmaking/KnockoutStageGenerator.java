@@ -22,6 +22,7 @@ public class KnockoutStageGenerator {
     }
 
     public List<Match> generateInitialKnockoutMatches(KnockoutStage knockoutStage, Event event) {
+        
         Set<PlayerRank> rankings = event.getRankings();
         int totalPlayers = rankings.size();
 
@@ -38,9 +39,24 @@ public class KnockoutStageGenerator {
 
     public List<Match> generateNextKnockoutMatches(KnockoutStage previousStage, KnockoutStage currentStage,
             Event event) {
+        if(checkIfPrevStageComplete(previousStage) == false){
+            throw new IllegalArgumentException("Previous Knockout Stage has not been completed");
+        }
         List<Match> matches = previousStage.getMatches();
         List<Player> winners = getPreviousRoundWinners(matches);
         return createMatches(winners, currentStage, event);
+    }
+
+    private boolean checkIfPrevStageComplete(KnockoutStage previousStage){
+
+        List<Match> matches = previousStage.getMatches();
+        for(Match m : matches){
+            if(m.isFinished() == false){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private int largestPowerOf2LessThan(int number) {
