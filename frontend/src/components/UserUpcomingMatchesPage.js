@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
-import '../styles/UserUpcomingMatchesPage.css';
+import '../styles/shared/index.css';
 
 axios.defaults.baseURL = 'http://localhost:8080';
 
@@ -189,25 +189,8 @@ const UpcomingMatchesPage = () => {
     return 'Unknown Stage';
   };
 
-  // const renderMatchesByDate = (groupedMatches) => {
-  //   const today = new Date().toLocaleDateString('en-CA');
-  //   const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
-
-  //   const todayMatches = groupedMatches[today] || [];
-  //   const tomorrowMatches = groupedMatches[tomorrow] || [];
-  //   const otherDates = Object.keys(groupedMatches).filter((date) => date !== today && date !== tomorrow);
-
-  //   return (
-  //     <div>
-  //       {renderMatchSection('Today', today, todayMatches)}
-  //       {renderMatchSection('Tomorrow', tomorrow, tomorrowMatches)}
-  //       {otherDates.map((date) => renderMatchSection(date, date, groupedMatches[date]))}
-  //     </div>
-  //   );
-  // };
-
   const renderMatchSection = (title, date, matches) => (
-    <div className="date-section" key={date}>
+    <div className="section-container" key={date}>
       <h2>{title}</h2>
       {matches.length > 0 ? (
         matches.map((match) => {
@@ -220,23 +203,29 @@ const UpcomingMatchesPage = () => {
           const stageType = getStageType(match);
   
           return (
-            <div key={match.id} className="match-item">
-              <p>Match ID: {match.id}, {stageType}</p>
-              <p>
-                Event: {event.gender || 'N/A'}, {event.weapon || 'N/A'}
-              </p>
-              <p>
-              {event.startDate ? new Date(event.startDate).toLocaleString() : 'N/A'} - 
-              {event.endDate ? new Date(event.endDate).toLocaleString() : 'N/A'}
-              </p>
+            <div className="modal">
+            <div key={match.id} className="modal-content">
+              <h3>Match ID: {match.id} [{stageType}]</h3>
               <h4>{tournament.name || 'N/A'}</h4>
-              <p>Venue: {tournament.venue || 'N/A'}</p>
-              <p>Opponent: Player ID: {opponent.id}, @{opponent.username}</p>
+              <div className="list-item">
+                Event ID: {event.id}, {event.gender || 'N/A'}, {event.weapon || 'N/A'}
+              </div>
+              <div className="list-item">
+                {event.startDate ? new Date(event.startDate).toLocaleString() : 'N/A'} - 
+                {event.endDate ? new Date(event.endDate).toLocaleString() : 'N/A'}
+              </div>
+              <div className="list-item">
+                Venue: {tournament.venue || 'N/A'}
+              </div>
+              <div className="list-item">
+                Opponent: @{opponent.username}
+              </div>
               {(userScore !== 0 && opponentScore !== 0) && (
                 <button onClick={() => setSelectedMatch(match)} className="view-results-button">
                   View results
                 </button>
               )}
+            </div>
             </div>
           );
         })
@@ -254,8 +243,19 @@ const UpcomingMatchesPage = () => {
   const groupedMatches = groupMatchesByDate(filteredMatches);
 
   return (
-    <div className="upcoming-matches-page">
-      <h1>Upcoming Matches</h1>
+    <div className="dashboard">
+      {/* Error Message Container */}
+      {error && (
+        <div className="error-container">
+          <svg className="error-icon" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+          </svg>
+          <span className="error-message">{error}</span>
+          <button className="close-error-button" onClick={() => setError(null)}>✕</button>
+        </div>
+      )}
+
+      <h1 className="dashboard-title">Upcoming Matches</h1>
       <div className="filter-by">
         <h3>Filter by</h3>
         <FilterDropdown
@@ -281,7 +281,7 @@ const UpcomingMatchesPage = () => {
 
 // Define the FilterDropdown component
 const FilterDropdown = ({ label, options, value, onChange }) => (
-  <div>
+  <div className="filter-by">
     <label>{label}</label>
     <select value={value} onChange={(e) => onChange(e.target.value)}>
       {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -294,12 +294,14 @@ const MatchResultsPopup = ({ match, userId, onClose }) => {
   const userScore = match.player1.id === userId ? match.player1Score : match.player2Score;
   const opponentScore = match.player1.id === userId ? match.player2Score : match.player1Score;
   return (
-    <div className="popup-overlay">
-      <div className="popup-content">
+    <div className="modal-backdrop">
+      <div className="modal">
+      <div className="modal-content">
         <h3>Winner: Player {match.winner?.id} @{match.winner?.username}</h3>
         <p>Your score: {userScore}</p>
         <p>Opponent's score: {opponentScore}</p>
         <button onClick={onClose}>Close</button>
+      </div>
       </div>
     </div>
   );

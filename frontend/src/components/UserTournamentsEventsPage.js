@@ -129,11 +129,11 @@ const TournamentEventsPage = () => {
   const formatDate = (dateString) => new Date(dateString).toLocaleDateString();
 
   return (
-    <div className="tournament-events-page">
-      <h1>Events in Tournament</h1>
+    <div className="dashboard">
+      <h1 className="dashboard-title">Events in Tournament</h1>
       
       {/* Filter Section */}
-      <div className="filter-section">
+      <div className="filter-by">
         <label>Gender</label>
         <select
           value={filters.gender}
@@ -160,20 +160,28 @@ const TournamentEventsPage = () => {
       {loading ? (
         <p className="loading-message">Loading events...</p>
       ) : error ? (
-        <p className="error-message">{error}</p>
+        <div className="error-container">
+          <svg className="error-icon" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+          </svg>
+          <span className="error-message">{error}</span>
+          <button className="close-error-button" onClick={() => setError(null)}>✕</button>
+        </div>
       ) : (
-        <div className="event-list">
+        <div className="section-container">
           {filteredEvents.length > 0 ? (
             filteredEvents.map((event) => {
               const isJoined = userEvents.includes(event.id);
 
               return (
-                <div key={event.id} className="event-card">
-                  <h3>{event.name}</h3>
-                  <p>Start: {formatDate(event.startDate)}</p>
-                  <p>End: {formatDate(event.endDate)}</p>
+                <div key={event.id} className="modal">
+                <div className="modal-content">
                   <p>Gender: {event.gender}</p>
                   <p>Weapon: {event.weapon}</p>
+                  <p>Start: {formatDate(event.startDate)}</p>
+                  <p>End: {formatDate(event.endDate)}</p>
+                </div>
+                <div className="modal-action">
                   <button
                     className={`join-button ${isJoined ? 'joined' : ''}`}
                     disabled={isJoined}
@@ -181,6 +189,7 @@ const TournamentEventsPage = () => {
                   >
                     {isJoined ? 'Joined' : 'Join'}
                   </button>
+                </div>
                 </div>
               );
             })

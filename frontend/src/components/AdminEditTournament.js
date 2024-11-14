@@ -154,7 +154,10 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
           />
         </div>
         <div className="modal-actions">
-          <button onClick={onClose} disabled={isSaving}>
+          <button 
+          onClick={onClose} disabled={isSaving}
+          className="cancel-button"
+          >
             Cancel
           </button>
           <button
@@ -168,6 +171,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
               !tournamentStartDate ||
               !tournamentEndDate
             }
+            className="add-button"
           >
             {isSaving ? "Saving..." : "Save"}
           </button>

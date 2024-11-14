@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
-import '../styles/AdminEventsList.css';
+import '../styles/shared/index.css';
 
 axios.defaults.baseURL = 'http://localhost:8080';
 
@@ -23,16 +23,22 @@ const AdminEventsList = ({ events, tournamentId, onEditEvent, onDeleteEvent }) =
   };
 
   return (
-    <div className="events-list">
+    <div>
       {events.length > 0 ? (
         events.map((event) => (
-          <div key={event.id} className="event-item" onClick={() => handleEventClick(event)}>
-            <h4>ID: {event.id}</h4>
-            <p>Gender: {event.gender || 'N/A'}</p>
-            <p>Weapon: {event.weapon || 'N/A'}</p>
-            <p>
-              {format(new Date(event.startDate), 'PPPpp')} - {format(new Date(event.endDate), 'PPPpp')}
-            </p>
+          <div key={event.id} onClick={() => handleEventClick(event)}>
+          <div className="list-item">
+            <div className="item-content">
+              <h4 className="item-title">ID: {event.id}</h4>
+              <div className='item-details'>
+                <p>Gender: {event.gender || 'N/A'}</p>
+                <p>Weapon: {event.weapon || 'N/A'}</p>
+                <p>
+                  {format(new Date(event.startDate), 'PPPpp')} - {format(new Date(event.endDate), 'PPPpp')}
+                </p>
+              </div>
+              </div>
+              <div className="modal-actions">
             <button
               onClick={(e) => { e.stopPropagation(); onEditEvent(event); }}
               className="edit-button"
@@ -45,6 +51,8 @@ const AdminEventsList = ({ events, tournamentId, onEditEvent, onDeleteEvent }) =
             >
               Delete
             </button>
+            </div>
+            </div>
           </div>
         ))
       ) : (

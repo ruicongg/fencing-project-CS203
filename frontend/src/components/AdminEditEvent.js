@@ -93,10 +93,16 @@ const AdminEditEvent = ({ event, tournamentId,  onClose, onSave }) => {
           </select>
         </div>
         <div className="modal-actions">
-          <button onClick={onClose} disabled={isSaving}>
+          <button 
+          onClick={onClose} disabled={isSaving}
+          className="cancel-button"
+          >
             Cancel
           </button>
-          <button onClick={handleSave} disabled={isSaving || !startDate || !endDate}>
+          <button 
+          onClick={handleSave} disabled={isSaving || !startDate || !endDate}
+          className="add-button"
+          >
             {isSaving ? 'Saving...' : 'Save'}
           </button>
         </div>

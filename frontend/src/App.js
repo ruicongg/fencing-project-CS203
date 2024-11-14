@@ -14,7 +14,6 @@ import UserDashboard from "./components/UserDashboard";
 import TournamentsPage from "./components/UserTournamentsPage";
 import UpcomingMatchesPage from "./components/UserUpcomingMatchesPage";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Sidebar from "./components/Sidebar";
 // import NotFound from './components/NotFound';
 import UnauthorizedPage from "./components/UnauthorizedPage";
 import AdminEventDetailsPage from "./components/AdminEventDetailsPage";
@@ -99,7 +98,6 @@ const App = () => {
 const AdminLayout = () => {
   return (
     <>
-      <Sidebar /> {/* Sidebar for admin */}
       <Routes>
         <Route path="dashboard" element={<AdminDashboard />} />
 
@@ -128,7 +126,6 @@ const AdminLayout = () => {
 const UserLayout = () => {
   return (
     <div className="user-layout">
-      <Sidebar /> {/* Sidebar for users */}
       <div className="main-content">
         <Routes>
           <Route path="my-tournaments" element={<UserDashboard />} /> {/* Default redirect to My Tournaments */}
