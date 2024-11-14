@@ -106,27 +106,43 @@ const UpcomingMatchesPage = () => {
   };
 
   const filteredMatches = matches.map((match) => {
-    // Populate event details only if missing
-    if (!match.event.startDate && eventDetailsMap[match.event.id]) {
+    if (!match.event.startDate) {
       return {
         ...match,
-        event: eventDetailsMap[match.event.id], // Replace with full event details
+        event: eventDetailsMap[match.event], // Replace with full event details
       };
     }
     return match;
   }).filter((match) => {
-    const { time, weapon } = filters;
-    const event = match.event;
-    const matchStartDate = new Date(event?.startDate);
+    const { weapon } = filters;
+    const event = match.event.startDate ? match.event : eventDetailsMap[match.event] || {};
 
-    const weaponMatch = weapon === 'All' || event.weapon?.toUpperCase() === weapon.toUpperCase();
-    if (time === 'All') return weaponMatch;
-
-    const [startDate, endDate] = getDateRangeForFilter(time);
-    const dateMatch = (!startDate && !endDate) || (matchStartDate >= startDate && matchStartDate <= endDate);
-
-    return weaponMatch && dateMatch;
+    // Filter by weapon
+    return weapon === 'All' || (event.weapon && event.weapon.toUpperCase() === weapon.toUpperCase());
   });
+
+  // const filteredMatches = matches.map((match) => {
+  //   // Populate event details only if missing
+  //   if (!match.event.startDate && eventDetailsMap[match.event.id]) {
+  //     return {
+  //       ...match,
+  //       event: eventDetailsMap[match.event.id], // Replace with full event details
+  //     };
+  //   }
+  //   return match;
+  // }).filter((match) => {
+  //   const { time, weapon } = filters;
+  //   const event = match.event;
+  //   const matchStartDate = new Date(event?.startDate);
+
+  //   const weaponMatch = weapon === 'All' || event.weapon?.toUpperCase() === weapon.toUpperCase();
+  //   if (time === 'All') return weaponMatch;
+
+  //   const [startDate, endDate] = getDateRangeForFilter(time);
+  //   const dateMatch = (!startDate && !endDate) || (matchStartDate >= startDate && matchStartDate <= endDate);
+
+  //   return weaponMatch && dateMatch;
+  // });
 
   const handleFilterChange = (filterName, value) => {
     setFilters((prevFilters) => ({
