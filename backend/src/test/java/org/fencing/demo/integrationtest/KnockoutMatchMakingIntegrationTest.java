@@ -2,10 +2,13 @@ package org.fencing.demo.integrationtest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.fencing.demo.groupstage.GroupStage;
+import org.fencing.demo.groupstage.GroupStageRepository;
 import org.fencing.demo.knockoutmatchmaking.KnockoutMatchMakingService;
 import org.fencing.demo.knockoutstage.KnockoutStage;
 import org.fencing.demo.match.Match;
@@ -26,16 +29,41 @@ public class KnockoutMatchMakingIntegrationTest extends BaseIntegrationTest {
         @Autowired
         private KnockoutMatchMakingService knockoutMatchMakingService;
 
+        @Autowired
+        private GroupStageRepository groupStageRepository;
+
         @BeforeEach
         void setUp() {
                 super.setUp();
                 knockoutStageRepository.deleteAll();
+                groupStageRepository.deleteAll();
                 // Setup players
                 int[] elos = new int[32];
                 for (int i = 0; i < 32; i++) {
                         elos[i] = 1000 + i;
                 }
                 setUpWithPlayersInEvent(elos);
+                // Create and complete group stages
+                GroupStage groupStage = new GroupStage();
+                groupStage.setEvent(event);
+                groupStage.setMatches(new ArrayList<>());
+                event.getGroupStages().add(groupStage);
+
+                // Create a completed match
+                Match match = new Match();
+                match.setEvent(event);
+                match.setGroupStage(groupStage);
+                match.setPlayer1(event.getRankings().first().getPlayer());
+                match.setPlayer2(event.getRankings().last().getPlayer());
+                match.setFinished(true);
+                match.setPlayer1Score(5);
+                match.setPlayer2Score(3);
+
+                groupStage.getMatches().add(match);
+
+                eventRepository.save(event);
+                groupStageRepository.save(groupStage);
+                matchRepository.save(match);
         }
 
         @Test
