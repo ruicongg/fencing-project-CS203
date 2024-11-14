@@ -131,15 +131,6 @@ const TournamentsPage = () => {
           <option value="this year">This year</option>
         </select>
 
-        <label htmlFor="locationFilter">Location</label>
-        <select
-          id="locationFilter"
-          value={filters.location}
-          onChange={(e) => handleFilterChange('location', e.target.value)}
-        >
-          <option value="global">Global</option>
-          <option value="local">Local</option>
-        </select>
       </div>
 
       {/* Loading, Error, and Tournaments Display */}

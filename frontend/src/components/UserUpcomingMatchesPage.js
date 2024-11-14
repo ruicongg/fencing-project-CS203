@@ -14,8 +14,8 @@ const UpcomingMatchesPage = () => {
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
   const [filters, setFilters] = useState({
-    time: 'all',
-    weapon: 'all',
+    time: 'All',
+    weapon: 'All',
   });
   const [selectedMatch, setSelectedMatch] = useState(null);
 
@@ -119,8 +119,8 @@ const UpcomingMatchesPage = () => {
     const event = match.event;
     const matchStartDate = new Date(event?.startDate);
 
-    const weaponMatch = weapon === 'all' || event.weapon?.toUpperCase() === weapon.toUpperCase();
-    if (time === 'all') return weaponMatch;
+    const weaponMatch = weapon === 'All' || event.weapon?.toUpperCase() === weapon.toUpperCase();
+    if (time === 'All') return weaponMatch;
 
     const [startDate, endDate] = getDateRangeForFilter(time);
     const dateMatch = (!startDate && !endDate) || (matchStartDate >= startDate && matchStartDate <= endDate);
@@ -257,16 +257,10 @@ const UpcomingMatchesPage = () => {
 
       <h1 className="dashboard-title">Upcoming Matches</h1>
       <div className="filter-by">
-        <h3>Filter by</h3>
-        <FilterDropdown
-          label="Time"
-          options={['all', 'this week', 'this month', 'this year']}
-          value={filters.time}
-          onChange={(value) => handleFilterChange('time', value)}
-        />
+        {/* <h3>Filter by</h3> */}
         <FilterDropdown
           label="Weapon"
-          options={['all', 'Foil', 'Epee', 'Saber']}
+          options={['All', 'Foil', 'Epee', 'Saber']}
           value={filters.weapon}
           onChange={(value) => handleFilterChange('weapon', value)}
         />
