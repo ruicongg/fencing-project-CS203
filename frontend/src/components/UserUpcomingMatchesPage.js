@@ -14,8 +14,8 @@ const UpcomingMatchesPage = () => {
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
   const [filters, setFilters] = useState({
-    time: 'all',
-    weapon: 'all',
+    time: 'All',
+    weapon: 'All',
   });
   const [selectedMatch, setSelectedMatch] = useState(null);
 
@@ -106,27 +106,43 @@ const UpcomingMatchesPage = () => {
   };
 
   const filteredMatches = matches.map((match) => {
-    // Populate event details only if missing
-    if (!match.event.startDate && eventDetailsMap[match.event.id]) {
+    if (!match.event.startDate) {
       return {
         ...match,
-        event: eventDetailsMap[match.event.id], // Replace with full event details
+        event: eventDetailsMap[match.event], // Replace with full event details
       };
     }
     return match;
   }).filter((match) => {
-    const { time, weapon } = filters;
-    const event = match.event;
-    const matchStartDate = new Date(event?.startDate);
+    const { weapon } = filters;
+    const event = match.event.startDate ? match.event : eventDetailsMap[match.event] || {};
 
-    const weaponMatch = weapon === 'all' || event.weapon?.toUpperCase() === weapon.toUpperCase();
-    if (time === 'all') return weaponMatch;
-
-    const [startDate, endDate] = getDateRangeForFilter(time);
-    const dateMatch = (!startDate && !endDate) || (matchStartDate >= startDate && matchStartDate <= endDate);
-
-    return weaponMatch && dateMatch;
+    // Filter by weapon
+    return weapon === 'All' || (event.weapon && event.weapon.toUpperCase() === weapon.toUpperCase());
   });
+
+  // const filteredMatches = matches.map((match) => {
+  //   // Populate event details only if missing
+  //   if (!match.event.startDate && eventDetailsMap[match.event.id]) {
+  //     return {
+  //       ...match,
+  //       event: eventDetailsMap[match.event.id], // Replace with full event details
+  //     };
+  //   }
+  //   return match;
+  // }).filter((match) => {
+  //   const { time, weapon } = filters;
+  //   const event = match.event;
+  //   const matchStartDate = new Date(event?.startDate);
+
+  //   const weaponMatch = weapon === 'All' || event.weapon?.toUpperCase() === weapon.toUpperCase();
+  //   if (time === 'All') return weaponMatch;
+
+  //   const [startDate, endDate] = getDateRangeForFilter(time);
+  //   const dateMatch = (!startDate && !endDate) || (matchStartDate >= startDate && matchStartDate <= endDate);
+
+  //   return weaponMatch && dateMatch;
+  // });
 
   const handleFilterChange = (filterName, value) => {
     setFilters((prevFilters) => ({
@@ -257,16 +273,10 @@ const UpcomingMatchesPage = () => {
 
       <h1 className="dashboard-title">Upcoming Matches</h1>
       <div className="filter-by">
-        <h3>Filter by</h3>
-        <FilterDropdown
-          label="Time"
-          options={['all', 'this week', 'this month', 'this year']}
-          value={filters.time}
-          onChange={(value) => handleFilterChange('time', value)}
-        />
+        {/* <h3>Filter by</h3> */}
         <FilterDropdown
           label="Weapon"
-          options={['all', 'Foil', 'Epee', 'Saber']}
+          options={['All', 'Foil', 'Epee', 'Saber']}
           value={filters.weapon}
           onChange={(value) => handleFilterChange('weapon', value)}
         />
