@@ -15,20 +15,6 @@
   color: #00BFFF;
 }
 
-/* Filter section */
-.filter-by {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.filter-by select {
-  padding: 10px;
-  background-color: #2e2e2e;
-  color: #ffffff;
-  border: 1px solid #00BFFF;
-  border-radius: 4px;
-}
 
 /* Tournament cards container */
 .tournament-list {

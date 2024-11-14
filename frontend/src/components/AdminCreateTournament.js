@@ -34,6 +34,20 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
+  const isSameOrFutureDate = (date) => {
+    const inputDate = new Date(date);
+    const today = new Date();
+    
+    // Set time to midnight for both dates
+    inputDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    console.log(inputDate);
+    console.log(today);
+    
+    return inputDate >= today;
+  };
+
   const handleAdd = async () => {
     if (
       !name ||
@@ -47,8 +61,9 @@ const AdminCreateTournament = ({ onClose, onAdd }) => {
       return;
     }
 
-    if (new Date(registrationStartDate) < new Date().setHours(0, 0, 0, 0)) {
-      setErrorMessage('Registration start date must be today or in the future.');
+    if (!isSameOrFutureDate(registrationStartDate)) {
+      console.log(new Date())
+      setErrorMessage('Registration start date must be in the present or future.');
       return;
     }
 

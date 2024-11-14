@@ -40,20 +40,10 @@ const AdminEditEvent = ({ event, tournamentId,  onClose, onSave }) => {
     } catch (error) {
       console.log("Error saving event:", error);
       if (error.response) {
-        const errorMsg = error.response.data?.error;
-        if (errorMsg?.includes('start date')) {
-          setErrorMessage(`Event start date (${new Date(startDate).toLocaleDateString()}) must be within tournament period.`);
-        } else if (errorMsg?.includes('end date')) {
-          setErrorMessage(`Event end date (${new Date(endDate).toLocaleDateString()}) must be after start date and within tournament period.`);
-        } else if (errorMsg?.includes('Tournament')) {
-          setErrorMessage('Tournament no longer exists or has been cancelled.');
-        } else if (error.response.status === 403) {
-          setErrorMessage('You do not have permission to modify this event.');
-        } else {
-          setErrorMessage(`Failed to save event: ${errorMsg || 'Unknown error'}`);
-        }
+        // Display backend error message if available
+        setErrorMessage(error.response.data.error || 'An unexpected error occurred.');
       } else {
-        setErrorMessage('Network error. Please check your connection and try again.');
+        setErrorMessage('Failed to save event. Please try again.');
       }
     } finally {
       setIsSaving(false);
@@ -66,14 +56,14 @@ const AdminEditEvent = ({ event, tournamentId,  onClose, onSave }) => {
         <h2>Edit Event</h2>
         <div className="modal-content">
           {errorMessage && <p className="error-message">{errorMessage}</p>}
-          <label>Event Start Date Time</label>
+          <label>Event Date Time</label>
           <input
             type="datetime-local"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
             disabled={isSaving}
           />
-          <label>Event End Date Time</label>
+          to
           <input
             type="datetime-local"
             value={endDate}
@@ -103,10 +93,16 @@ const AdminEditEvent = ({ event, tournamentId,  onClose, onSave }) => {
           </select>
         </div>
         <div className="modal-actions">
-          <button onClick={onClose} disabled={isSaving}>
+          <button 
+          onClick={onClose} disabled={isSaving}
+          className="cancel-button"
+          >
             Cancel
           </button>
-          <button onClick={handleSave} disabled={isSaving || !startDate || !endDate}>
+          <button 
+          onClick={handleSave} disabled={isSaving || !startDate || !endDate}
+          className="add-button"
+          >
             {isSaving ? 'Saving...' : 'Save'}
           </button>
         </div>

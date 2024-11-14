@@ -1,6 +1,5 @@
 
 /* modal backdrop to centre the modal */
-
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -29,12 +28,17 @@
 
 .modal {
   background: white;
+  position: center;
     padding: 40px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh; /* Ensures the modal doesn't exceed viewport height */
+    margin-bottom: 40px;
+    overflow-y: auto;
 }
+
 
 /* modal content styling */
 
@@ -83,8 +87,6 @@
 }
 
 /* modal actions styling */
-
-
 
 .modal-actions {
   display: flex;

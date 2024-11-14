@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import '../styles/shared/index.css';
 import '../styles/AdminStageDetailsPage.css'; // Import the relevant CSS
 
 axios.defaults.baseURL = 'http://localhost:8080';
@@ -67,22 +68,7 @@ const AdminStageDetailsPage = () => {
       const response = await axios.get(fetchEndpoint);
       setMatches(response.data);
     } catch (error) {
-      if (error.response?.status === 404) {
-        setError(`${stageType === 'groupStage' ? 'Group' : 'Knockout'} stage not found. It may have been deleted.`);
-      } else if (error.response?.data?.error) {
-        const errorMsg = error.response.data.error;
-        if (errorMsg.includes('group stage')) {
-          setError('Cannot generate knockout matches: All group stage matches must be completed first.');
-        } else if (errorMsg.includes('insufficient players')) {
-          setError(`Cannot generate ${stageType === 'groupStage' ? 'group' : 'knockout'} matches: Not enough players.`);
-        } else if (errorMsg.includes('already generated')) {
-          setError(`Matches have already been generated for this ${stageType === 'groupStage' ? 'group' : 'knockout'} stage.`);
-        } else {
-          setError(`Failed to generate matches: ${errorMsg}`);
-        }
-      } else {
-        setError('Network error while generating matches. Please try again.');
-      }
+      setError('Error generating matches.');
       console.error('Error generating matches:', error);
     } finally {
       setGenerating(false);
@@ -90,37 +76,58 @@ const AdminStageDetailsPage = () => {
   };
 
   const renderMatches = () => (
-    <ul className="match-list">
+    <ul className="section-container">
       {matches.map((match) => (
-        <li key={match.id} onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/match/${match.id}`)}>
-          Match ID: {match.id}: @{match.player1.username} vs @{match.player2.username}
-        </li>
+        <div key={match.id} onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/match/${match.id}`)}>
+          <div className="modal">
+            <div className="list-item">
+            <div className="item-title"> Match ID: {match.id}</div>
+            </div>
+            <p><strong>Player 1:</strong> @{match.player1.username}</p>
+            <p><strong>Player 2:</strong> @{match.player2.username}</p>
+          </div>
+          
+        </div>
       ))}
     </ul>
   );
 
   return (
-    <div className={`${stageType}-details-page`}>
+    <div className="dashboard">
+      {/* Error Message Container */}
+      {error && (
+        <div className="error-container">
+          <svg className="error-icon" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+          </svg>
+          <span className="error-message">{error}</span>
+          <button className="close-error-button" onClick={() => setError(null)}>✕</button>
+        </div>
+      )}
+      
       {/* Breadcrumb Navigation */}
       <nav className="breadcrumb">
-        <span onClick={() => navigate(`/admin/tournaments/${tournamentId}`)}>Tournaments</span> &gt;
-        <span onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}`)}>Event</span> &gt;
-        <span>{stageType === 'groupStage' ? 'GroupStage' : 'KnockoutStage'}</span>
+        <span onClick={() => navigate(`/admin/tournaments/${tournamentId}`)}>Tournaments </span> 
+        <span className="separator">/</span>
+        <span onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}`)}>Event </span> 
+        <span className="separator">/</span>
+        <a className="active">{stageType === 'groupStage' ? 'GroupStage' : 'KnockoutStage'}</a>
       </nav>
 
-      <h1>{stageType === 'groupStage' ? `Group Stage ${stageId}` : `Knockout Stage ${stageId}`}</h1>
-
-      {/* Display loading, error, or content based on state */}
-      {loading && <p>Loading matches...</p>}
-      {error && <p className="error-message">{error}</p>}
-      {!loading && matches.length === 0 && !error && (
-        <button onClick={handleGenerateMatches} disabled={generating} className="generate-button">
-          {generating ? 'Generating matches...' : 'Generate matches'}
-        </button>
-      )}
-      {matches.length > 0 && renderMatches()}
-      {!loading && matches.length === 0 && !error && <p>No matches available</p>}
-    </div>
+      <h1 className="dashboard-title">{stageType === 'groupStage' ? `Group Stage ID: ${stageId}` : `Knockout Stage ID: ${stageId}`}</h1>
+      
+        {/* Display loading, error, or content based on state */}
+        {loading && <p>Loading matches...</p>}
+        {error && <p className="error-message">{error}</p>}
+        {!loading && matches.length === 0 && !error && (
+          <button onClick={handleGenerateMatches} disabled={generating} className="add-button">
+            {generating ? 'Generating matches...' : 'Generate matches'}
+          </button>
+        )}
+        {matches.length > 0 && renderMatches()}
+        {!loading && matches.length === 0 && !error && <p>No matches available</p>}
+      </div>
+    
   );
 };
 

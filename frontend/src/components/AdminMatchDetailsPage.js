@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/AdminMatchDetailsPage.css'; // Import the relevant CSS
+import '../styles/shared/index.css'; // Import the relevant CSS
 
 axios.defaults.baseURL = 'http://localhost:8080';
 
@@ -77,38 +77,57 @@ const AdminMatchDetailsPage = () => {
   }
 
   return (
-    <div className="match-details-page">
+    <div className="dashboard">
+      {/* Error Message Container */}
+      {error && (
+        <div className="error-container">
+          <svg className="error-icon" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+          </svg>
+          <span className="error-message">{error}</span>
+          <button className="close-error-button" onClick={() => setError(null)}>✕</button>
+        </div>
+      )}
+      
       <nav className="breadcrumb">
+        <span onClick={() => navigate(`/admin/tournaments/${tournamentId}`)}>Tournaments</span>
+        <span className="separator">/</span>
+        <span onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}`)}>Event</span>
+        <span className="separator">/</span>
         <span onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}`)}>
           {stageType === 'groupStage' ? 'Group Stage' : 'Knockout Stage'}
-        </span> &gt;
-        <span>Match {matchId}</span>
+        </span>
+        <span className="separator">/</span>
+        <a className="active">Match</a>
       </nav>
+      
+      <div className="section-container">
+      <h1>Match ID: {match.id}</h1>
+      <div className="modal">
 
-      <h1>Match {match.id}</h1>
-      <p>Player 1: @{match.player1.username}</p>
-      <p>Player 2: @{match.player2.username}</p>
-
-      <div className="score-input">
+      <div className="modal-action">
         <label>
-          Player 1 Score:
+        <h3>Player 1 @{match.player1.username}:</h3>
           <input
             type="number"
             value={player1Score}
             onChange={handleScoreChange(setPlayer1Score)}
             disabled={saving}
+            placeholder='Enter Score'
           />
         </label>
 
         <label>
-          Player 2 Score:
+        <h3>Player 2 @{match.player2.username}:</h3>
           <input
             type="number"
             value={player2Score}
             onChange={handleScoreChange(setPlayer2Score)}
             disabled={saving}
+            placeholder='Enter Score'
           />
         </label>
+      </div>
       </div>
 
       <button onClick={handleSave} disabled={saving || !player1Score || !player2Score}>
@@ -116,6 +135,8 @@ const AdminMatchDetailsPage = () => {
       </button>
 
       {error && <p className="error-message">{error}</p>}
+      </div>
+    
     </div>
   );
 };

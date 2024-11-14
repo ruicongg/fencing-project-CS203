@@ -14,34 +14,6 @@
     margin-bottom: 1.5rem;
   }
   
-  /* Tabs for Active and Completed Events */
-  .tabs {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .tabs button {
-    background-color: #1f1f1f;
-    color: #ffffff;
-    border: 1px solid #00BFFF;
-    padding: 0.8rem 1.2rem;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  .tabs button.active {
-    background-color: #00BFFF;
-    color: #141414;
-  }
-  
-  .tabs button:hover:not(.active) {
-    background-color: #0056b3;
-  }
-  
   /* Filter-by Section */
   .filter-by {
     display: flex;

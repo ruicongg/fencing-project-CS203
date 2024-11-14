@@ -26,7 +26,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
 
   const handleSave = async () => {
     // Validation: Check if registration dates and tournament dates are valid
-    if (new Date(registrationStartDate) < new Date().setHours(0, 0, 0, 0)) {
+    if (new Date(registrationStartDate) < new Date()) {
       setErrorMessage('Registration start date must be in the present or future.');
       return;
     }
@@ -154,7 +154,10 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
           />
         </div>
         <div className="modal-actions">
-          <button onClick={onClose} disabled={isSaving}>
+          <button 
+          onClick={onClose} disabled={isSaving}
+          className="cancel-button"
+          >
             Cancel
           </button>
           <button
@@ -168,6 +171,7 @@ const AdminEditTournament = ({ tournament, onClose, onSave }) => {
               !tournamentStartDate ||
               !tournamentEndDate
             }
+            className="add-button"
           >
             {isSaving ? "Saving..." : "Save"}
           </button>

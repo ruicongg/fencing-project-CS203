@@ -1,6 +1,6 @@
 import React from 'react';
 import { format } from 'date-fns'; // Importing date-fns for consistent date formatting
-import '../styles/AdminTournamentCard.css';
+import '../styles/shared/index.css';
 
 const AdminTournamentCard = ({ tournament, onSelect, onEdit, onDelete }) => {
   // Date formatting using date-fns for better control over the format
@@ -9,38 +9,45 @@ const AdminTournamentCard = ({ tournament, onSelect, onEdit, onDelete }) => {
 
   return (
     <div
-      className="tournament-card"
+      className="modal"
       onClick={() => onSelect(tournament)}  // Handle entire card click to select tournament
       style={{ cursor: 'pointer' }} // Add pointer cursor to indicate clickability
     >
-      <h3>{tournament.name}</h3>
-      <p>{formattedStartDate} - {formattedEndDate}</p>
-      <p>{tournament.venue}</p>
-      <p>{tournament.participants || '0'} Participants</p>
-      
-      {/* Edit button with click propagation stopped */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation(); // Prevent the card click event from triggering
-          onEdit(tournament);
-        }}
-        className="edit-button"
-        aria-label={`Edit ${tournament.name}`} // Added for accessibility
-      >
-        Edit
-      </button>
+      <div className="list-item">
+        <div className="item-content">
+          <h3 className="item-title">{tournament.name}</h3>
+          <div className="item-details">
+            <p>{formattedStartDate} - {formattedEndDate}</p>
+            <p>Venue: {tournament.venue}</p>
+            <p>Registration deadline: {tournament.registrationEndDate}</p>
+          </div>
+        </div>
+      </div>
+      <div className="modal-actions">
+          {/* Edit button with click propagation stopped */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent the card click event from triggering
+              onEdit(tournament);
+            }}
+            className="edit-button"
+            aria-label={`Edit ${tournament.name}`} // Added for accessibility
+          >
+            Edit
+          </button>
 
-      {/* Delete button with click propagation stopped */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation(); // Prevent the card click event from triggering
-          onDelete(tournament);
-        }}
-        className="delete-button"
-        aria-label={`Delete ${tournament.name}`} // Added for accessibility
-      >
-        Delete
-      </button>
+          {/* Delete button with click propagation stopped */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent the card click event from triggering
+              onDelete(tournament);
+            }}
+            className="delete-button"
+            aria-label={`Delete ${tournament.name}`} // Added for accessibility
+          >
+            Delete
+          </button>
+        </div>
     </div>
   );
 };
