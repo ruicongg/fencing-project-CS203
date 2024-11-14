@@ -27,25 +27,6 @@
   margin: 2px 0;
 }
 
-.withdraw-button {
-  background-color: #FF4500;
-  border: none;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.withdraw-button:hover {
-  background-color: #ff6347;
-}
-
-.withdraw-button:disabled {
-  background-color: #d3d3d3;
-  cursor: not-allowed;
-}
-
 .error-message {
   color: #ff4d4f;
   background-color: #2e2e2e;

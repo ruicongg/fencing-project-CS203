@@ -63,6 +63,7 @@ const AdminCreateEvent = ({ tournamentId, onClose, onAdd }) => {
   };
 
   return (
+    
     <div className="modal-backdrop">
       <div className="modal">
         <h2>Create New Event</h2>

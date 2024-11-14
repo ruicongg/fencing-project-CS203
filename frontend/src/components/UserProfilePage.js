@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import '../styles/UserProfilePage.css';
+import '../styles/shared/index.css';
+import { FormField } from './shared/FormField';
 
 const UserProfilePage = () => {
     const [user, setUser] = useState({});
@@ -111,75 +112,105 @@ const UserProfilePage = () => {
     if (error) return <p className="error">{error}</p>;
   
     return (
-      <div className="profile-page">
-        <h1>User Profile</h1>
-  
-        {successMessage && <p className="success-message">{successMessage}</p>}
-        <div className="profile-field">
-          <label>ID:</label>
-          <span>{user.id}</span>
-        </div>
-        <div className="profile-field">
-          <label>Username:</label>
-          {editing ? (
-            <input
-              type="text"
-              name="username"
-              value={editableUser.username}
-              onChange={handleInputChange}
-            />
-          ) : (
-            <span>{user.username}</span>
-          )}
-        </div>
-        <div className="profile-field">
-          <label>Email:</label>
-          {editing ? (
-            <input
-              type="email"
-              name="email"
-              value={editableUser.email}
-              onChange={handleInputChange}
-            />
-          ) : (
-            <span>{user.email}</span>
-          )}
-        </div>
-        <div className="profile-field">
-          <label>Gender:</label>
-          <span>{user.gender}</span>
-        </div>
-        <div className="profile-field">
-          <label>ELO:</label>
-          <span>{user.elo}</span>
-        </div>
-  
-        {/* Password is only editable */}
-        {editing && (
-          <div className="profile-field">
-            <label>New Password:</label>
-            <input
-              type="password"
-              name="password"
-              value={editableUser.password}
-              onChange={handleInputChange}
-              placeholder="Enter new password"
-            />
+        <div className="dashboard">
+            {/* Error Message Container */}
+            {error && (
+                <div className="error-container">
+                <svg className="error-icon" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                </svg>
+                <span className="error-message">{error}</span>
+                <button className="close-error-button" onClick={() => setError(null)}>✕</button>
+                </div>
+            )}
+          <h1 className="dashboard-title">User Profile</h1>
+      
+          <div className="section-container">
+            {successMessage && <p className="success-message">{successMessage}</p>}
+      
+            <div className="modal">
+              <p className="input">
+                <strong>ID: </strong>
+                <span>{user.id}</span>
+              </p>
+      
+              <p className="input">
+                <strong>Username: </strong>
+                {editing ? (
+                  <FormField
+                    id="username"
+                    type="text"
+                    value={editableUser.username}
+                    onChange={handleInputChange}
+                    placeholder="Enter username"
+                  />
+                ) : (
+                  <span>{user.username}</span>
+                )}
+              </p>
+      
+              <p className="input">
+                <strong>Email: </strong>
+                {editing ? (
+                  <FormField
+                    id="email"
+                    type="email"
+                    value={editableUser.email}
+                    onChange={handleInputChange}
+                    placeholder="Enter email"
+                  />
+                ) : (
+                  <span>{user.email}</span>
+                )}
+              </p>
+      
+              <p className="profile-field">
+                <strong>Gender: </strong>
+                <span>{user.gender}</span>
+              </p>
+      
+              <p className="profile-field">
+                <strong>ELO: </strong>
+                <span>{user.elo}</span>
+              </p>
+            
+      
+                {/* Editable Password Field */}
+                {editing && (
+                <p className="input">
+                    <strong>New Password: </strong>
+                    <FormField
+                    id="password"
+                    type="password"
+                    value={editableUser.password}
+                    onChange={handleInputChange}
+                    placeholder="Enter new password"
+                    />
+                </p>
+                )}
+            </div>
+      
+            {/* Profile action buttons */}
+            <div className="modal-actions">
+              {editing ? (
+                <>
+                  <button onClick={handleSaveChanges} className="add-button">
+                    Save Changes
+                  </button>
+                  <button onClick={() => setEditing(false)} className="cancel-button">
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button onClick={() => setEditing(true)} className="edit-button">
+                  Edit Profile
+                </button>
+              )}
+            </div>
           </div>
-        )}
-  
-        <div className="profile-actions">
-          {editing ? (
-            <>
-              <button onClick={handleSaveChanges}>Save Changes</button>
-              <button onClick={() => setEditing(false)}>Cancel</button>
-            </>
-          ) : (
-            <button onClick={() => setEditing(true)}>Edit Profile</button>
-          )}
         </div>
-      </div>
-    );
+      );
+      
   };
   
   export default UserProfilePage;

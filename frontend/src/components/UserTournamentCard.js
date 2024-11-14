@@ -11,11 +11,13 @@ const TournamentCard = ({ tournament, onSelect, showStatus = true }) => {
   // const participantCount = tournament.participants !== undefined ? tournament.participants : '0';
 
   return (
-    <div className="tournament-card" onClick={onSelect}>
+    <div className="list-item" onClick={onSelect}>
+    <div className="item-content">
       <h2>{tournament.name}</h2>
       <p>{formattedStartDate} - {formattedEndDate}</p>
-      <p>Venue: {tournament.venue}</p>
+      <p><strong>Venue:</strong> {tournament.venue}</p>
       <h4>Registration deadline: {tournament.registrationEndDate}</h4>
+    </div>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; // Use navigate for routing
-import '../styles/UserTournamentsPage.css'; // CSS file for the page
+import '../styles/shared/index.css'; // CSS file for the page
 import TournamentCard from './UserTournamentCard'; 
 
 axios.defaults.baseURL = 'http://localhost:8080';
@@ -103,8 +103,19 @@ const TournamentsPage = () => {
   };
 
   return (
-    <div className="tournaments-page">
-      <h1>Explore Tournaments</h1>
+    <div className="dashboard">
+      {/* Error Message Container */}
+      {error && (
+        <div className="error-container">
+          <svg className="error-icon" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+          </svg>
+          <span className="error-message">{error}</span>
+          <button className="close-error-button" onClick={() => setError(null)}>✕</button>
+        </div>
+      )}
+      
+      <h1 className="dashboard-title">Explore Tournaments</h1>
 
       {/* Filter Section */}
       <div className="filter-by">
@@ -137,7 +148,8 @@ const TournamentsPage = () => {
       ) : error ? (
         <p className="error-message">{error}</p>
       ) : (
-        <div className="tournament-list">
+        <div className="section-container">
+        <div className="tournament-list-container">
           {filteredTournaments.length > 0 ? (
             filteredTournaments.map((tournament) => (
               <TournamentCard
@@ -149,6 +161,7 @@ const TournamentsPage = () => {
           ) : (
             <p className="no-tournaments-message">No tournaments found.</p>
           )}
+        </div>
         </div>
       )}
     </div>

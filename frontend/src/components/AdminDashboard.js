@@ -6,7 +6,7 @@ import AdminEditTournament from "./AdminEditTournament";
 import AdminCreateTournament from "./AdminCreateTournament";
 import AdminEditEvent from "./AdminEditEvent";
 import AdminCreateEvent from "./AdminCreateEvent";
-import "../styles/AdminDashboard.css";
+import "../styles/shared/index.css";
 
 axios.defaults.baseURL = "http://localhost:8080";
 
@@ -117,78 +117,92 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="admin-dashboard">
+    <div className="dashboard">
+      
+      {/* Breadcrumb Navigation */}
       <nav className="breadcrumb">
-        <span>Tournaments</span>
+        <span className="separator">/</span>
+        <a className="active">Tournaments</a>
       </nav>
-
-      <h1>Admin Dashboard</h1>
-
+  
+      {/* Dashboard Title */}
+      <h1 className="dashboard-title">Admin Dashboard</h1>
+  
+      {/* Tabs for Active and Completed Tournaments */}
       <div className="tabs">
-        <button
+        <button 
           onClick={() => handleTabClick("active")}
-          className={activeTab === "active" ? "active" : ""}
+          className={`tab ${activeTab === "active" ? "active" : ""}`}
         >
           Active
         </button>
         <button
           onClick={() => handleTabClick("completed")}
-          className={activeTab === "completed" ? "active" : ""}
+          className={`tab ${activeTab === "completed" ? "active" : ""}`}
         >
           Completed
         </button>
       </div>
-
-      {activeTab === "active" && (
-        <button
-          className="new-tournament-button"
-          onClick={() => setIsCreatingTournament(true)}
-        >
-          + New tournament
-        </button>
-      )}
-
-      {loading && <p>Loading tournaments...</p>}
-
-      <div className="tournament-cards">
-        {!loading &&
-          activeTab === "active" &&
-          activeTournaments.length === 0 && <p>No active tournaments</p>}
-        {!loading &&
-          activeTab === "completed" &&
-          completedTournaments.length === 0 && <p>No completed tournaments</p>}
-
-        {(activeTab === "active"
-          ? activeTournaments
-          : completedTournaments
-        ).map((tournament) => (
-          <AdminTournamentCard
-            key={tournament.id}
-            tournament={tournament}
-            onSelect={() => {
-              setSelectedTournament(tournament);
-              fetchEventsForTournament(tournament.id); // Fetch events when a tournament is selected
-            }}
-            onEdit={() => {
-              setSelectedTournament(tournament);
-              setIsEditingTournament(true);
-            }}
-            onDelete={() => handleDeleteTournament(tournament.id)}
-          />
-        ))}
-      </div>
-
+  
+      {/* Section for Tournaments */}
+      <div className="section-container">
+        {activeTab === "active" && (
+          <button
+            className="new-tournament-button"
+            onClick={() => setIsCreatingTournament(true)}
+          >
+            + New tournament
+          </button>
+        )}
+  
+        {/* Loading Indicator */}
+        {loading && <p className="loading-message">Loading tournaments...</p>}
+  
+        {/* Tournament Cards */}
+        <div className="tournament-list-container">
+          {!loading &&
+            activeTab === "active" &&
+            activeTournaments.length === 0 && <p className="no-tournaments-message">No active tournaments</p>}
+          {!loading &&
+            activeTab === "completed" &&
+            completedTournaments.length === 0 && <p className="no-tournaments-message">No completed tournaments</p>}
+    
+          {(activeTab === "active"
+            ? activeTournaments
+            : completedTournaments
+          ).map((tournament) => (
+            <AdminTournamentCard
+              key={tournament.id}
+              tournament={tournament}
+              onSelect={() => {
+                setSelectedTournament(tournament);
+                fetchEventsForTournament(tournament.id); // Fetch events when a tournament is selected
+              }}
+              onEdit={() => {
+                setSelectedTournament(tournament);
+                setIsEditingTournament(true);
+              }}
+              onDelete={() => handleDeleteTournament(tournament.id)}
+            />
+          ))}
+        </div>
+      
+  
+      {/* Events Section for Selected Tournament */}
       {selectedTournament && (
-        <div className="events-section">
-          <h2>My events for {selectedTournament.name}</h2>
-          {activeTab === "active" && (
-            <button
-              className="new-event-button"
-              onClick={() => setIsCreatingEvent(true)}
-            >
-              + New event
-            </button>
-          )}
+        
+          <div className="">
+            <h2 className="section-title">My events for {selectedTournament.name}</h2>
+            {activeTab === "active" && (
+              <button
+                className="add-button"
+                onClick={() => setIsCreatingEvent(true)}
+              >
+                + New event
+              </button>
+            )}
+            <p></p>
+          
           <AdminEventsList
             events={selectedTournament.events || []} // Pass the events from selectedTournament
             tournamentId={selectedTournament?.id}
@@ -200,7 +214,7 @@ const AdminDashboard = () => {
           />
         </div>
       )}
-
+  
       {/* Modals */}
       {isEditingTournament && (
         <AdminEditTournament
@@ -215,7 +229,7 @@ const AdminDashboard = () => {
           }
         />
       )}
-
+  
       {isCreatingTournament && (
         <AdminCreateTournament
           onClose={() => setIsCreatingTournament(false)}
@@ -224,7 +238,7 @@ const AdminDashboard = () => {
           }
         />
       )}
-
+  
       {isEditingEvent && selectedEvent && (
         <AdminEditEvent
           event={selectedEvent}
@@ -239,7 +253,7 @@ const AdminDashboard = () => {
           }
         />
       )}
-
+  
       {isCreatingEvent && (
         <AdminCreateEvent
           tournamentId={selectedTournament.id}
@@ -253,8 +267,10 @@ const AdminDashboard = () => {
           }
         />
       )}
+      </div>
     </div>
   );
-};
+  
+}
 
 export default AdminDashboard;

@@ -50,27 +50,6 @@
   background-color: #3e3e3e;
 }
 
-/* Save Button */
-button {
-  padding: 10px 20px;
-  background-color: #28a745;
-  color: #ffffff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-button:hover {
-  background-color: #218838;
-}
-
-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-
 /* .match-details-page {
     padding: 20px;
   }
