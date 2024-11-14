@@ -62,6 +62,7 @@ public class SecurityConfig {
                 .cors((cors -> cors.configurationSource(corsConfigurationSource())))
                 .csrf(csrf -> csrf.disable()) // Disable CSRF protection
                 .authorizeHttpRequests((authz) -> authz
+                        .requestMatchers("/").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         // Specific event endpoints first
