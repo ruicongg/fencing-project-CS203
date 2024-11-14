@@ -115,7 +115,6 @@ public class GroupMatchMakingServiceTest {
         Map<Integer, List<Match>> mockGroupMatches = new HashMap<>();
         mockGroupMatches.put(0, Arrays.asList(new Match(), new Match()));
         mockGroupMatches.put(1, Arrays.asList(new Match(), new Match()));
-
         List<Match> expectedMatches = Arrays.asList(
                 new Match(), new Match(), new Match(), new Match());
 
