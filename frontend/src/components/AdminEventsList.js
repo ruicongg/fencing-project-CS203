@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { format } from 'date-fns';
-import PropTypes from 'prop-types';
-import '../styles/shared/index.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { format } from "date-fns";
+import PropTypes from "prop-types";
+import "../styles/shared/index.css";
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = "https://parry-hub.com";
 
-const AdminEventsList = ({ events, tournamentId, onEditEvent, onDeleteEvent }) => {
+const AdminEventsList = ({
+  events,
+  tournamentId,
+  onEditEvent,
+  onDeleteEvent,
+}) => {
   console.log("tournamentId in AdminEventsList:", tournamentId);
   const navigate = useNavigate();
 
@@ -27,31 +32,35 @@ const AdminEventsList = ({ events, tournamentId, onEditEvent, onDeleteEvent }) =
       {events.length > 0 ? (
         events.map((event) => (
           <div key={event.id} onClick={() => handleEventClick(event)}>
-          <div className="list-item">
-            <div className="item-content">
-              <h4 className="item-title">ID: {event.id}</h4>
-              <div className='item-details'>
-                <p>Gender: {event.gender || 'N/A'}</p>
-                <p>Weapon: {event.weapon || 'N/A'}</p>
-                <p>
-                  {format(new Date(event.startDate), 'PPPpp')} - {format(new Date(event.endDate), 'PPPpp')}
-                </p>
-              </div>
+            <div className="list-item">
+              <div className="item-content">
+                <h4 className="item-title">ID: {event.id}</h4>
+                <div className="item-details">
+                  <p>Gender: {event.gender || "N/A"}</p>
+                  <p>Weapon: {event.weapon || "N/A"}</p>
+                  <p>
+                    {format(new Date(event.startDate), "PPPpp")} -{" "}
+                    {format(new Date(event.endDate), "PPPpp")}
+                  </p>
+                </div>
               </div>
               <div className="modal-actions">
-            <button
-              onClick={(e) => { e.stopPropagation(); onEditEvent(event); }}
-              className="edit-button"
-            >
-              Edit
-            </button>
-            <button
-              onClick={(e) => handleDeleteClick(e, event)}
-              className="delete-button"
-            >
-              Delete
-            </button>
-            </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEditEvent(event);
+                  }}
+                  className="edit-button"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={(e) => handleDeleteClick(e, event)}
+                  className="delete-button"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         ))
@@ -72,13 +81,13 @@ AdminEventsList.propTypes = {
       endDate: PropTypes.string.isRequired,
     })
   ).isRequired,
-  tournamentId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  tournamentId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
   onEditEvent: PropTypes.func.isRequired,
   onDeleteEvent: PropTypes.func,
 };
 
 export default AdminEventsList;
-
 
 // const AdminEventsList = ({ tournamentId, onEditEvent, onDeleteEvent }) => {
 //   const [events, setEvents] = useState([]);
@@ -160,11 +169,10 @@ export default AdminEventsList;
 // AdminEventsList.propTypes = {
 //   tournamentId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 //   onEditEvent: PropTypes.func.isRequired,
-//   onDeleteEvent: PropTypes.func, 
+//   onDeleteEvent: PropTypes.func,
 // };
 
 // export default AdminEventsList;
-
 
 // import React, { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
@@ -230,7 +238,6 @@ export default AdminEventsList;
 // };
 
 // export default AdminEventsList;
-
 
 // import React, { useState, useEffect } from 'react'; // Added necessary imports
 // import { useNavigate } from 'react-router-dom';

@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { jwtDecode } from 'jwt-decode';
-import axios from 'axios';
-import '../styles/shared/index.css';
+import React, { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
+import "../styles/shared/index.css";
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = "https://parry-hub.com";
 
 const EventsList = ({ events, showWithdrawButton, onWithdraw }) => {
   const [withdrawing, setWithdrawing] = useState(null); // Track which event is being withdrawn
   const [error, setError] = useState(null); // Error state for handling withdraw errors
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   const handleWithdraw = async (event) => {
     const eventId = event.id;
@@ -27,8 +27,9 @@ const EventsList = ({ events, showWithdrawButton, onWithdraw }) => {
       );
       onWithdraw(eventId); // Inform the parent component that the event was withdrawn
     } catch (error) {
-      console.error('Error withdrawing from event:', error);
-      const errorMessage = error.response?.data?.message || 'Failed to withdraw from the event.';
+      console.error("Error withdrawing from event:", error);
+      const errorMessage =
+        error.response?.data?.message || "Failed to withdraw from the event.";
       setError(errorMessage);
     } finally {
       setWithdrawing(null); // Reset after action completes
@@ -58,29 +59,41 @@ const EventsList = ({ events, showWithdrawButton, onWithdraw }) => {
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
           </svg>
           <span className="error-message">{error}</span>
-          <button className="close-error-button" onClick={() => setError(null)}>✕</button>
+          <button className="close-error-button" onClick={() => setError(null)}>
+            ✕
+          </button>
         </div>
       )}
-      
-      {events.map(event => (
+
+      {events.map((event) => (
         <div key={event.id} className="modal">
           <h2>{event.tournament.name}</h2>
-          <p><strong>Venue:</strong> {event.tournament.venue}</p>
-          <p>{new Date(event.startDate).toLocaleString()} - {new Date(event.endDate).toLocaleString()}</p>
-          <p><strong>Gender:</strong> {event.gender}</p>
-          <p><strong>Weapon:</strong> {event.weapon}</p>
+          <p>
+            <strong>Venue:</strong> {event.tournament.venue}
+          </p>
+          <p>
+            {new Date(event.startDate).toLocaleString()} -{" "}
+            {new Date(event.endDate).toLocaleString()}
+          </p>
+          <p>
+            <strong>Gender:</strong> {event.gender}
+          </p>
+          <p>
+            <strong>Weapon:</strong> {event.weapon}
+          </p>
 
-          {showWithdrawButton && isUpcomingAndWithinRegistrationPeriod(event) && (
-            <button
-              className="withdraw-button"
-              onClick={() => handleWithdraw(event)} // Pass entire event object
-              disabled={withdrawing === event.id} // Disable the button while withdrawing
-              aria-live="polite"
-              aria-disabled={withdrawing === event.id}
-            >
-              {withdrawing === event.id ? 'Withdrawing...' : 'Withdraw'}
-            </button>
-          )}
+          {showWithdrawButton &&
+            isUpcomingAndWithinRegistrationPeriod(event) && (
+              <button
+                className="withdraw-button"
+                onClick={() => handleWithdraw(event)} // Pass entire event object
+                disabled={withdrawing === event.id} // Disable the button while withdrawing
+                aria-live="polite"
+                aria-disabled={withdrawing === event.id}
+              >
+                {withdrawing === event.id ? "Withdrawing..." : "Withdraw"}
+              </button>
+            )}
         </div>
       ))}
     </div>
@@ -90,7 +103,7 @@ const EventsList = ({ events, showWithdrawButton, onWithdraw }) => {
 export default EventsList;
 
 // const EventsList = ({ events, showWithdrawButton, onWithdraw }) => {
-  
+
 //   const [withdrawing, setWithdrawing] = useState(null); // Track which event is being withdrawn
 
 //   const handleWithdraw = async (eventId) => {
@@ -144,9 +157,6 @@ export default EventsList;
 // };
 
 // export default EventsList;
-
-
-
 
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
@@ -231,7 +241,6 @@ export default EventsList;
 // };
 
 // export default EventsList;
-
 
 // import React, { useState, useEffect } from 'react';
 // import { useNavigate } from 'react-router-dom';
@@ -323,4 +332,3 @@ export default EventsList;
 // };
 
 // export default EventsList;
-

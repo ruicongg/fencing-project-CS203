@@ -8,7 +8,7 @@ import AdminEditEvent from "./AdminEditEvent";
 import AdminCreateEvent from "./AdminCreateEvent";
 import "../styles/shared/index.css";
 
-axios.defaults.baseURL = "http://localhost:8080";
+axios.defaults.baseURL = "https://parry-hub.com";
 
 const AdminDashboard = () => {
   const [activeTournaments, setActiveTournaments] = useState([]);
@@ -118,19 +118,18 @@ const AdminDashboard = () => {
 
   return (
     <div className="dashboard">
-      
       {/* Breadcrumb Navigation */}
       <nav className="breadcrumb">
         <span className="separator">/</span>
         <a className="active">Tournaments</a>
       </nav>
-  
+
       {/* Dashboard Title */}
       <h1 className="dashboard-title">Admin Dashboard</h1>
-  
+
       {/* Tabs for Active and Completed Tournaments */}
       <div className="tabs">
-        <button 
+        <button
           onClick={() => handleTabClick("active")}
           className={`tab ${activeTab === "active" ? "active" : ""}`}
         >
@@ -143,7 +142,7 @@ const AdminDashboard = () => {
           Completed
         </button>
       </div>
-  
+
       {/* Section for Tournaments */}
       <div className="section-container">
         {activeTab === "active" && (
@@ -154,19 +153,23 @@ const AdminDashboard = () => {
             + New tournament
           </button>
         )}
-  
+
         {/* Loading Indicator */}
         {loading && <p className="loading-message">Loading tournaments...</p>}
-  
+
         {/* Tournament Cards */}
         <div className="tournament-list-container">
           {!loading &&
             activeTab === "active" &&
-            activeTournaments.length === 0 && <p className="no-tournaments-message">No active tournaments</p>}
+            activeTournaments.length === 0 && (
+              <p className="no-tournaments-message">No active tournaments</p>
+            )}
           {!loading &&
             activeTab === "completed" &&
-            completedTournaments.length === 0 && <p className="no-tournaments-message">No completed tournaments</p>}
-    
+            completedTournaments.length === 0 && (
+              <p className="no-tournaments-message">No completed tournaments</p>
+            )}
+
           {(activeTab === "active"
             ? activeTournaments
             : completedTournaments
@@ -186,13 +189,13 @@ const AdminDashboard = () => {
             />
           ))}
         </div>
-      
-  
-      {/* Events Section for Selected Tournament */}
-      {selectedTournament && (
-        
+
+        {/* Events Section for Selected Tournament */}
+        {selectedTournament && (
           <div className="">
-            <h2 className="section-title">My events for {selectedTournament.name}</h2>
+            <h2 className="section-title">
+              My events for {selectedTournament.name}
+            </h2>
             {activeTab === "active" && (
               <button
                 className="add-button"
@@ -202,75 +205,74 @@ const AdminDashboard = () => {
               </button>
             )}
             <p></p>
-          
-          <AdminEventsList
-            events={selectedTournament.events || []} // Pass the events from selectedTournament
-            tournamentId={selectedTournament?.id}
-            onEditEvent={(event) => {
-              setSelectedEvent(event);
-              setIsEditingEvent(true);
-            }}
-            onDeleteEvent={handleDeleteEvent}
+
+            <AdminEventsList
+              events={selectedTournament.events || []} // Pass the events from selectedTournament
+              tournamentId={selectedTournament?.id}
+              onEditEvent={(event) => {
+                setSelectedEvent(event);
+                setIsEditingEvent(true);
+              }}
+              onDeleteEvent={handleDeleteEvent}
+            />
+          </div>
+        )}
+
+        {/* Modals */}
+        {isEditingTournament && (
+          <AdminEditTournament
+            tournament={selectedTournament}
+            onClose={() => setIsEditingTournament(false)}
+            onSave={(updatedTournament) =>
+              handleSave(
+                `/tournaments/${updatedTournament.id}`,
+                updatedTournament,
+                "tournament"
+              )
+            }
           />
-        </div>
-      )}
-  
-      {/* Modals */}
-      {isEditingTournament && (
-        <AdminEditTournament
-          tournament={selectedTournament}
-          onClose={() => setIsEditingTournament(false)}
-          onSave={(updatedTournament) =>
-            handleSave(
-              `/tournaments/${updatedTournament.id}`,
-              updatedTournament,
-              "tournament"
-            )
-          }
-        />
-      )}
-  
-      {isCreatingTournament && (
-        <AdminCreateTournament
-          onClose={() => setIsCreatingTournament(false)}
-          onAdd={(newTournament) =>
-            handleAdd("/tournaments", newTournament, "tournament")
-          }
-        />
-      )}
-  
-      {isEditingEvent && selectedEvent && (
-        <AdminEditEvent
-          event={selectedEvent}
-          tournamentId={selectedTournament.id}
-          onClose={() => setIsEditingEvent(false)}
-          onSave={(updatedEvent) =>
-            handleSave(
-              `/tournaments/${selectedTournament.id}/events/${updatedEvent.id}`,
-              updatedEvent,
-              "event"
-            )
-          }
-        />
-      )}
-  
-      {isCreatingEvent && (
-        <AdminCreateEvent
-          tournamentId={selectedTournament.id}
-          onClose={() => setIsCreatingEvent(false)}
-          onAdd={(newEvent) =>
-            handleAdd(
-              `/tournaments/${selectedTournament.id}/events`,
-              newEvent,
-              "event"
-            )
-          }
-        />
-      )}
+        )}
+
+        {isCreatingTournament && (
+          <AdminCreateTournament
+            onClose={() => setIsCreatingTournament(false)}
+            onAdd={(newTournament) =>
+              handleAdd("/tournaments", newTournament, "tournament")
+            }
+          />
+        )}
+
+        {isEditingEvent && selectedEvent && (
+          <AdminEditEvent
+            event={selectedEvent}
+            tournamentId={selectedTournament.id}
+            onClose={() => setIsEditingEvent(false)}
+            onSave={(updatedEvent) =>
+              handleSave(
+                `/tournaments/${selectedTournament.id}/events/${updatedEvent.id}`,
+                updatedEvent,
+                "event"
+              )
+            }
+          />
+        )}
+
+        {isCreatingEvent && (
+          <AdminCreateEvent
+            tournamentId={selectedTournament.id}
+            onClose={() => setIsCreatingEvent(false)}
+            onAdd={(newEvent) =>
+              handleAdd(
+                `/tournaments/${selectedTournament.id}/events`,
+                newEvent,
+                "event"
+              )
+            }
+          />
+        )}
       </div>
     </div>
   );
-  
-}
+};
 
 export default AdminDashboard;

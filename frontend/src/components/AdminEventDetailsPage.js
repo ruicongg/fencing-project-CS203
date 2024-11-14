@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import ViewPlayersModal from './ViewPlayers';
-import '../styles/shared/index.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import ViewPlayersModal from "./ViewPlayers";
+import "../styles/shared/index.css";
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = "https://parry-hub.com";
 
 const AdminEventDetailsPage = () => {
   const { tournamentId, eventId } = useParams();
@@ -24,13 +24,15 @@ const AdminEventDetailsPage = () => {
   useEffect(() => {
     const fetchEventData = async () => {
       try {
-        const eventResponse = await axios.get(`/tournaments/${tournamentId}/events/${eventId}`);
+        const eventResponse = await axios.get(
+          `/tournaments/${tournamentId}/events/${eventId}`
+        );
         setEvent(eventResponse.data);
         await fetchGroupStages();
         await fetchKnockoutStages();
       } catch (error) {
-        setError('Failed to load event details. Please try again.');
-        console.error('Error fetching event details:', error);
+        setError("Failed to load event details. Please try again.");
+        console.error("Error fetching event details:", error);
       } finally {
         setLoading(false);
       }
@@ -41,84 +43,130 @@ const AdminEventDetailsPage = () => {
 
   const fetchGroupStages = async () => {
     try {
-      const response = await axios.get(`/tournaments/${tournamentId}/events/${eventId}/groupStages`);
+      const response = await axios.get(
+        `/tournaments/${tournamentId}/events/${eventId}/groupStages`
+      );
       setGroupStages(response.data);
     } catch (error) {
-      setError('Error fetching group stages: ' + (error.response?.data?.error || 'Unknown error'));
-      console.error('Error fetching group stages: ' + (error.response?.data?.error || 'Unknown error'));
+      setError(
+        "Error fetching group stages: " +
+          (error.response?.data?.error || "Unknown error")
+      );
+      console.error(
+        "Error fetching group stages: " +
+          (error.response?.data?.error || "Unknown error")
+      );
     }
   };
 
   const fetchKnockoutStages = async () => {
     try {
-      const response = await axios.get(`/tournaments/${tournamentId}/events/${eventId}/knockoutStage`);
+      const response = await axios.get(
+        `/tournaments/${tournamentId}/events/${eventId}/knockoutStage`
+      );
       setKnockoutStages(response.data);
     } catch (error) {
-
-      setError('Error fetching knockout stages: ' + (error.response?.data?.error || 'Unknown error'));
-      console.error('Error fetching knockout stages: ' + (error.response?.data?.error || 'Unknown error'));
+      setError(
+        "Error fetching knockout stages: " +
+          (error.response?.data?.error || "Unknown error")
+      );
+      console.error(
+        "Error fetching knockout stages: " +
+          (error.response?.data?.error || "Unknown error")
+      );
     }
   };
 
   const handleGenerateGroupStageMatches = async (groupStageId) => {
     try {
-      await axios.post(`/tournaments/${tournamentId}/events/${eventId}/groupStage/matches`);
-      setGroupStages(prevStages =>
-        prevStages.map(stage =>
+      await axios.post(
+        `/tournaments/${tournamentId}/events/${eventId}/groupStage/matches`
+      );
+      setGroupStages((prevStages) =>
+        prevStages.map((stage) =>
           stage.id === groupStageId ? { ...stage, matches: [{}] } : stage
         )
       );
-      setSuccessfulGeneration({ ...successfulGeneration, groupStage: groupStageId });
-      setError(null);  // Clear any existing error on success
+      setSuccessfulGeneration({
+        ...successfulGeneration,
+        groupStage: groupStageId,
+      });
+      setError(null); // Clear any existing error on success
     } catch (error) {
-      setError('Error generating matches for group stage. ' + (error.response?.data?.error || 'Unknown error'));
-      console.error('Error generating group stage matches:', error);
+      setError(
+        "Error generating matches for group stage. " +
+          (error.response?.data?.error || "Unknown error")
+      );
+      console.error("Error generating group stage matches:", error);
     }
   };
 
   const handleGenerateKnockoutStageMatches = async (knockoutStageId) => {
     try {
-      await axios.post(`/tournaments/${tournamentId}/events/${eventId}/knockoutStage/${knockoutStageId}/matches`);
-      setKnockoutStages(prevStages =>
-        prevStages.map(stage =>
+      await axios.post(
+        `/tournaments/${tournamentId}/events/${eventId}/knockoutStage/${knockoutStageId}/matches`
+      );
+      setKnockoutStages((prevStages) =>
+        prevStages.map((stage) =>
           stage.id === knockoutStageId ? { ...stage, matches: [{}] } : stage
         )
       );
-      setSuccessfulGeneration({ ...successfulGeneration, knockoutStage: knockoutStageId });
+      setSuccessfulGeneration({
+        ...successfulGeneration,
+        knockoutStage: knockoutStageId,
+      });
     } catch (error) {
-      setError('Error generating matches for knockout stage. ' + (error.response?.data?.error || 'Unknown error'));
-      console.error('Error generating knockout stage matches:', error);
+      setError(
+        "Error generating matches for knockout stage. " +
+          (error.response?.data?.error || "Unknown error")
+      );
+      console.error("Error generating knockout stage matches:", error);
     }
   };
 
   const handleGenerateGroupStages = async () => {
     try {
-      await axios.post(`/tournaments/${tournamentId}/events/${eventId}/groupStage`);
+      await axios.post(
+        `/tournaments/${tournamentId}/events/${eventId}/groupStage`
+      );
       await fetchGroupStages();
-      setError(null);  // Clear any existing error on success
+      setError(null); // Clear any existing error on success
     } catch (error) {
-      setError('Error generating group stages: ' + (error.response?.data?.error || 'Unknown error'));
-      console.error('Error generating group stages:', error);
+      setError(
+        "Error generating group stages: " +
+          (error.response?.data?.error || "Unknown error")
+      );
+      console.error("Error generating group stages:", error);
     }
   };
 
   const handleGenerateKnockoutStages = async () => {
     try {
-      await axios.post(`/tournaments/${tournamentId}/events/${eventId}/knockoutStage`);
+      await axios.post(
+        `/tournaments/${tournamentId}/events/${eventId}/knockoutStage`
+      );
       await fetchKnockoutStages();
     } catch (error) {
-      setError('Error generating knockout stage. ' + (error.response?.data?.error || 'Unknown error'));
-      console.error('Error generating knockout stage:', error);
+      setError(
+        "Error generating knockout stage. " +
+          (error.response?.data?.error || "Unknown error")
+      );
+      console.error("Error generating knockout stage:", error);
     }
   };
 
   const handleDeleteKnockoutStage = async (knockoutStageId) => {
     try {
-      await axios.delete(`/tournaments/${tournamentId}/events/${eventId}/knockoutStage/${knockoutStageId}`);
+      await axios.delete(
+        `/tournaments/${tournamentId}/events/${eventId}/knockoutStage/${knockoutStageId}`
+      );
       await fetchKnockoutStages();
     } catch (error) {
-      setError('Error deleting knockout stage. ' + (error.response?.data?.error || 'Unknown error'));
-      console.error('Error deleting knockout stage:', error);
+      setError(
+        "Error deleting knockout stage. " +
+          (error.response?.data?.error || "Unknown error")
+      );
+      console.error("Error deleting knockout stage:", error);
     }
   };
 
@@ -139,45 +187,61 @@ const AdminEventDetailsPage = () => {
           <span className="error-message">{error}</span>
         </div>
       )}
-  
+
       {/* Breadcrumb Navigation */}
       <div className="breadcrumb">
         <Link to="/admin/dashboard">Tournaments</Link>
         <span className="separator">/</span>
         <a className="active">Event</a>
       </div>
-  
+
       {/* Page Title */}
       <h1 className="dashboard-title">Event Details</h1>
-  
+
       {/* Event Details Section */}
       <div className="section-container">
-        
-          <p className="section-title"><strong>Event ID:</strong> {event.id}</p>
-          <div className="section-content">
-            <p><strong>Date:</strong> {new Date(event.startDate).toLocaleString()} to {new Date(event.endDate).toLocaleString()}</p>
-            <p><strong>Gender:</strong> {event.gender}</p>
-            <p><strong>Weapon:</strong> {event.weapon}</p>
-          </div>
-          <button onClick={openPlayersModal} className="view-button">View Players</button>
-        
-      {/* Group Stages Section */}
-      <div className="section-container">
-        <h2 className="section-title">Group Stages</h2>
+        <p className="section-title">
+          <strong>Event ID:</strong> {event.id}
+        </p>
         <div className="section-content">
-          {groupStages.length > 0 ? (
-            <ul>
-              {groupStages.map(groupStage => (
-                <li 
-                key={groupStage.id}
-                onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}/groupStage/${groupStage.id}`)}
-                className="list-item"
-                >
-                  <div className="item-content">
-                    Group Stage ID: {groupStage.id}  
+          <p>
+            <strong>Date:</strong> {new Date(event.startDate).toLocaleString()}{" "}
+            to {new Date(event.endDate).toLocaleString()}
+          </p>
+          <p>
+            <strong>Gender:</strong> {event.gender}
+          </p>
+          <p>
+            <strong>Weapon:</strong> {event.weapon}
+          </p>
+        </div>
+        <button onClick={openPlayersModal} className="view-button">
+          View Players
+        </button>
+
+        {/* Group Stages Section */}
+        <div className="section-container">
+          <h2 className="section-title">Group Stages</h2>
+          <div className="section-content">
+            {groupStages.length > 0 ? (
+              <ul>
+                {groupStages.map((groupStage) => (
+                  <li
+                    key={groupStage.id}
+                    onClick={() =>
+                      navigate(
+                        `/admin/tournaments/${tournamentId}/events/${eventId}/groupStage/${groupStage.id}`
+                      )
+                    }
+                    className="list-item"
+                  >
+                    <div className="item-content">
+                      Group Stage ID: {groupStage.id}
                       {groupStage.matches && groupStage.matches.length === 0 ? (
                         <button
-                          onClick={() => handleGenerateGroupStageMatches(groupStage.id)}
+                          onClick={() =>
+                            handleGenerateGroupStageMatches(groupStage.id)
+                          }
                           className="add-button"
                         >
                           Generate Matches
@@ -186,86 +250,103 @@ const AdminEventDetailsPage = () => {
                         <p>Matches creation successful.</p>
                       ) : null}
                     </div>
-                  
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div>
-              <p>No Group Stages have been generated yet. Click below to create them.</p>
-              <button onClick={handleGenerateGroupStages} className="add-button">Generate Group Stages</button>
-            </div>
-          )}
-        </div>
-      </div>
-  
-      {/* Knockout Stages Section */}
-      <div className="section-container">
-        <h2 className="section-title">Knockout Stages</h2>
-        
-        <div className="section-content">
-        <div>
-            <button 
-            onClick={handleGenerateKnockoutStages} 
-            className="add-button"
-            >
-              + New Knockout Stage
-            </button>
-        </div>
-          {knockoutStages.length > 0 ? (
-            <ul>
-              {knockoutStages.map(knockoutStage => (
-                <li 
-                key={knockoutStage.id} 
-                onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}/knockoutStage/${knockoutStage.id}`)}
-                className="list-item"
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div>
+                <p>
+                  No Group Stages have been generated yet. Click below to create
+                  them.
+                </p>
+                <button
+                  onClick={handleGenerateGroupStages}
+                  className="add-button"
                 >
-                  <div className="item-content">
-                    Knockout Stage ID: {knockoutStage.id} 
-                    <button
-                      onClick={(e) => {
+                  Generate Group Stages
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Knockout Stages Section */}
+        <div className="section-container">
+          <h2 className="section-title">Knockout Stages</h2>
+
+          <div className="section-content">
+            <div>
+              <button
+                onClick={handleGenerateKnockoutStages}
+                className="add-button"
+              >
+                + New Knockout Stage
+              </button>
+            </div>
+            {knockoutStages.length > 0 ? (
+              <ul>
+                {knockoutStages.map((knockoutStage) => (
+                  <li
+                    key={knockoutStage.id}
+                    onClick={() =>
+                      navigate(
+                        `/admin/tournaments/${tournamentId}/events/${eventId}/knockoutStage/${knockoutStage.id}`
+                      )
+                    }
+                    className="list-item"
+                  >
+                    <div className="item-content">
+                      Knockout Stage ID: {knockoutStage.id}
+                      <button
+                        onClick={(e) => {
                           e.stopPropagation(); // Prevent navigation when deleting
                           handleDeleteKnockoutStage(knockoutStage.id);
                         }}
-                          className="delete-button"
-                    >
-                      Delete
-                    </button>
-                    
-                      {knockoutStage.matches && knockoutStage.matches.length === 0 ? (
+                        className="delete-button"
+                      >
+                        Delete
+                      </button>
+                      {knockoutStage.matches &&
+                      knockoutStage.matches.length === 0 ? (
                         <button
-                          onClick={() => handleGenerateKnockoutStageMatches(knockoutStage.id)}
+                          onClick={() =>
+                            handleGenerateKnockoutStageMatches(knockoutStage.id)
+                          }
                           className="add-button"
                         >
                           Generate Matches
                         </button>
-                      ) : successfulGeneration.knockoutStage === knockoutStage.id ? (
+                      ) : successfulGeneration.knockoutStage ===
+                        knockoutStage.id ? (
                         <p>Matches creation successful.</p>
                       ) : null}
                     </div>
-                  
-                </li>
-              ))}
-            </ul>
-          ) : (
-              <p>No Knockout Stages have been generated yet. Click below to create them.</p>
-          )}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>
+                No Knockout Stages have been generated yet. Click below to
+                create them.
+              </p>
+            )}
+          </div>
         </div>
+
+        {/* Players Modal */}
+        {isPlayersModalOpen && (
+          <ViewPlayersModal
+            onClose={closePlayersModal}
+            eventId={eventId}
+            tournamentId={tournamentId}
+          />
+        )}
       </div>
-  
-      {/* Players Modal */}
-      {isPlayersModalOpen && (
-        <ViewPlayersModal onClose={closePlayersModal} eventId={eventId} tournamentId={tournamentId} />
-      )}
-    </div>
     </div>
   );
-  
 };
 
 export default AdminEventDetailsPage;
-
-
 
 //   const [event, setEvent] = useState(null);
 //   const [groupStages, setGroupStages] = useState([]);
@@ -405,7 +486,6 @@ export default AdminEventDetailsPage;
 
 // export default AdminEventDetailsPage;
 
-
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
 // import { Link, useParams, useNavigate } from 'react-router-dom';
@@ -413,7 +493,7 @@ export default AdminEventDetailsPage;
 // import '../styles/AdminEventDetailsPage.css';
 
 // const AdminEventDetailsPage = () => {
-//   const { tournamentId, eventId } = useParams(); 
+//   const { tournamentId, eventId } = useParams();
 //   const navigate = useNavigate();
 
 //   const [event, setEvent] = useState(null);
@@ -551,6 +631,3 @@ export default AdminEventDetailsPage;
 // };
 
 // export default AdminEventDetailsPage;
-
-
-

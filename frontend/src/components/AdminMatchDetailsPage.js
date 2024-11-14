@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '../styles/shared/index.css'; // Import the relevant CSS
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import "../styles/shared/index.css"; // Import the relevant CSS
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = "https://parry-hub.com";
 
 const AdminMatchDetailsPage = () => {
   const { tournamentId, eventId, stageType, stageId, matchId } = useParams();
   const navigate = useNavigate();
-  
+
   const [match, setMatch] = useState(null);
-  const [player1Score, setPlayer1Score] = useState('');
-  const [player2Score, setPlayer2Score] = useState('');
+  const [player1Score, setPlayer1Score] = useState("");
+  const [player2Score, setPlayer2Score] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -23,10 +23,10 @@ const AdminMatchDetailsPage = () => {
           `/tournaments/${tournamentId}/events/${eventId}/match/${matchId}`
         );
         setMatch(response.data);
-        setPlayer1Score(response.data.player1Score || '');
-        setPlayer2Score(response.data.player2Score || '');
+        setPlayer1Score(response.data.player1Score || "");
+        setPlayer2Score(response.data.player2Score || "");
       } catch (error) {
-        setError('Error fetching match details.', error);
+        setError("Error fetching match details.", error);
         // console.error('Error fetching match details:', error);
       } finally {
         setLoading(false);
@@ -37,8 +37,13 @@ const AdminMatchDetailsPage = () => {
   }, [tournamentId, eventId, stageType, stageId, matchId]);
 
   const handleSave = async () => {
-    if (!player1Score || !player2Score || isNaN(player1Score) || isNaN(player2Score)) {
-      setError('Please enter valid scores for both players.');
+    if (
+      !player1Score ||
+      !player2Score ||
+      isNaN(player1Score) ||
+      isNaN(player2Score)
+    ) {
+      setError("Please enter valid scores for both players.");
       return;
     }
 
@@ -51,13 +56,13 @@ const AdminMatchDetailsPage = () => {
           player1: match.player1,
           player2: match.player2,
           player1Score: Number(player1Score),
-          player2Score: Number(player2Score)
+          player2Score: Number(player2Score),
         }
       );
-      alert('Scores saved successfully!');
+      alert("Scores saved successfully!");
     } catch (error) {
-      console.error('Error saving scores:', error);
-      setError('Error saving scores. Please try again.');
+      console.error("Error saving scores:", error);
+      setError("Error saving scores. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -85,64 +90,80 @@ const AdminMatchDetailsPage = () => {
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
           </svg>
           <span className="error-message">{error}</span>
-          <button className="close-error-button" onClick={() => setError(null)}>✕</button>
+          <button className="close-error-button" onClick={() => setError(null)}>
+            ✕
+          </button>
         </div>
       )}
-      
+
       <nav className="breadcrumb">
-        <span onClick={() => navigate(`/admin/tournaments/${tournamentId}`)}>Tournaments</span>
+        <span onClick={() => navigate(`/admin/tournaments/${tournamentId}`)}>
+          Tournaments
+        </span>
         <span className="separator">/</span>
-        <span onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}`)}>Event</span>
+        <span
+          onClick={() =>
+            navigate(`/admin/tournaments/${tournamentId}/events/${eventId}`)
+          }
+        >
+          Event
+        </span>
         <span className="separator">/</span>
-        <span onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}`)}>
-          {stageType === 'groupStage' ? 'Group Stage' : 'Knockout Stage'}
+        <span
+          onClick={() =>
+            navigate(
+              `/admin/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}`
+            )
+          }
+        >
+          {stageType === "groupStage" ? "Group Stage" : "Knockout Stage"}
         </span>
         <span className="separator">/</span>
         <a className="active">Match</a>
       </nav>
-      
+
       <div className="section-container">
-      <h1>Match ID: {match.id}</h1>
-      <div className="modal">
+        <h1>Match ID: {match.id}</h1>
+        <div className="modal">
+          <div className="modal-action">
+            <label>
+              <h3>Player 1 @{match.player1.username}:</h3>
+              <input
+                type="number"
+                value={player1Score}
+                onChange={handleScoreChange(setPlayer1Score)}
+                disabled={saving}
+                placeholder="Enter Score"
+              />
+            </label>
 
-      <div className="modal-action">
-        <label>
-        <h3>Player 1 @{match.player1.username}:</h3>
-          <input
-            type="number"
-            value={player1Score}
-            onChange={handleScoreChange(setPlayer1Score)}
-            disabled={saving}
-            placeholder='Enter Score'
-          />
-        </label>
+            <label>
+              <h3>Player 2 @{match.player2.username}:</h3>
+              <input
+                type="number"
+                value={player2Score}
+                onChange={handleScoreChange(setPlayer2Score)}
+                disabled={saving}
+                placeholder="Enter Score"
+              />
+            </label>
+          </div>
+        </div>
 
-        <label>
-        <h3>Player 2 @{match.player2.username}:</h3>
-          <input
-            type="number"
-            value={player2Score}
-            onChange={handleScoreChange(setPlayer2Score)}
-            disabled={saving}
-            placeholder='Enter Score'
-          />
-        </label>
+        <button
+          onClick={handleSave}
+          disabled={saving || !player1Score || !player2Score}
+        >
+          {saving ? "Saving..." : "Save"}
+        </button>
+
+        {error && <p className="error-message">{error}</p>}
       </div>
-      </div>
-
-      <button onClick={handleSave} disabled={saving || !player1Score || !player2Score}>
-        {saving ? 'Saving...' : 'Save'}
-      </button>
-
-      {error && <p className="error-message">{error}</p>}
-      </div>
-    
     </div>
   );
 };
 
 export default AdminMatchDetailsPage;
-
 
 // import React, { useState, useEffect } from 'react';
 // import { useParams, useNavigate } from 'react-router-dom';
@@ -176,7 +197,7 @@ export default AdminMatchDetailsPage;
 //   const handleSave = async () => {
 //     try {
 //       await axios.put(
-//         `/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/match/${matchId}`, 
+//         `/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/match/${matchId}`,
 //         {
 //           player1Score,
 //           player2Score
@@ -231,7 +252,6 @@ export default AdminMatchDetailsPage;
 // };
 
 // export default AdminMatchDetailsPage;
-
 
 // import React, { useState, useEffect } from 'react';
 // import { useParams } from 'react-router-dom';

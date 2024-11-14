@@ -6,7 +6,7 @@ import {
   BrowserRouter,
 } from "react-router-dom";
 import { Navigate } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
 import LoginPage from "./components/LoginPage";
 import CreateAccountPage from "./components/CreateAccountPage";
 import AdminDashboard from "./components/AdminDashboard";
@@ -20,15 +20,18 @@ import AdminEventDetailsPage from "./components/AdminEventDetailsPage";
 import AdminStageDetailsPage from "./components/AdminStageDetailsPage";
 import AdminMatchDetailsPage from "./components/AdminMatchDetailsPage";
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = "https://parry-hub.com";
 
 axios.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token'); // Retrieve token from localStorage
+    const token = localStorage.getItem("token"); // Retrieve token from localStorage
 
     // Skip Authorization header for specific public endpoints
-    const publicEndpoints = ['/api/v1/auth/authenticate', '/api/v1/auth/register'];
-    
+    const publicEndpoints = [
+      "/api/v1/auth/authenticate",
+      "/api/v1/auth/register",
+    ];
+
     if (token && !publicEndpoints.includes(config.url)) {
       config.headers.Authorization = `Bearer ${token}`; // Attach token to Authorization header
     }
@@ -67,8 +70,14 @@ const App = () => {
           />
 
           {/* Stage Details */}
-          <Route path="tournaments/:tournamentId/events/:eventId/knockoutStage/:stageId" element={<AdminStageDetailsPage />} />
-          <Route path="tournaments/:tournamentId/events/:eventId/groupStage/:stageId" element={<AdminStageDetailsPage />} />
+          <Route
+            path="tournaments/:tournamentId/events/:eventId/knockoutStage/:stageId"
+            element={<AdminStageDetailsPage />}
+          />
+          <Route
+            path="tournaments/:tournamentId/events/:eventId/groupStage/:stageId"
+            element={<AdminStageDetailsPage />}
+          />
 
           {/* Match Details */}
           <Route
@@ -128,7 +137,8 @@ const UserLayout = () => {
     <div className="user-layout">
       <div className="main-content">
         <Routes>
-          <Route path="my-tournaments" element={<UserDashboard />} /> {/* Default redirect to My Tournaments */}
+          <Route path="my-tournaments" element={<UserDashboard />} />{" "}
+          {/* Default redirect to My Tournaments */}
           <Route path="upcoming" element={<UpcomingMatchesPage />} />
         </Routes>
       </div>

@@ -1,26 +1,27 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
-import '../styles/shared/Button.css';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
+import "../styles/shared/Button.css";
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = "https://parry-hub.com";
 
 const CreateAccountPage = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [gender, setGender] = useState(''); // New state for gender
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [gender, setGender] = useState(""); // New state for gender
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const validateForm = () => {
-    if (!username || !email || !password || !gender) { // Include gender in validation
-      setError('All fields are required.');
+    if (!username || !email || !password || !gender) {
+      // Include gender in validation
+      setError("All fields are required.");
       return false;
     }
     if (!/\S+@\S+\.\S+/.test(email)) {
-      setError('Please enter a valid email.');
+      setError("Please enter a valid email.");
       return false;
     }
     return true;
@@ -32,16 +33,20 @@ const CreateAccountPage = () => {
     setLoading(true); // Set loading state when form is submitted
 
     try {
-      await axios.post('/api/v1/auth/register', {
-        username,
-        email,
-        password,
-        gender, // Add gender to request payload
-        role: 'USER',
-      }, { withCredentials: true });
-      navigate('/login'); // Redirect to login page after account creation
+      await axios.post(
+        "/api/v1/auth/register",
+        {
+          username,
+          email,
+          password,
+          gender, // Add gender to request payload
+          role: "USER",
+        },
+        { withCredentials: true }
+      );
+      navigate("/login"); // Redirect to login page after account creation
     } catch (error) {
-      setError('Error creating account.');
+      setError("Error creating account.");
     } finally {
       setLoading(false); // Reset loading state after the request completes
     }
@@ -95,24 +100,25 @@ const CreateAccountPage = () => {
             </select>
           </div>
           <button type="submit" className="button" disabled={loading}>
-            {loading ? 'Creating Account...' : 'Create Account'}
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
           {error && (
             <div className="error-container">
               <svg className="error-icon" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
               </svg>
               <span className="error-message">{error}</span>
             </div>
           )}
         </form>
         <div className="signup-link">
-          <p>Already have an account? <Link to="/login">Login</Link></p>
+          <p>
+            Already have an account? <Link to="/login">Login</Link>
+          </p>
         </div>
       </div>
     </div>
   );
 };
-
 
 export default CreateAccountPage;

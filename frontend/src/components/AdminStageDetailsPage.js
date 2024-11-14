@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '../styles/shared/index.css';
-import '../styles/AdminStageDetailsPage.css'; // Import the relevant CSS
+import React, { useState, useEffect } from "react";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import "../styles/shared/index.css";
+import "../styles/AdminStageDetailsPage.css"; // Import the relevant CSS
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = "https://parry-hub.com";
 
 const AdminStageDetailsPage = () => {
   const { tournamentId, eventId, stageId } = useParams();
@@ -12,8 +12,10 @@ const AdminStageDetailsPage = () => {
   const location = useLocation();
 
   // Determine the stage type (knockoutStage or groupStage) based on the URL
-  const stageType = location.pathname.includes("knockoutStage") ? "knockoutStage" : "groupStage";
-  console.log('Params:', { tournamentId, eventId, stageType, stageId });
+  const stageType = location.pathname.includes("knockoutStage")
+    ? "knockoutStage"
+    : "groupStage";
+  console.log("Params:", { tournamentId, eventId, stageType, stageId });
 
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,22 +25,23 @@ const AdminStageDetailsPage = () => {
   // Fetch matches for the stage
   useEffect(() => {
     const fetchMatches = async () => {
-      setLoading(true);  // Start loading
-      setError(null);    // Clear any previous errors
+      setLoading(true); // Start loading
+      setError(null); // Clear any previous errors
 
       try {
         // Define the endpoint based on the stageType
-        const endpoint = stageType === 'groupStage'
-          ? `/tournaments/${tournamentId}/events/${eventId}/groupStage/${stageId}/matches`
-          : `/tournaments/${tournamentId}/events/${eventId}/knockoutStage/${stageId}/matches`;
-        
-        console.log('Fetching from endpoint:', endpoint);
-        
+        const endpoint =
+          stageType === "groupStage"
+            ? `/tournaments/${tournamentId}/events/${eventId}/groupStage/${stageId}/matches`
+            : `/tournaments/${tournamentId}/events/${eventId}/knockoutStage/${stageId}/matches`;
+
+        console.log("Fetching from endpoint:", endpoint);
+
         const response = await axios.get(endpoint);
         setMatches(response.data);
       } catch (error) {
-        setError('Error fetching matches.');
-        console.error('Error fetching matches:', error);
+        setError("Error fetching matches.");
+        console.error("Error fetching matches:", error);
       } finally {
         setLoading(false); // End loading
       }
@@ -54,22 +57,23 @@ const AdminStageDetailsPage = () => {
 
     try {
       // Use the correct endpoint for generating matches based on stageType
-      const endpoint = stageType === 'groupStage'
-        ? `/tournaments/${tournamentId}/events/${eventId}/groupStage/matches`
-        : `/tournaments/${tournamentId}/events/${eventId}/knockoutStage/${stageId}/matches`;
+      const endpoint =
+        stageType === "groupStage"
+          ? `/tournaments/${tournamentId}/events/${eventId}/groupStage/matches`
+          : `/tournaments/${tournamentId}/events/${eventId}/knockoutStage/${stageId}/matches`;
 
-      console.log('Creating matches from endpoint:', endpoint);
-      
+      console.log("Creating matches from endpoint:", endpoint);
+
       // Generate matches
       await axios.post(endpoint);
-      
+
       // Fetch the newly generated matches
       const fetchEndpoint = `/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/matches`;
       const response = await axios.get(fetchEndpoint);
       setMatches(response.data);
     } catch (error) {
-      setError('Error generating matches.');
-      console.error('Error generating matches:', error);
+      setError("Error generating matches.");
+      console.error("Error generating matches:", error);
     } finally {
       setGenerating(false);
     }
@@ -78,15 +82,25 @@ const AdminStageDetailsPage = () => {
   const renderMatches = () => (
     <ul className="section-container">
       {matches.map((match) => (
-        <div key={match.id} onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/match/${match.id}`)}>
+        <div
+          key={match.id}
+          onClick={() =>
+            navigate(
+              `/admin/tournaments/${tournamentId}/events/${eventId}/${stageType}/${stageId}/match/${match.id}`
+            )
+          }
+        >
           <div className="modal">
             <div className="list-item">
-            <div className="item-title"> Match ID: {match.id}</div>
+              <div className="item-title"> Match ID: {match.id}</div>
             </div>
-            <p><strong>Player 1:</strong> @{match.player1.username}</p>
-            <p><strong>Player 2:</strong> @{match.player2.username}</p>
+            <p>
+              <strong>Player 1:</strong> @{match.player1.username}
+            </p>
+            <p>
+              <strong>Player 2:</strong> @{match.player2.username}
+            </p>
           </div>
-          
         </div>
       ))}
     </ul>
@@ -101,39 +115,58 @@ const AdminStageDetailsPage = () => {
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
           </svg>
           <span className="error-message">{error}</span>
-          <button className="close-error-button" onClick={() => setError(null)}>✕</button>
+          <button className="close-error-button" onClick={() => setError(null)}>
+            ✕
+          </button>
         </div>
       )}
-      
+
       {/* Breadcrumb Navigation */}
       <nav className="breadcrumb">
-        <span onClick={() => navigate(`/admin/tournaments/${tournamentId}`)}>Tournaments </span> 
+        <span onClick={() => navigate(`/admin/tournaments/${tournamentId}`)}>
+          Tournaments{" "}
+        </span>
         <span className="separator">/</span>
-        <span onClick={() => navigate(`/admin/tournaments/${tournamentId}/events/${eventId}`)}>Event </span> 
+        <span
+          onClick={() =>
+            navigate(`/admin/tournaments/${tournamentId}/events/${eventId}`)
+          }
+        >
+          Event{" "}
+        </span>
         <span className="separator">/</span>
-        <a className="active">{stageType === 'groupStage' ? 'GroupStage' : 'KnockoutStage'}</a>
+        <a className="active">
+          {stageType === "groupStage" ? "GroupStage" : "KnockoutStage"}
+        </a>
       </nav>
 
-      <h1 className="dashboard-title">{stageType === 'groupStage' ? `Group Stage ID: ${stageId}` : `Knockout Stage ID: ${stageId}`}</h1>
-      
-        {/* Display loading, error, or content based on state */}
-        {loading && <p>Loading matches...</p>}
-        {error && <p className="error-message">{error}</p>}
-        {!loading && matches.length === 0 && !error && (
-          <button onClick={handleGenerateMatches} disabled={generating} className="add-button">
-            {generating ? 'Generating matches...' : 'Generate matches'}
-          </button>
-        )}
-        {matches.length > 0 && renderMatches()}
-        {!loading && matches.length === 0 && !error && <p>No matches available</p>}
-      </div>
-    
+      <h1 className="dashboard-title">
+        {stageType === "groupStage"
+          ? `Group Stage ID: ${stageId}`
+          : `Knockout Stage ID: ${stageId}`}
+      </h1>
+
+      {/* Display loading, error, or content based on state */}
+      {loading && <p>Loading matches...</p>}
+      {error && <p className="error-message">{error}</p>}
+      {!loading && matches.length === 0 && !error && (
+        <button
+          onClick={handleGenerateMatches}
+          disabled={generating}
+          className="add-button"
+        >
+          {generating ? "Generating matches..." : "Generate matches"}
+        </button>
+      )}
+      {matches.length > 0 && renderMatches()}
+      {!loading && matches.length === 0 && !error && (
+        <p>No matches available</p>
+      )}
+    </div>
   );
 };
 
 export default AdminStageDetailsPage;
-
-
 
 // import React, { useState, useEffect } from 'react';
 // import { useParams, useNavigate } from 'react-router-dom';
@@ -144,7 +177,7 @@ export default AdminStageDetailsPage;
 //   const { tournamentId, eventId, stageType, stageId } = useParams(); // Use stageType and stageId from the URL
 //   const navigate = useNavigate();
 //   const [matches, setMatches] = useState([]);
-  
+
 //   useEffect(() => {
 //     const fetchMatches = async () => {
 //       try {
@@ -204,7 +237,6 @@ export default AdminStageDetailsPage;
 // };
 
 // export default AdminStageDetailsPage;
-
 
 // import React, { useState, useEffect } from 'react';
 // import { useParams, useNavigate } from 'react-router-dom';
@@ -285,4 +317,3 @@ export default AdminStageDetailsPage;
 // };
 
 // export default GroupStageDetailsPage;
-

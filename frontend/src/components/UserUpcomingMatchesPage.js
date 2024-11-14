@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
-import '../styles/shared/index.css';
+import "../styles/shared/index.css";
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = "https://parry-hub.com";
 
 const UpcomingMatchesPage = () => {
   const [matches, setMatches] = useState([]);
@@ -14,18 +14,18 @@ const UpcomingMatchesPage = () => {
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
   const [filters, setFilters] = useState({
-    time: 'All',
-    weapon: 'All',
+    time: "All",
+    weapon: "All",
   });
   const [selectedMatch, setSelectedMatch] = useState(null);
 
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (!token || isTokenExpired(token)) {
-      localStorage.removeItem('token');
-      navigate('/login');
+      localStorage.removeItem("token");
+      navigate("/login");
     } else {
       fetchUserId();
     }
@@ -37,18 +37,18 @@ const UpcomingMatchesPage = () => {
 
   const fetchUserId = async () => {
     try {
-      const response = await axios.get('/users/id', {
+      const response = await axios.get("/users/id", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUserId(response.data);
     } catch (error) {
-      setError('Failed to fetch user ID.');
+      setError("Failed to fetch user ID.");
     }
   };
 
   const fetchMatches = async () => {
     try {
-      const response = await axios.get('/matches', {
+      const response = await axios.get("/matches", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const userMatches = response.data.filter(
@@ -57,7 +57,7 @@ const UpcomingMatchesPage = () => {
       setMatches(userMatches);
       fetchEventDetails(userMatches); // Fetch event details for matches
     } catch (error) {
-      setError('Failed to fetch upcoming matches.');
+      setError("Failed to fetch upcoming matches.");
     } finally {
       setLoading(false);
     }
@@ -74,7 +74,10 @@ const UpcomingMatchesPage = () => {
         });
         fetchedEventDetails[eventId] = response.data;
       } catch (error) {
-        console.error(`Failed to fetch event details for event ID: ${eventId}`, error);
+        console.error(
+          `Failed to fetch event details for event ID: ${eventId}`,
+          error
+        );
       }
     }
     setEventDetailsMap(fetchedEventDetails);
@@ -83,7 +86,7 @@ const UpcomingMatchesPage = () => {
   const getDateRangeForFilter = (filter) => {
     const now = new Date();
     switch (filter) {
-      case 'this week':
+      case "this week":
         const startOfWeek = new Date(now);
         startOfWeek.setDate(now.getDate() - now.getDay() + 1);
         startOfWeek.setHours(0, 0, 0, 0);
@@ -91,12 +94,12 @@ const UpcomingMatchesPage = () => {
         endOfWeek.setDate(startOfWeek.getDate() + 6);
         endOfWeek.setHours(23, 59, 59, 999);
         return [startOfWeek, endOfWeek];
-      case 'this month':
+      case "this month":
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
         endOfMonth.setHours(23, 59, 59, 999);
         return [startOfMonth, endOfMonth];
-      case 'this year':
+      case "this year":
         const startOfYear = new Date(now.getFullYear(), 0, 1);
         const endOfYear = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
         return [startOfYear, endOfYear];
@@ -105,21 +108,28 @@ const UpcomingMatchesPage = () => {
     }
   };
 
-  const filteredMatches = matches.map((match) => {
-    if (!match.event.startDate) {
-      return {
-        ...match,
-        event: eventDetailsMap[match.event], // Replace with full event details
-      };
-    }
-    return match;
-  }).filter((match) => {
-    const { weapon } = filters;
-    const event = match.event.startDate ? match.event : eventDetailsMap[match.event] || {};
+  const filteredMatches = matches
+    .map((match) => {
+      if (!match.event.startDate) {
+        return {
+          ...match,
+          event: eventDetailsMap[match.event], // Replace with full event details
+        };
+      }
+      return match;
+    })
+    .filter((match) => {
+      const { weapon } = filters;
+      const event = match.event.startDate
+        ? match.event
+        : eventDetailsMap[match.event] || {};
 
-    // Filter by weapon
-    return weapon === 'All' || (event.weapon && event.weapon.toUpperCase() === weapon.toUpperCase());
-  });
+      // Filter by weapon
+      return (
+        weapon === "All" ||
+        (event.weapon && event.weapon.toUpperCase() === weapon.toUpperCase())
+      );
+    });
 
   // const filteredMatches = matches.map((match) => {
   //   // Populate event details only if missing
@@ -163,46 +173,58 @@ const UpcomingMatchesPage = () => {
   const groupMatchesByDate = (matches) => {
     return matches.reduce((grouped, match) => {
       // Use the event details from eventDetailsMap if startDate is missing
-      const event = match.event.startDate ? match.event : eventDetailsMap[match.event] || {};
-      const matchDate = new Date(event.startDate).toLocaleDateString('en-CA'); // Format date as 'YYYY-MM-DD'
-      
+      const event = match.event.startDate
+        ? match.event
+        : eventDetailsMap[match.event] || {};
+      const matchDate = new Date(event.startDate).toLocaleDateString("en-CA"); // Format date as 'YYYY-MM-DD'
+
       if (!grouped[matchDate]) {
         grouped[matchDate] = [];
       }
       grouped[matchDate].push({ ...match, event }); // Add event details to each match if missing
-  
+
       return grouped;
     }, {});
   };
-  
+
   // Sorting function to sort matches by event start time within each date group
   const renderMatchesByDate = (groupedMatches) => {
-    const today = new Date().toLocaleDateString('en-CA');
-    const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
-    
-    const todayMatches = (groupedMatches[today] || []).sort((a, b) => new Date(a.event.startDate) - new Date(b.event.startDate));
-    const tomorrowMatches = (groupedMatches[tomorrow] || []).sort((a, b) => new Date(a.event.startDate) - new Date(b.event.startDate));
+    const today = new Date().toLocaleDateString("en-CA");
+    const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString(
+      "en-CA"
+    );
+
+    const todayMatches = (groupedMatches[today] || []).sort(
+      (a, b) => new Date(a.event.startDate) - new Date(b.event.startDate)
+    );
+    const tomorrowMatches = (groupedMatches[tomorrow] || []).sort(
+      (a, b) => new Date(a.event.startDate) - new Date(b.event.startDate)
+    );
     const otherDates = Object.keys(groupedMatches)
       .filter((date) => date !== today && date !== tomorrow)
       .sort() // Sort dates in ascending order
       .map((date) => ({
         date,
-        matches: (groupedMatches[date] || []).sort((a, b) => new Date(a.event.startDate) - new Date(b.event.startDate)),
+        matches: (groupedMatches[date] || []).sort(
+          (a, b) => new Date(a.event.startDate) - new Date(b.event.startDate)
+        ),
       }));
-  
+
     return (
       <div>
-        {renderMatchSection('Today', today, todayMatches)}
-        {renderMatchSection('Tomorrow', tomorrow, tomorrowMatches)}
-        {otherDates.map(({ date, matches }) => renderMatchSection(date, date, matches))}
+        {renderMatchSection("Today", today, todayMatches)}
+        {renderMatchSection("Tomorrow", tomorrow, tomorrowMatches)}
+        {otherDates.map(({ date, matches }) =>
+          renderMatchSection(date, date, matches)
+        )}
       </div>
     );
   };
 
   const getStageType = (match) => {
-    if (match.groupStage) return 'Group Stage';
-    if (match.knockoutStage) return 'Knockout Stage';
-    return 'Unknown Stage';
+    if (match.groupStage) return "Group Stage";
+    if (match.knockoutStage) return "Knockout Stage";
+    return "Unknown Stage";
   };
 
   const renderMatchSection = (title, date, matches) => (
@@ -211,37 +233,55 @@ const UpcomingMatchesPage = () => {
       {matches.length > 0 ? (
         matches.map((match) => {
           // Retrieve event details from eventDetailsMap if missing in match
-          const event = match.event.startDate ? match.event : eventDetailsMap[match.event] || {};
+          const event = match.event.startDate
+            ? match.event
+            : eventDetailsMap[match.event] || {};
           const tournament = event.tournament || {};
-          const opponent = match.player1.id === userId ? match.player2 : match.player1;
-          const userScore = match.player1.id === userId ? match.player1Score : match.player2Score;
-          const opponentScore = match.player1.id === userId ? match.player2Score : match.player1Score;
+          const opponent =
+            match.player1.id === userId ? match.player2 : match.player1;
+          const userScore =
+            match.player1.id === userId
+              ? match.player1Score
+              : match.player2Score;
+          const opponentScore =
+            match.player1.id === userId
+              ? match.player2Score
+              : match.player1Score;
           const stageType = getStageType(match);
-  
+
           return (
             <div className="modal">
-            <div key={match.id} className="modal-content">
-              <h3>Match ID: {match.id} [{stageType}]</h3>
-              <h4>{tournament.name || 'N/A'}</h4>
-              <div className="list-item">
-                Event ID: {event.id}, {event.gender || 'N/A'}, {event.weapon || 'N/A'}
+              <div key={match.id} className="modal-content">
+                <h3>
+                  Match ID: {match.id} [{stageType}]
+                </h3>
+                <h4>{tournament.name || "N/A"}</h4>
+                <div className="list-item">
+                  Event ID: {event.id}, {event.gender || "N/A"},{" "}
+                  {event.weapon || "N/A"}
+                </div>
+                <div className="list-item">
+                  {event.startDate
+                    ? new Date(event.startDate).toLocaleString()
+                    : "N/A"}{" "}
+                  -
+                  {event.endDate
+                    ? new Date(event.endDate).toLocaleString()
+                    : "N/A"}
+                </div>
+                <div className="list-item">
+                  Venue: {tournament.venue || "N/A"}
+                </div>
+                <div className="list-item">Opponent: @{opponent.username}</div>
+                {userScore !== 0 && opponentScore !== 0 && (
+                  <button
+                    onClick={() => setSelectedMatch(match)}
+                    className="view-results-button"
+                  >
+                    View results
+                  </button>
+                )}
               </div>
-              <div className="list-item">
-                {event.startDate ? new Date(event.startDate).toLocaleString() : 'N/A'} - 
-                {event.endDate ? new Date(event.endDate).toLocaleString() : 'N/A'}
-              </div>
-              <div className="list-item">
-                Venue: {tournament.venue || 'N/A'}
-              </div>
-              <div className="list-item">
-                Opponent: @{opponent.username}
-              </div>
-              {(userScore !== 0 && opponentScore !== 0) && (
-                <button onClick={() => setSelectedMatch(match)} className="view-results-button">
-                  View results
-                </button>
-              )}
-            </div>
             </div>
           );
         })
@@ -249,9 +289,7 @@ const UpcomingMatchesPage = () => {
         <p>No matches for {title.toLowerCase()}</p>
       )}
     </div>
-  );  
-  
-  
+  );
 
   if (loading) return <p>Loading matches...</p>;
   if (error) return <p>{error}</p>;
@@ -267,7 +305,9 @@ const UpcomingMatchesPage = () => {
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
           </svg>
           <span className="error-message">{error}</span>
-          <button className="close-error-button" onClick={() => setError(null)}>✕</button>
+          <button className="close-error-button" onClick={() => setError(null)}>
+            ✕
+          </button>
         </div>
       )}
 
@@ -276,14 +316,18 @@ const UpcomingMatchesPage = () => {
         {/* <h3>Filter by</h3> */}
         <FilterDropdown
           label="Weapon"
-          options={['All', 'Foil', 'Epee', 'Saber']}
+          options={["All", "Foil", "Epee", "Saber"]}
           value={filters.weapon}
-          onChange={(value) => handleFilterChange('weapon', value)}
+          onChange={(value) => handleFilterChange("weapon", value)}
         />
       </div>
       {renderMatchesByDate(groupedMatches)}
       {selectedMatch && (
-        <MatchResultsPopup match={selectedMatch} userId={userId} onClose={() => setSelectedMatch(null)} />
+        <MatchResultsPopup
+          match={selectedMatch}
+          userId={userId}
+          onClose={() => setSelectedMatch(null)}
+        />
       )}
     </div>
   );
@@ -294,32 +338,38 @@ const FilterDropdown = ({ label, options, value, onChange }) => (
   <div className="filter-by">
     <label>{label}</label>
     <select value={value} onChange={(e) => onChange(e.target.value)}>
-      {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+      {options.map((opt) => (
+        <option key={opt} value={opt}>
+          {opt}
+        </option>
+      ))}
     </select>
   </div>
 );
 
 // Define the MatchResultsPopup component
 const MatchResultsPopup = ({ match, userId, onClose }) => {
-  const userScore = match.player1.id === userId ? match.player1Score : match.player2Score;
-  const opponentScore = match.player1.id === userId ? match.player2Score : match.player1Score;
+  const userScore =
+    match.player1.id === userId ? match.player1Score : match.player2Score;
+  const opponentScore =
+    match.player1.id === userId ? match.player2Score : match.player1Score;
   return (
     <div className="modal-backdrop">
       <div className="modal">
-      <div className="modal-content">
-        <h3>Winner: Player {match.winner?.id} @{match.winner?.username}</h3>
-        <p>Your score: {userScore}</p>
-        <p>Opponent's score: {opponentScore}</p>
-        <button onClick={onClose}>Close</button>
-      </div>
+        <div className="modal-content">
+          <h3>
+            Winner: Player {match.winner?.id} @{match.winner?.username}
+          </h3>
+          <p>Your score: {userScore}</p>
+          <p>Opponent's score: {opponentScore}</p>
+          <button onClick={onClose}>Close</button>
+        </div>
       </div>
     </div>
   );
 };
 
 export default UpcomingMatchesPage;
-
-
 
 // const UpcomingMatchesPage = () => {
 //   const [matches, setMatches] = useState([]);
@@ -370,7 +420,7 @@ export default UpcomingMatchesPage;
 //             },
 //             params: filters,
 //           });
-          
+
 //           const userMatches = response.data.filter(
 //             (match) => match.player1.id === userId || match.player2.id === userId
 //           );
@@ -399,7 +449,7 @@ export default UpcomingMatchesPage;
 
 //   const isTokenExpired = (token) => {
 //     if (!token) return true; // No token found
-    
+
 //     try {
 //       const decodedToken = jwtDecode(token);
 //       const currentTime = Date.now() / 1000; // Get current time in seconds
@@ -465,8 +515,8 @@ export default UpcomingMatchesPage;
 //                 <div key={match.id} className="match-item">
 //                   <p>Match ID: {match.id}, {stageType}</p>
 //                   <p>
-//                     Event: {match.event.gender}, {match.event.weapon}, 
-//                     {new Date(match.event.startDate).toLocaleString()} - 
+//                     Event: {match.event.gender}, {match.event.weapon},
+//                     {new Date(match.event.startDate).toLocaleString()} -
 //                     {new Date(match.event.endDate).toLocaleString()}
 //                   </p>
 //                   <p>Venue: {match.event.tournament.venue}</p>
@@ -498,8 +548,8 @@ export default UpcomingMatchesPage;
 //                 <div key={match.id} className="match-item">
 //                   <p>Match ID: {match.id}, {stageType}</p>
 //                   <p>
-//                     Event: {match.event.gender}, {match.event.weapon}, 
-//                     {new Date(match.event.startDate).toLocaleString()} - 
+//                     Event: {match.event.gender}, {match.event.weapon},
+//                     {new Date(match.event.startDate).toLocaleString()} -
 //                     {new Date(match.event.endDate).toLocaleString()}
 //                   </p>
 //                   <p>Venue: {match.event.tournament.venue}</p>
@@ -524,8 +574,8 @@ export default UpcomingMatchesPage;
 //                 <div key={match.id} className="match-item">
 //                   <p>Match ID: {match.id}, {stageType}</p>
 //                   <p>
-//                     Event: {match.event.gender}, {match.event.weapon}, 
-//                     {new Date(match.event.startDate).toLocaleString()} - 
+//                     Event: {match.event.gender}, {match.event.weapon},
+//                     {new Date(match.event.startDate).toLocaleString()} -
 //                     {new Date(match.event.endDate).toLocaleString()}
 //                   </p>
 //                   <p>Venue: {match.event.tournament.venue}</p>
@@ -679,8 +729,8 @@ export default UpcomingMatchesPage;
 //                 <div key={match.id} className="match-item">
 //                   <p>Match ID: {match.id}, {match.stageType}</p>
 //                   <p>
-//                     Event: {match.event.gender}, {match.event.weapon}, 
-//                     {format(new Date(match.event.startDateTime), 'dd MMMM yyyy, HH:mm')} - 
+//                     Event: {match.event.gender}, {match.event.weapon},
+//                     {format(new Date(match.event.startDateTime), 'dd MMMM yyyy, HH:mm')} -
 //                     {format(new Date(match.event.endDateTime), 'HH:mm')}
 //                   </p>
 //                   <p>Venue: {match.event.tournament.venue}</p>
@@ -703,8 +753,8 @@ export default UpcomingMatchesPage;
 //                 <div key={match.id} className="match-item">
 //                   <p>Match ID: {match.id}, {match.stageType}</p>
 //                   <p>
-//                     Event: {match.event.gender}, {match.event.weapon}, 
-//                     {format(new Date(match.event.startDateTime), 'dd MMMM yyyy, HH:mm')} - 
+//                     Event: {match.event.gender}, {match.event.weapon},
+//                     {format(new Date(match.event.startDateTime), 'dd MMMM yyyy, HH:mm')} -
 //                     {format(new Date(match.event.endDateTime), 'HH:mm')}
 //                   </p>
 //                   <p>Venue: {match.event.tournament.venue}</p>
@@ -727,8 +777,8 @@ export default UpcomingMatchesPage;
 //                 <div key={match.id} className="match-item">
 //                   <p>Match ID: {match.id}, {match.stageType}</p>
 //                   <p>
-//                     Event: {match.event.gender}, {match.event.weapon}, 
-//                     {format(new Date(match.event.startDateTime), 'dd MMMM yyyy, HH:mm')} - 
+//                     Event: {match.event.gender}, {match.event.weapon},
+//                     {format(new Date(match.event.startDateTime), 'dd MMMM yyyy, HH:mm')} -
 //                     {format(new Date(match.event.endDateTime), 'HH:mm')}
 //                   </p>
 //                   <p>Venue: {match.event.tournament.venue}</p>
@@ -792,7 +842,6 @@ export default UpcomingMatchesPage;
 // };
 
 // export default UpcomingMatchesPage;
-
 
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
@@ -875,8 +924,8 @@ export default UpcomingMatchesPage;
 //                 <div key={match.id} className="match-item">
 //                   <p>Match ID: {match.id}, {match.stageType}</p>
 //                   <p>
-//                     Event: {match.event.gender}, {match.event.weapon}, 
-//                     {new Date(match.event.startDateTime).toLocaleString()} - 
+//                     Event: {match.event.gender}, {match.event.weapon},
+//                     {new Date(match.event.startDateTime).toLocaleString()} -
 //                     {new Date(match.event.endDateTime).toLocaleString()}
 //                   </p>
 //                   <p>Venue: {match.event.tournament.venue}</p>
@@ -899,8 +948,8 @@ export default UpcomingMatchesPage;
 //                 <div key={match.id} className="match-item">
 //                   <p>Match ID: {match.id}, {match.stageType}</p>
 //                   <p>
-//                     Event: {match.event.gender}, {match.event.weapon}, 
-//                     {new Date(match.event.startDateTime).toLocaleString()} - 
+//                     Event: {match.event.gender}, {match.event.weapon},
+//                     {new Date(match.event.startDateTime).toLocaleString()} -
 //                     {new Date(match.event.endDateTime).toLocaleString()}
 //                   </p>
 //                   <p>Venue: {match.event.tournament.venue}</p>
@@ -923,8 +972,8 @@ export default UpcomingMatchesPage;
 //                 <div key={match.id} className="match-item">
 //                   <p>Match ID: {match.id}, {match.stageType}</p>
 //                   <p>
-//                     Event: {match.event.gender}, {match.event.weapon}, 
-//                     {new Date(match.event.startDateTime).toLocaleString()} - 
+//                     Event: {match.event.gender}, {match.event.weapon},
+//                     {new Date(match.event.startDateTime).toLocaleString()} -
 //                     {new Date(match.event.endDateTime).toLocaleString()}
 //                   </p>
 //                   <p>Venue: {match.event.tournament.venue}</p>

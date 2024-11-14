@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import '../styles/ViewPlayers.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "../styles/ViewPlayers.css";
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = "https://parry-hub.com";
 
 const ViewPlayers = ({ onClose, eventId, tournamentId }) => {
   const [players, setPlayers] = useState([]);
@@ -13,12 +13,14 @@ const ViewPlayers = ({ onClose, eventId, tournamentId }) => {
     const fetchPlayers = async () => {
       try {
         // Fetch event data including rankings
-        const response = await axios.get(`/tournaments/${tournamentId}/events/${eventId}/playerRanks`);
+        const response = await axios.get(
+          `/tournaments/${tournamentId}/events/${eventId}/playerRanks`
+        );
         const playerRanks = response.data;
-  
+
         if (playerRanks.length === 0) {
           setPlayers([]); // Set players to an empty array
-          setError('No players registered for this event.'); // Display a message
+          setError("No players registered for this event."); // Display a message
         } else {
           // Extract players directly from playerRanks
           const playerList = playerRanks.map((rank) => ({
@@ -29,18 +31,23 @@ const ViewPlayers = ({ onClose, eventId, tournamentId }) => {
           setError(null); // Clear any previous error
         }
       } catch (error) {
-        setError('Error fetching players. Please try again later.');
-        console.error('Error fetching players:', error);
+        setError("Error fetching players. Please try again later.");
+        console.error("Error fetching players:", error);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchPlayers();
   }, [eventId, tournamentId]);
 
   return (
-    <div className="modal-backdrop" role="dialog" aria-labelledby="players-title" aria-describedby="players-list">
+    <div
+      className="modal-backdrop"
+      role="dialog"
+      aria-labelledby="players-title"
+      aria-describedby="players-list"
+    >
       <div className="modal">
         <h2 id="players-title">Players</h2>
 
@@ -48,19 +55,19 @@ const ViewPlayers = ({ onClose, eventId, tournamentId }) => {
           {loading && <p>Loading players...</p>}
           {error && <p className="error-message">{error}</p>}
 
-          {!loading && !error && (
-            players.length > 0 ? (
+          {!loading &&
+            !error &&
+            (players.length > 0 ? (
               <ul>
-                {players.map(player => (
+                {players.map((player) => (
                   <li key={player.id}>
-                    Player ID: {player.id} @{player.username || 'Unknown'}
+                    Player ID: {player.id} @{player.username || "Unknown"}
                   </li>
                 ))}
               </ul>
             ) : (
               <p>No players registered for this event.</p>
-            )
-          )}
+            ))}
         </div>
 
         <div className="modal-actions">
@@ -72,8 +79,6 @@ const ViewPlayers = ({ onClose, eventId, tournamentId }) => {
 };
 
 export default ViewPlayers;
-
-
 
 // import React, { useState, useEffect } from 'react';
 // import './ViewPlayersModal.css';

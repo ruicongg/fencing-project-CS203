@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
-import '../styles/UserTournamentsEventsPage.css'; // Import CSS for styling
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import "../styles/UserTournamentsEventsPage.css"; // Import CSS for styling
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = "https://parry-hub.com";
 
 const TournamentEventsPage = () => {
   const [events, setEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [userEvents, setUserEvents] = useState([]); // Store events the user is registered in
   const [filters, setFilters] = useState({
-    gender: 'all',
-    weapon: 'all',
+    gender: "all",
+    weapon: "all",
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { tournamentId } = useParams();
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   // Fetch user registered events
   useEffect(() => {
@@ -33,7 +33,7 @@ const TournamentEventsPage = () => {
         const registeredEvents = response.data.map((rank) => rank.event.id);
         setUserEvents(registeredEvents);
       } catch (error) {
-        console.error('Error fetching user events:', error);
+        console.error("Error fetching user events:", error);
       }
     };
 
@@ -51,7 +51,7 @@ const TournamentEventsPage = () => {
         setEvents(response.data);
         setFilteredEvents(response.data); // Initialize with all events
       } catch (error) {
-        setError('Failed to load events');
+        setError("Failed to load events");
       } finally {
         setLoading(false);
       }
@@ -65,9 +65,11 @@ const TournamentEventsPage = () => {
     const applyFilters = () => {
       const { gender, weapon } = filters;
 
-      const filtered = events.filter(event => {
-        const genderMatch = gender === 'all' || event.gender === gender.toUpperCase();
-        const weaponMatch = weapon === 'all' || event.weapon === weapon.toUpperCase();
+      const filtered = events.filter((event) => {
+        const genderMatch =
+          gender === "all" || event.gender === gender.toUpperCase();
+        const weaponMatch =
+          weapon === "all" || event.weapon === weapon.toUpperCase();
         return genderMatch && weaponMatch;
       });
 
@@ -86,8 +88,8 @@ const TournamentEventsPage = () => {
 
   const handleJoin = async (eventId) => {
     if (!token || isTokenExpired(token)) {
-      alert('Session expired, please log in again');
-      navigate('/login');
+      alert("Session expired, please log in again");
+      navigate("/login");
       return;
     }
 
@@ -108,11 +110,13 @@ const TournamentEventsPage = () => {
             event.id === eventId ? { ...event, joined: true } : event
           )
         );
-        alert('Successfully joined the event!');
+        alert("Successfully joined the event!");
       }
     } catch (error) {
-      console.error('Failed to join event', error);
-      alert('An error occurred while trying to join the event. Please try again.');
+      console.error("Failed to join event", error);
+      alert(
+        "An error occurred while trying to join the event. Please try again."
+      );
     }
   };
 
@@ -121,7 +125,7 @@ const TournamentEventsPage = () => {
       const { exp } = jwtDecode(token);
       return exp * 1000 < Date.now();
     } catch (error) {
-      console.error('Invalid token:', error);
+      console.error("Invalid token:", error);
       return true;
     }
   };
@@ -131,13 +135,13 @@ const TournamentEventsPage = () => {
   return (
     <div className="dashboard">
       <h1 className="dashboard-title">Events in Tournament</h1>
-      
+
       {/* Filter Section */}
       <div className="filter-by">
         <label>Gender</label>
         <select
           value={filters.gender}
-          onChange={(e) => handleFilterChange('gender', e.target.value)}
+          onChange={(e) => handleFilterChange("gender", e.target.value)}
         >
           <option value="all">All</option>
           <option value="male">Male</option>
@@ -147,7 +151,7 @@ const TournamentEventsPage = () => {
         <label>Weapon</label>
         <select
           value={filters.weapon}
-          onChange={(e) => handleFilterChange('weapon', e.target.value)}
+          onChange={(e) => handleFilterChange("weapon", e.target.value)}
         >
           <option value="all">All</option>
           <option value="foil">Foil</option>
@@ -165,7 +169,9 @@ const TournamentEventsPage = () => {
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
           </svg>
           <span className="error-message">{error}</span>
-          <button className="close-error-button" onClick={() => setError(null)}>✕</button>
+          <button className="close-error-button" onClick={() => setError(null)}>
+            ✕
+          </button>
         </div>
       ) : (
         <div className="section-container">
@@ -175,26 +181,28 @@ const TournamentEventsPage = () => {
 
               return (
                 <div key={event.id} className="modal">
-                <div className="modal-content">
-                  <p>Gender: {event.gender}</p>
-                  <p>Weapon: {event.weapon}</p>
-                  <p>Start: {formatDate(event.startDate)}</p>
-                  <p>End: {formatDate(event.endDate)}</p>
-                </div>
-                <div className="modal-action">
-                  <button
-                    className={`join-button ${isJoined ? 'joined' : ''}`}
-                    disabled={isJoined}
-                    onClick={() => handleJoin(event.id)}
-                  >
-                    {isJoined ? 'Joined' : 'Join'}
-                  </button>
-                </div>
+                  <div className="modal-content">
+                    <p>Gender: {event.gender}</p>
+                    <p>Weapon: {event.weapon}</p>
+                    <p>Start: {formatDate(event.startDate)}</p>
+                    <p>End: {formatDate(event.endDate)}</p>
+                  </div>
+                  <div className="modal-action">
+                    <button
+                      className={`join-button ${isJoined ? "joined" : ""}`}
+                      disabled={isJoined}
+                      onClick={() => handleJoin(event.id)}
+                    >
+                      {isJoined ? "Joined" : "Join"}
+                    </button>
+                  </div>
                 </div>
               );
             })
           ) : (
-            <p className="no-events-message">No events found for this tournament.</p>
+            <p className="no-events-message">
+              No events found for this tournament.
+            </p>
           )}
         </div>
       )}
@@ -300,7 +308,7 @@ export default TournamentEventsPage;
 //   return (
 //     <div className="tournament-events-page">
 //       <h1>Events in Tournament</h1>
-      
+
 //       {/* Filter Section */}
 //       <div className="filter-section">
 //         <label>Gender</label>
@@ -360,7 +368,6 @@ export default TournamentEventsPage;
 
 // export default TournamentEventsPage;
 
-
 // const TournamentEventsPage = ({ match }) => {
 //   const [events, setEvents] = useState([]);
 //   const [filters, setFilters] = useState({
@@ -402,14 +409,14 @@ export default TournamentEventsPage;
 //         navigate('/login');  // Redirect to login
 //         return;
 //       }
-      
+
 //       // Send the JWT token in the Authorization header
 //       const response = await axios.post(`/events/${eventId}/addPlayer`, {}, {
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //         },
 //       });
-      
+
 //       if (response.status === 200) {
 //         setEvents(events.map(event =>
 //           event.id === eventId ? { ...event, joined: true } : event
@@ -479,7 +486,6 @@ export default TournamentEventsPage;
 
 // export default TournamentEventsPage;
 
-
 // import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
 // import '../styles/TournamentEventsPage.css';
@@ -516,14 +522,14 @@ export default TournamentEventsPage;
 //         console.error('No token found, please log in');
 //         return;
 //       }
-      
+
 //       // Send the JWT token in the Authorization header
 //       const response = await axios.post(`/events/${eventId}/addPlayer`, {}, {
 //         headers: {
 //           Authorization: `Bearer ${token}`,  // Include the token in the request headers
 //         },
 //       });
-      
+
 //       if (response.status === 200) {
 //         setEvents(events.map(event =>
 //           event.id === eventId ? { ...event, joined: true } : event
@@ -583,4 +589,3 @@ export default TournamentEventsPage;
 // };
 
 // export default TournamentEventsPage;
-

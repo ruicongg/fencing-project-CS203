@@ -1,15 +1,15 @@
-import axios from 'axios';
-import React, { useState, useEffect } from 'react';
-import '../styles/AdminEditEvent.css';
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import "../styles/AdminEditEvent.css";
 
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = "https://parry-hub.com";
 
-const AdminEditEvent = ({ event, tournamentId,  onClose, onSave }) => {
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [gender, setGender] = useState('');
-  const [weapon, setWeapon] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+const AdminEditEvent = ({ event, tournamentId, onClose, onSave }) => {
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [gender, setGender] = useState("");
+  const [weapon, setWeapon] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -24,26 +24,36 @@ const AdminEditEvent = ({ event, tournamentId,  onClose, onSave }) => {
 
   const handleSave = async () => {
     setIsSaving(true);
-    setErrorMessage(''); // Clear any previous error message
+    setErrorMessage(""); // Clear any previous error message
 
     try {
-      console.log("Saving event with tournamentId:", tournamentId, "eventId:", event.id);
-      const response = await axios.put(`/tournaments/${tournamentId}/events/${event.id}`, {
-        ...event,
-        startDate,
-        endDate,
-        gender,
-        weapon,
-      });
-      
+      console.log(
+        "Saving event with tournamentId:",
+        tournamentId,
+        "eventId:",
+        event.id
+      );
+      const response = await axios.put(
+        `/tournaments/${tournamentId}/events/${event.id}`,
+        {
+          ...event,
+          startDate,
+          endDate,
+          gender,
+          weapon,
+        }
+      );
+
       onSave(response.data); // Pass the updated event back to the parent component on successful save
     } catch (error) {
       console.log("Error saving event:", error);
       if (error.response) {
         // Display backend error message if available
-        setErrorMessage(error.response.data.error || 'An unexpected error occurred.');
+        setErrorMessage(
+          error.response.data.error || "An unexpected error occurred."
+        );
       } else {
-        setErrorMessage('Failed to save event. Please try again.');
+        setErrorMessage("Failed to save event. Please try again.");
       }
     } finally {
       setIsSaving(false);
@@ -70,7 +80,6 @@ const AdminEditEvent = ({ event, tournamentId,  onClose, onSave }) => {
             onChange={(e) => setEndDate(e.target.value)}
             disabled={isSaving}
           />
-
           <label>Gender</label>
           <select
             value={gender}
@@ -80,7 +89,6 @@ const AdminEditEvent = ({ event, tournamentId,  onClose, onSave }) => {
             <option value="MALE">Male</option>
             <option value="FEMALE">Female</option>
           </select>
-
           <label>Weapon</label>
           <select
             value={weapon}
@@ -93,17 +101,19 @@ const AdminEditEvent = ({ event, tournamentId,  onClose, onSave }) => {
           </select>
         </div>
         <div className="modal-actions">
-          <button 
-          onClick={onClose} disabled={isSaving}
-          className="cancel-button"
+          <button
+            onClick={onClose}
+            disabled={isSaving}
+            className="cancel-button"
           >
             Cancel
           </button>
-          <button 
-          onClick={handleSave} disabled={isSaving || !startDate || !endDate}
-          className="add-button"
+          <button
+            onClick={handleSave}
+            disabled={isSaving || !startDate || !endDate}
+            className="add-button"
           >
-            {isSaving ? 'Saving...' : 'Save'}
+            {isSaving ? "Saving..." : "Save"}
           </button>
         </div>
       </div>
@@ -112,7 +122,6 @@ const AdminEditEvent = ({ event, tournamentId,  onClose, onSave }) => {
 };
 
 export default AdminEditEvent;
-
 
 // import React, { useState, useEffect } from 'react';
 // import '../styles/AdminEditEvent.css';
@@ -195,7 +204,6 @@ export default AdminEditEvent;
 // };
 
 // export default AdminEditEvent;
-
 
 // import React, { useState } from 'react';
 // import './EditEventModal.css';
