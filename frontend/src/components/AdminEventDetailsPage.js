@@ -153,7 +153,7 @@ const AdminEventDetailsPage = () => {
       {/* Event Details Section */}
       <div className="section-container">
         
-          <p className="section-title"><strong>Event Name:</strong> {event.name}</p>
+          <p className="section-title"><strong>Event ID:</strong> {event.id}</p>
           <div className="section-content">
             <p><strong>Date:</strong> {new Date(event.startDate).toLocaleString()} to {new Date(event.endDate).toLocaleString()}</p>
             <p><strong>Gender:</strong> {event.gender}</p>

@@ -189,23 +189,6 @@ const UpcomingMatchesPage = () => {
     return 'Unknown Stage';
   };
 
-  // const renderMatchesByDate = (groupedMatches) => {
-  //   const today = new Date().toLocaleDateString('en-CA');
-  //   const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('en-CA');
-
-  //   const todayMatches = groupedMatches[today] || [];
-  //   const tomorrowMatches = groupedMatches[tomorrow] || [];
-  //   const otherDates = Object.keys(groupedMatches).filter((date) => date !== today && date !== tomorrow);
-
-  //   return (
-  //     <div>
-  //       {renderMatchSection('Today', today, todayMatches)}
-  //       {renderMatchSection('Tomorrow', tomorrow, tomorrowMatches)}
-  //       {otherDates.map((date) => renderMatchSection(date, date, groupedMatches[date]))}
-  //     </div>
-  //   );
-  // };
-
   const renderMatchSection = (title, date, matches) => (
     <div className="section-container" key={date}>
       <h2>{title}</h2>
@@ -271,7 +254,7 @@ const UpcomingMatchesPage = () => {
           <button className="close-error-button" onClick={() => setError(null)}>✕</button>
         </div>
       )}
-      
+
       <h1 className="dashboard-title">Upcoming Matches</h1>
       <div className="filter-by">
         <h3>Filter by</h3>
