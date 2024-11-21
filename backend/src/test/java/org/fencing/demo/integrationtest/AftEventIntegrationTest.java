@@ -136,7 +136,7 @@ public class AftEventIntegrationTest extends BaseIntegrationTest {
     // //Need check
     // need seperate set up
     @Test
-    public void endEvent_IncompleteMatches_Failure() throws Exception {
+    public void endEvent_IncompleteGrpMatches_Failure() throws Exception {
         grpMatch.setPlayer1Score(0);
         grpMatch.setPlayer2Score(0);
         matchRepository.save(grpMatch);
@@ -147,6 +147,20 @@ public class AftEventIntegrationTest extends BaseIntegrationTest {
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
     }
+
+    @Test
+    public void endEvent_IncompleteKnockoutMatches_Failure() throws Exception {
+        knockoutMatch.setPlayer1Score(0);
+        knockoutMatch.setPlayer2Score(0);
+        matchRepository.save(knockoutMatch);
+        URI uri = new URI(baseUrl + port + "/tournaments/" + tournament.getId() + "/events/" + event.getId() + "/elo");
+
+        ResponseEntity<String> result = restTemplate
+            .exchange(uri, HttpMethod.PUT, new HttpEntity<>(null, createHeaders(adminToken)), String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
 
     @Test
     public void endEvent_ForbiddenForRegularUser_Failure() throws Exception {
