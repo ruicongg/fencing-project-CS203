@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import "../styles/shared/Button.css";
 
-axios.defaults.baseURL = "https://parry-hub.com";
+axios.defaults.baseURL = "http://localhost:8080";
 
 const CreateAccountPage = () => {
   const [username, setUsername] = useState("");

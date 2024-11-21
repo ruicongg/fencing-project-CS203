@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import "../styles/AdminEditEvent.css";
 
-axios.defaults.baseURL = "https://parry-hub.com";
+axios.defaults.baseURL = "http://localhost:8080";
 
 const AdminEditEvent = ({ event, tournamentId, onClose, onSave }) => {
   const [startDate, setStartDate] = useState("");

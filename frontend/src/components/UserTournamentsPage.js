@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"; // Use navigate for routing
 import "../styles/shared/index.css"; // CSS file for the page
 import TournamentCard from "./UserTournamentCard";
 
-axios.defaults.baseURL = "https://parry-hub.com";
+axios.defaults.baseURL = "http://localhost:8080";
 
 const TournamentsPage = () => {
   const [tournaments, setTournaments] = useState([]);

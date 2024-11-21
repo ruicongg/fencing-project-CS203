@@ -4,7 +4,7 @@ import "../styles/AdminCreateEvent.css";
 import { DateTimeRangeField } from "./shared/DateTimeRangeField";
 import "../styles/shared/Modal.css";
 
-axios.defaults.baseURL = "https://parry-hub.com";
+axios.defaults.baseURL = "http://localhost:8080";
 
 const AdminCreateEvent = ({ tournamentId, onClose, onAdd }) => {
   const formatDateTime = (date) => {

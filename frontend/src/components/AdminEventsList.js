@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import PropTypes from "prop-types";
 import "../styles/shared/index.css";
 
-axios.defaults.baseURL = "https://parry-hub.com";
+axios.defaults.baseURL = "http://localhost:8080";
 
 const AdminEventsList = ({
   events,

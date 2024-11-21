@@ -4,7 +4,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import ViewPlayersModal from "./ViewPlayers";
 import "../styles/shared/index.css";
 
-axios.defaults.baseURL = "https://parry-hub.com";
+axios.defaults.baseURL = "http://localhost:8080";
 
 const AdminEventDetailsPage = () => {
   const { tournamentId, eventId } = useParams();

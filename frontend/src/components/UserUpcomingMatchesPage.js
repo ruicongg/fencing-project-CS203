@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode";
 
 import "../styles/shared/index.css";
 
-axios.defaults.baseURL = "https://parry-hub.com";
+axios.defaults.baseURL = "http://localhost:8080";
 
 const UpcomingMatchesPage = () => {
   const [matches, setMatches] = useState([]);
@@ -110,7 +110,7 @@ const UpcomingMatchesPage = () => {
 
   const filteredMatches = matches
     .map((match) => {
-      if (!match.event.startDate) {
+      if (!match.event.startDate && eventDetailsMap[match.event]) {
         return {
           ...match,
           event: eventDetailsMap[match.event], // Replace with full event details

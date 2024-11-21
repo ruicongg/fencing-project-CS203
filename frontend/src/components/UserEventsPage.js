@@ -4,7 +4,7 @@ import EventsList from "./UserEventsList";
 import { jwtDecode } from "jwt-decode";
 import "../styles/UserEventsPage.css";
 
-axios.defaults.baseURL = "https://parry-hub.com";
+axios.defaults.baseURL = "http://localhost:8080";
 
 const EventsPage = () => {
   const [activeEvents, setActiveEvents] = useState([]);

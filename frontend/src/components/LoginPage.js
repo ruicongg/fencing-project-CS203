@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode";
 
 import "../styles/shared/index.css";
 
-axios.defaults.baseURL = "https://parry-hub.com";
+axios.defaults.baseURL = "http://localhost:8080";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");

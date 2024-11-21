@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/shared/index.css"; // Import the relevant CSS
 
-axios.defaults.baseURL = "https://parry-hub.com";
+axios.defaults.baseURL = "http://localhost:8080";
 
 const AdminMatchDetailsPage = () => {
   const { tournamentId, eventId, stageType, stageId, matchId } = useParams();

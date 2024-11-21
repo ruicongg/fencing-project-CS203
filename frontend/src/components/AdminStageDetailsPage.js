@@ -4,7 +4,7 @@ import axios from "axios";
 import "../styles/shared/index.css";
 import "../styles/AdminStageDetailsPage.css"; // Import the relevant CSS
 
-axios.defaults.baseURL = "https://parry-hub.com";
+axios.defaults.baseURL = "http://localhost:8080";
 
 const AdminStageDetailsPage = () => {
   const { tournamentId, eventId, stageId } = useParams();

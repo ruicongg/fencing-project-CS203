@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../styles/ViewPlayers.css";
 
-axios.defaults.baseURL = "https://parry-hub.com";
+axios.defaults.baseURL = "http://localhost:8080";
 
 const ViewPlayers = ({ onClose, eventId, tournamentId }) => {
   const [players, setPlayers] = useState([]);

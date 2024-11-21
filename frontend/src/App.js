@@ -20,7 +20,7 @@ import AdminEventDetailsPage from "./components/AdminEventDetailsPage";
 import AdminStageDetailsPage from "./components/AdminStageDetailsPage";
 import AdminMatchDetailsPage from "./components/AdminMatchDetailsPage";
 
-axios.defaults.baseURL = "https://parry-hub.com";
+axios.defaults.baseURL = "http://localhost:8080";
 
 axios.interceptors.request.use(
   (config) => {

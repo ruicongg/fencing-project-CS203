@@ -28,21 +28,6 @@ public class SecurityConfig {
         this.authProvider = authProvider;
     }
 
-    // @Bean
-    // public CorsFilter corsFilter() {
-    // CorsConfiguration config = new CorsConfiguration();
-    // config.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Allow
-    // frontend origin
-    // config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE",
-    // "OPTIONS"));
-    // config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-    // config.setAllowCredentials(true);
-
-    // UrlBasedCorsConfigurationSource source = new
-    // UrlBasedCorsConfigurationSource();
-    // source.registerCorsConfiguration("/**", config);
-    // return new CorsFilter(source);
-    // }
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();

@@ -3,7 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import "../styles/shared/index.css";
 
-axios.defaults.baseURL = "https://parry-hub.com";
+axios.defaults.baseURL = "http://localhost:8080";
 
 const EventsList = ({ events, showWithdrawButton, onWithdraw }) => {
   const [withdrawing, setWithdrawing] = useState(null); // Track which event is being withdrawn
